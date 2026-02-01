@@ -3,7 +3,8 @@ import Image from "next/image";
 import AnimateOnScroll from "./components/AnimateOnScroll";
 import {CodeCake} from "@/app/components/CodeCake";
 import { ContactModalTrigger } from "./components/ContactModal";
-import {Discounts} from "@/app/components/Discounts";
+import { Discounts } from "@/app/components/Discounts";
+import { Faq } from "@/app/components/Faq";
 
 export const metadata: Metadata = {
   title: "Перевозка лежачих больных и инвалидов в Евпатории | Медтакси Крым",
@@ -74,6 +75,30 @@ const faqStructuredData = {
       acceptedAnswer: {
         "@type": "Answer",
         text: "Наш транспорт оборудован подъёмниками, фиксаторами, местами для сопровождающих. Возможна транспортировка на носилках или в инвалидном кресле. Салон оснащён климат-контролем и поддерживается в стерильном состоянии.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Сколько стоит перевозка лежачего больного в Евпатории?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Стоимость перевозки лежачих больных и инвалидов в Евпатории и по Крыму зависит от маршрута, сложности и необходимости сопровождения. Точную цену можно узнать по телефону +7 (978) 938-02-21. Мы работаем без скрытых платежей.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Можно ли перевезти больного из больницы домой в Евпатории?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Да, мы организуем перевозку лежачих больных из больницы домой в Евпатории и по Крыму. Транспорт подъезжает к месту выписки, обеспечиваем бережную погрузку и доставку до двери.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Делаете ли перевозку на процедуры и в реабилитационный центр?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Да, мы осуществляем перевозку лежачих больных и инвалидов на процедуры, обследования, в реабилитационные центры и санатории. Работаем по Евпатории, Крыму и между городами России.",
       },
     },
   ],
@@ -461,6 +486,122 @@ export default function Home() {
 
         {/* Discounts Section */}
         <Discounts />
+
+        {/* Когда нужна перевозка — use cases, long-tail */}
+        <section className="py-16 px-4 bg-white" aria-labelledby="when-needed-heading">
+          <div className="container mx-auto max-w-6xl">
+            <h2 id="when-needed-heading" className="text-3xl md:text-4xl font-bold text-gray-900 mb-12 text-center">
+              Когда нужна перевозка лежачих больных и инвалидов
+            </h2>
+            <ul className="grid md:grid-cols-2 lg:grid-cols-3 gap-6" role="list">
+              <li>
+                <article className="p-6 bg-gray-50 rounded-xl border border-gray-200 h-full">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Из больницы домой</h3>
+                  <p className="text-gray-600">
+                    <strong>Перевозка лежачего больного из больницы домой в Евпатории</strong> — выписка, погрузка и доставка до двери. Бережная транспортировка после операции или лечения.
+                  </p>
+                </article>
+              </li>
+              <li>
+                <article className="p-6 bg-gray-50 rounded-xl border border-gray-200 h-full">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">На процедуры и обследования</h3>
+                  <p className="text-gray-600">
+                    <strong>Транспортировка на процедуры</strong>, в поликлинику, на МРТ и обследования. Регулярные поездки в медучреждения Евпатории и Крыма.
+                  </p>
+                </article>
+              </li>
+              <li>
+                <article className="p-6 bg-gray-50 rounded-xl border border-gray-200 h-full">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">В реабилитационный центр и санаторий</h3>
+                  <p className="text-gray-600">
+                    <strong>Перевозка в реабилитационный центр</strong> и санатории Крыма. Из Евпатории в Симферополь, Ялту и другие города — с сопровождением при необходимости.
+                  </p>
+                </article>
+              </li>
+              <li>
+                <article className="p-6 bg-gray-50 rounded-xl border border-gray-200 h-full">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">После операции</h3>
+                  <p className="text-gray-600">
+                    <strong>Перевозка после операции</strong> — щадящая транспортировка лежачих пациентов. Спецтранспорт с фиксацией, без тряски и резких движений.
+                  </p>
+                </article>
+              </li>
+              <li>
+                <article className="p-6 bg-gray-50 rounded-xl border border-gray-200 h-full">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Между городами</h3>
+                  <p className="text-gray-600">
+                    <strong>Междугородняя перевозка лежачих больных</strong> из Евпатории в Москву, Санкт-Петербург и другие города России. Долгие маршруты с комфортом.
+                  </p>
+                </article>
+              </li>
+              <li>
+                <article className="p-6 bg-gray-50 rounded-xl border border-gray-200 h-full">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Из пансионата и обратно</h3>
+                  <p className="text-gray-600">
+                    Транспортировка из дома в пансионат, дом престарелых или обратно. По <strong>Евпатории</strong>, <strong>Крыму</strong> и при необходимости в другие регионы.
+                  </p>
+                </article>
+              </li>
+            </ul>
+          </div>
+        </section>
+
+        {/* Как мы работаем */}
+        <section className="py-16 px-4 bg-blue-50" aria-labelledby="how-we-work-heading">
+          <div className="container mx-auto max-w-4xl">
+            <h2 id="how-we-work-heading" className="text-3xl md:text-4xl font-bold text-gray-900 mb-12 text-center">
+              Как заказать перевозку лежачего больного в Евпатории
+            </h2>
+            <ol className="space-y-6" start={1}>
+              <li className="flex gap-4 items-start">
+                <span className="flex-shrink-0 w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">1</span>
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-1">Позвоните или напишите</h3>
+                  <p className="text-gray-600">Опишите маршрут и состояние пациента. Мы подберём подходящий транспорт и согласуем время.</p>
+                </div>
+              </li>
+              <li className="flex gap-4 items-start">
+                <span className="flex-shrink-0 w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">2</span>
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-1">Встреча в назначенном месте</h3>
+                  <p className="text-gray-600">Машина приедет в больницу, дом или пансионат. Помощь с погрузкой на носилках или в кресле.</p>
+                </div>
+              </li>
+              <li className="flex gap-4 items-start">
+                <span className="flex-shrink-0 w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">3</span>
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-1">Безопасная доставка</h3>
+                  <p className="text-gray-600">Перевозка в пункт назначения с учётом состояния пациента. При необходимости — сопровождение родственником.</p>
+                </div>
+              </li>
+            </ol>
+          </div>
+        </section>
+
+        {/* FAQ — расширенный блок для семантики и сниппетов */}
+        <Faq />
+
+        {/* Локальное SEO — районы и направления */}
+        <section className="py-16 px-4 bg-gray-50" aria-labelledby="areas-heading">
+          <div className="container mx-auto max-w-4xl">
+            <h2 id="areas-heading" className="text-3xl md:text-4xl font-bold text-gray-900 mb-8 text-center">
+              Перевозка лежачих больных в Евпатории и по Крыму
+            </h2>
+            <p className="text-gray-700 text-center mb-8 max-w-2xl mx-auto">
+              Работаем по <strong>Евпатории</strong> (все районы), выезжаем в <strong>Симферополь</strong>, <strong>Севастополь</strong>, <strong>Ялту</strong>, <strong>Алушту</strong>, <strong>Феодосию</strong>, <strong>Керчь</strong> и другие города Крыма. Организуем <strong>междугородние перевозки лежачих больных</strong> в Москву, Санкт-Петербург и по России.
+            </p>
+            <div className="flex flex-wrap justify-center gap-3 text-sm">
+              <span className="px-4 py-2 bg-white rounded-lg border border-gray-200 text-gray-700">Евпатория</span>
+              <span className="px-4 py-2 bg-white rounded-lg border border-gray-200 text-gray-700">Симферополь</span>
+              <span className="px-4 py-2 bg-white rounded-lg border border-gray-200 text-gray-700">Севастополь</span>
+              <span className="px-4 py-2 bg-white rounded-lg border border-gray-200 text-gray-700">Ялта</span>
+              <span className="px-4 py-2 bg-white rounded-lg border border-gray-200 text-gray-700">Алушта</span>
+              <span className="px-4 py-2 bg-white rounded-lg border border-gray-200 text-gray-700">Феодосия</span>
+              <span className="px-4 py-2 bg-white rounded-lg border border-gray-200 text-gray-700">Керчь</span>
+              <span className="px-4 py-2 bg-white rounded-lg border border-gray-200 text-gray-700">междугородние перевозки</span>
+            </div>
+          </div>
+        </section>
 
         {/* Additional SEO Content */}
         <section className="py-16 px-4 bg-white">
