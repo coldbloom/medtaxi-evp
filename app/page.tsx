@@ -92,7 +92,7 @@ export default function Home() {
       />
 
       <header className="bg-white shadow-sm sticky top-0 z-30">
-        <div className="container mx-auto px-4 py-4">
+        <div className="container mx-auto px-4 py-4 max-w-7xl">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4 w-[40px] md:w-[60px]">
               <Image
@@ -147,7 +147,25 @@ export default function Home() {
                   перевозке пациентов, делая этот процесс максимально безопасным и
                   комфортным.
                 </p>
-                <ContactModalTrigger />
+                <div className="flex flex-col gap-6 mt-6">
+                  <ContactModalTrigger />
+                  <a
+                    href={`https://t.me/ritevp?text=${encodeURIComponent("Здравствуйте")}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex flex-row gap-2 items-center justify-center bg-white text-blue-600 border-2 border-blue-600 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-blue-50 transition-colors shadow-lg w-full md:w-fit"
+                    aria-label="Задать вопрос в Telegram"
+                  >
+                    Задать вопрос в Telegram
+                    <img
+                      src="/icon-tg.svg"
+                      alt="Telegram"
+                      width={24}
+                      height={24}
+                      className="icon-blue"
+                    />
+                  </a>
+                </div>
               </div>
 
               {/* Image */}
@@ -424,6 +442,20 @@ export default function Home() {
                 <p className="text-gray-600 font-semibold">— Анна, Севастополь</p>
               </article>
             </div>
+            <div className="mt-12 text-center p-6 bg-blue-50 rounded-2xl border border-blue-100">
+              <p className="text-lg text-gray-700 mb-4">
+                Остались вопросы? Напишите нам в Telegram — ответим быстро.
+              </p>
+              <a
+                href={`https://t.me/ritevp?text=${encodeURIComponent("Здравствуйте")}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-blue-600 text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-blue-700 transition-colors shadow-lg"
+                aria-label="Задать вопрос в Telegram"
+              >
+                Задать вопрос в Telegram
+              </a>
+            </div>
           </div>
         </section>
 
@@ -487,16 +519,27 @@ export default function Home() {
               Звоните круглосуточно. Мы ответим на все вопросы и организуем
               перевозку в кратчайшие сроки.
             </p>
-            <a
-              href="tel:+79789380221"
-              className="inline-block bg-white text-blue-600 px-10 py-4 rounded-lg font-bold text-xl hover:bg-gray-100 transition-colors shadow-lg"
-              aria-label="Позвонить по телефону +79789380221"
-            >
-              +7 (978) 938-02-21
-            </a>
+            <div className="flex flex-col sm:flex-row gap-4 items-center justify-center flex-wrap">
+              <a
+                href="tel:+79789380221"
+                className="inline-block bg-white text-blue-600 px-10 py-4 rounded-lg font-bold text-xl hover:bg-gray-100 transition-colors shadow-lg"
+                aria-label="Позвонить по телефону +79789380221"
+              >
+                +7 (978) 938-02-21
+              </a>
+              <a
+                href={`https://t.me/ritevp?text=${encodeURIComponent("Здравствуйте")}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-white text-blue-600 px-8 py-4 rounded-lg font-bold text-lg hover:bg-gray-100 transition-colors shadow-lg"
+                aria-label="Написать в Telegram"
+              >
+                Задать вопрос в Telegram
+              </a>
+            </div>
             <div className="flex gap-4 items-center justify-center mt-6">
               <a 
-                href="https://t.me/ritevp"
+                href={`https://t.me/ritevp?text=${encodeURIComponent("Здравствуйте")}`}
                 className="inline-flex items-center justify-center bg-white text-blue-600 px-6 py-3 rounded-lg font-bold hover:bg-gray-100 transition-colors shadow-lg"
                 aria-label="Написать в Telegram"
                 target="_blank"
