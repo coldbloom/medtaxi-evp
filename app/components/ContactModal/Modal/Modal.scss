@@ -1,0 +1,111 @@
+//@use '@/styles/abstracts/variables' as var;
+//@use '@/styles/abstracts/mixins' as mixin;
+
+.modal__overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(8px);
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(1.02);
+  transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+
+  &.open {
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1);
+
+    .modal {
+      transform: translateY(7%);
+    }
+  }
+}
+
+.modal {
+  z-index: 101;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  width: min(90%, 600px);
+  padding: 32px;
+  //background: var.$background-color;
+  //border-radius: var.$rounded-3xl;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+  transform: translateY(-10px);
+  transition: transform 0.3s ease;
+
+  &--sm {
+    width: min(90%, 546px);
+  }
+
+  &--md {
+    width: min(90%, 600px);
+  }
+
+  &--lg {
+    width: min(90%, 794px);
+  }
+
+  &__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    &-title {
+      //font: 400 64px/0.9 var.$font-family-bebas;
+      //color: var.$text-color;
+    }
+  }
+
+  &__close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+
+    &:hover {
+      opacity: 0.6;
+    }
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+}
+
+//@include mixin.respond('tablet') {
+//  .modal {
+//    gap: 32px;
+//    padding: 24px;
+//
+//    &__head-title {
+//      font-size: 48px;
+//    }
+//
+//    &__body {
+//      gap: 24px;
+//    }
+//  }
+//}
+//
+//@include mixin.respond('mobile') {
+//  .modal {
+//    gap: 24px;
+//    padding: 20px;
+//
+//    &__head-title {
+//      font-size: 32px;
+//    }
+//
+//    &__body {
+//      gap: 20px;
+//    }
+//  }
+//}
