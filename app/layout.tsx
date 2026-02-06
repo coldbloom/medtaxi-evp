@@ -35,6 +35,19 @@ export const metadata: Metadata = {
     siteName: "Медтакси Евпатория",
     locale: "ru_RU",
     type: "website",
+    images: [
+      {
+        url: "/peugeot.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Специализированный транспорт для перевозки лежачих больных — Медтакси Евпатория",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Перевозка лежачих больных и инвалидов в Евпатории | Медтакси Крым",
+    description: "Специализированная перевозка лежачих больных и инвалидов в Евпатории, Крыму и по всей России. Работа 24/7.",
   },
   robots: {
     index: true,

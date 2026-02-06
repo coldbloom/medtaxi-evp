@@ -15,17 +15,28 @@ import { OurWork } from "@/app/components/sections/main/OurWork";
 
 export const metadata: Metadata = {
   title: "Перевозка лежачих больных и инвалидов в Евпатории | Медтакси Крым",
-  description: "Специализированная перевозка лежачих больных и инвалидов в Евпатории, Крыму и по всей России. Профессиональная бригада, медицинское оборудование, работа 24/7.",
+  description:
+    "Специализированная перевозка лежачих больных и инвалидов в Евпатории, Крыму и по всей России. Профессиональная бригада, медицинское оборудование, работа 24/7.",
+  openGraph: {
+    url: "https://medtaxi-evp.ru",
+    type: "website",
+  },
 };
 
 // Структурированные данные для поисковых систем
 const structuredData = {
   "@context": "https://schema.org",
   "@type": "MedicalBusiness",
+  "@id": "https://medtaxi-evp.ru/#organization",
   name: "Медтакси Евпатория",
-  description: "Перевозка лежачих больных и инвалидов в Евпатории, Крыму и по всей России",
+  description: "Перевозка лежачих больных и инвалидов в Евпатории, Крыму и по всей России. Профессиональная бригада, медицинское оборудование, работа 24/7.",
   url: "https://medtaxi-evp.ru",
   telephone: "+79789380221",
+  image: "https://medtaxi-evp.ru/peugeot.jpg",
+  sameAs: [
+    "https://t.me/ritevp",
+    // Добавьте ссылки на VK, WhatsApp при наличии публичных профилей
+  ],
   address: {
     "@type": "PostalAddress",
     addressLocality: "Евпатория",
@@ -33,18 +44,9 @@ const structuredData = {
     addressCountry: "RU",
   },
   areaServed: [
-    {
-      "@type": "City",
-      name: "Евпатория",
-    },
-    {
-      "@type": "State",
-      name: "Крым",
-    },
-    {
-      "@type": "Country",
-      name: "Россия",
-    },
+    { "@type": "City", name: "Евпатория" },
+    { "@type": "State", name: "Крым" },
+    { "@type": "Country", name: "Россия" },
   ],
   serviceType: [
     "Перевозка лежачих больных",
@@ -54,6 +56,19 @@ const structuredData = {
   ],
   priceRange: "$$",
   openingHours: "Mo-Su 00:00-23:59",
+};
+
+const breadcrumbStructuredData = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    {
+      "@type": "ListItem",
+      position: 1,
+      name: "Главная",
+      item: "https://medtaxi-evp.ru",
+    },
+  ],
 };
 
 const faqStructuredData = {
@@ -120,6 +135,10 @@ export default function Home() {
       />
       <script
         type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbStructuredData) }}
+      />
+      <script
+        type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqStructuredData) }}
       />
 
@@ -127,7 +146,7 @@ export default function Home() {
         <header className="bg-white shadow-sm">
           <div className="container mx-auto px-4 py-4 max-w-7xl">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4 w-[40px] md:w-[60px]">
+              <div className="flex items-center gap-2 md:gap-4 w-[40px] md:w-[60px]">
                 <Image
                   src="/logo.svg"
                   alt="Медтакси Евпатория - Логотип"
@@ -168,7 +187,7 @@ export default function Home() {
         </div>
       </div>
 
-      <main className="relative">
+      <main id="main-content" className="relative">
         {/* Hero Section */}
         <Hero />
 
@@ -264,7 +283,7 @@ export default function Home() {
            <div className="flex items-center justify-center pb-8 md:w-[128px] md:h-[128px] w-[96px] h-[96px]">
              <Image
                src="/24:7.svg"
-               alt="Медтакси Евпатория - Логотип"
+               alt="Круглосуточная работа 24/7 — Медтакси Евпатория"
                width={10}
                height={10}
                priority
