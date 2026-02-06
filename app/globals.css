@@ -33,7 +33,7 @@ html {
 
 /* Оптимизация для печати */
 @media print {
-  header, footer {
+  header, footer, .marquee-bar {
     display: none;
   }
 }
@@ -159,6 +159,28 @@ html {
     animation: none;
     opacity: 1;
     transform: none;
+  }
+}
+
+/* Бегущая строка */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 25s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
   }
 }
 

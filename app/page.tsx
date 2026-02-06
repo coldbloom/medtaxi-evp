@@ -4,7 +4,9 @@ import AnimateOnScroll from "./components/AnimateOnScroll";
 import {CodeCake} from "@/app/components/CodeCake";
 import { ContactModalTrigger } from "./components/ContactModal";
 import { Discounts } from "@/app/components/Discounts";
+import { Equipment } from "@/app/components/Equipment";
 import { Faq } from "@/app/components/Faq";
+import { Reviews } from "@/app/components/Reviews";
 
 export const metadata: Metadata = {
   title: "Перевозка лежачих больных и инвалидов в Евпатории | Медтакси Крым",
@@ -116,37 +118,50 @@ export default function Home() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqStructuredData) }}
       />
 
-      <header className="bg-white shadow-sm sticky top-0 z-30">
-        <div className="container mx-auto px-4 py-4 max-w-7xl">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4 w-[40px] md:w-[60px]">
-              <Image
-                src="/logo.svg"
-                alt="Медтакси Евпатория - Логотип"
-                width={10}
-                height={10}
-                priority
-                className="w-auto h-auto"
-              />
-              <div>
-                <h1 className="text-lg font-bold text-blue-600">
-                  Медтакси Евпатория
-                </h1>
-                {/*<p className="text-sm text-gray-600 mt-1">*/}
-                {/*  Перевозка лежачих больных и инвалидов*/}
-                {/*</p>*/}
+      <div className="sticky top-0 z-30">
+        <header className="bg-white shadow-sm">
+          <div className="container mx-auto px-4 py-4 max-w-7xl">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4 w-[40px] md:w-[60px]">
+                <Image
+                  src="/logo.svg"
+                  alt="Медтакси Евпатория - Логотип"
+                  width={10}
+                  height={10}
+                  priority
+                  className="w-auto h-auto"
+                />
+                <div>
+                  <h1 className="text-lg font-bold text-blue-600">
+                    Медтакси Евпатория
+                  </h1>
+                  {/*<p className="text-sm text-gray-600 mt-1">*/}
+                  {/*  Перевозка лежачих больных и инвалидов*/}
+                  {/*</p>*/}
+                </div>
               </div>
+              <a
+                href="tel:+79789380221"
+                className="bg-blue-600 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors text-sm md:text-lg"
+                aria-label="Позвонить по телефону +79789380221"
+              >
+                +7 (978) 938-02-21
+              </a>
             </div>
-            <a
-              href="tel:+79789380221"
-              className="bg-blue-600 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors text-sm md:text-lg"
-              aria-label="Позвонить по телефону +79789380221"
-            >
-              +7 (978) 938-02-21
-            </a>
+          </div>
+        </header>
+
+        <div className="marquee-bar overflow-hidden bg-blue-600 py-2 text-white" aria-hidden>
+          <div className="marquee-track">
+            <span className="whitespace-nowrap px-8 text-sm font-medium md:text-base">
+              Есть предложение дешевле?&nbsp;&nbsp;&nbsp;Позвоните.&nbsp;&nbsp;&nbsp;Скорректируем нашу цену и добавим уверенности!
+            </span>
+            <span className="whitespace-nowrap px-8 text-sm font-medium md:text-base">
+              Есть предложение дешевле? Позвоните. Скорректируем нашу цену и добавим уверенности.
+            </span>
           </div>
         </div>
-      </header>
+      </div>
 
       <main className="relative">
         {/* Hero Section */}
@@ -423,66 +438,11 @@ export default function Home() {
           </div>
         </section>
 
+        {/* Equipment Section */}
+        <Equipment />
+
         {/* Reviews Section */}
-        <section className="py-16 px-4 bg-gray-50">
-          <div className="container mx-auto max-w-6xl">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-12 text-center">
-              Отзывы наших клиентов
-            </h2>
-            <div className="grid md:grid-cols-3 gap-6">
-              <article className="bg-white p-6 rounded-lg shadow-md">
-                <div className="flex items-center mb-4">
-                  <div className="text-yellow-400 text-2xl">★★★★★</div>
-                </div>
-                <p className="text-gray-700 mb-4 italic">
-                  "Очень благодарны за помощь в перевозке мамы из больницы в
-                  Евпатории домой. Водитель Виталий внимательным, машина чистая, всё
-                  прошло быстро и аккуратно. Рекомендую!"
-                </p>
-                <p className="text-gray-600 font-semibold">— Мария, Евпатория</p>
-              </article>
-
-              <article className="bg-white p-6 rounded-lg shadow-md">
-                <div className="flex items-center mb-4">
-                  <div className="text-yellow-400 text-2xl">★★★★★</div>
-                </div>
-                <p className="text-gray-700 mb-4 italic">
-                  "Нужно было перевезти отца из Симферополя в Евпаторию. Спасибо
-                  за профессиональный подход и бережное отношение Виталию и Антону! Всё
-                  организовали под ключ, мы были спокойны за здоровье близкого
-                  человека."
-                </p>
-                <p className="text-gray-600 font-semibold">— Иван, Симферополь</p>
-              </article>
-
-              <article className="bg-white p-6 rounded-lg shadow-md">
-                <div className="flex items-center mb-4">
-                  <div className="text-yellow-400 text-2xl">★★★★★</div>
-                </div>
-                <p className="text-gray-700 mb-4 italic">
-                  "Перевозили бабушку на обследование в Симферополь. Очень
-                  довольны сервисом: комфортная машина, опытный водитель, всё
-                  вовремя. Обязательно обратимся снова!"
-                </p>
-                <p className="text-gray-600 font-semibold">— Анна, Севастополь</p>
-              </article>
-            </div>
-            <div className="mt-12 text-center p-6 bg-blue-50 rounded-2xl border border-blue-100">
-              <p className="text-lg text-gray-700 mb-4">
-                Остались вопросы? Напишите нам в Telegram — ответим быстро.
-              </p>
-              <a
-                href={`https://t.me/ritevp?text=${encodeURIComponent("Здравствуйте")}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 bg-blue-600 text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-blue-700 transition-colors shadow-lg"
-                aria-label="Задать вопрос в Telegram"
-              >
-                Задать вопрос в Telegram
-              </a>
-            </div>
-          </div>
-        </section>
+        <Reviews />
 
         {/* Discounts Section */}
         <Discounts />
