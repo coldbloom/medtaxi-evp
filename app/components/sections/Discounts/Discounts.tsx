@@ -1,4 +1,4 @@
-import { ContactModalTrigger } from "../ContactModal";
+import { ContactModalTrigger } from '@/app/components/ContactModal';
 
 const discounts = [
   {

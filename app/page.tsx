@@ -3,10 +3,10 @@ import Image from "next/image";
 import AnimateOnScroll from "./components/AnimateOnScroll";
 import {CodeCake} from "@/app/components/CodeCake";
 import { ContactModalTrigger } from "./components/ContactModal";
-import { Discounts } from "@/app/components/Discounts";
-import { Equipment } from "@/app/components/Equipment";
-import { Faq } from "@/app/components/Faq";
-import { Reviews } from "@/app/components/Reviews";
+import { Discounts } from "@/app/components/sections/Discounts";
+import { Equipment } from "@/app/components/sections/Equipment";
+import { Faq } from "@/app/components/sections/Faq";
+import { Reviews } from "@/app/components/sections/Reviews";
 
 export const metadata: Metadata = {
   title: "Перевозка лежачих больных и инвалидов в Евпатории | Медтакси Крым",
