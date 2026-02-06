@@ -1,12 +1,17 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import AnimateOnScroll from "./components/AnimateOnScroll";
-import {CodeCake} from "@/app/components/CodeCake";
-import { ContactModalTrigger } from "./components/ContactModal";
+import { CodeCake } from "@/app/components/CodeCake";
 import { Discounts } from "@/app/components/sections/Discounts";
-import { Equipment } from "@/app/components/sections/Equipment";
 import { Faq } from "@/app/components/sections/Faq";
 import { Reviews } from "@/app/components/sections/Reviews";
+
+import { Hero } from '@/app/components/sections/main/Hero';
+import { Services } from "@/app/components/sections/main/Services";
+import { Advantages } from "@/app/components/sections/main/Advantages";
+import { Geography } from "@/app/components/sections/main/Geography/Geography";
+import { Equipment } from "@/app/components/sections/main/Equipment";
+import { WhenShipping } from "@/app/components/sections/main/WhenShipping";
+import { OurWork } from "@/app/components/sections/main/OurWork";
 
 export const metadata: Metadata = {
   title: "Перевозка лежачих больных и инвалидов в Евпатории | Медтакси Крым",
@@ -165,278 +170,16 @@ export default function Home() {
 
       <main className="relative">
         {/* Hero Section */}
-        <section className="bg-gradient-to-br from-blue-50 to-blue-100 py-12 md:py-20 px-4">
-          <div className="container mx-auto max-w-7xl">
-            <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-              {/* Text Content */}
-              <div className="order-2 lg:order-1 animate-on-mount-right">
-                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
-                  Перевозка лежачих больных и инвалидов в{" "}
-                  <span className="text-blue-600">Евпатории</span>
-                </h2>
-                <p className="text-lg md:text-xl text-gray-700 mb-6 leading-relaxed">
-                  <strong>Специализированный транспорт</strong> с медоборудованием и{" "}
-                  <strong>профессиональной бригадой</strong>. Бережно, как дома, даже
-                  в дороге.
-                </p>
-                <p className="text-base md:text-lg text-gray-600 mb-8">
-                  Здоровье и покой близкого человека — главная ценность. Мы понимаем,
-                  насколько сложной и ответственной может быть транспортировка
-                  лежачего больного. Наша компания в{" "}
-                  <strong>Евпатории</strong> предоставляет полный комплекс услуг по
-                  перевозке пациентов, делая этот процесс максимально безопасным и
-                  комфортным.
-                </p>
-                <div className="flex flex-col gap-6 mt-6">
-                  <ContactModalTrigger />
-                  <a
-                    href={`https://t.me/ritevp?text=${encodeURIComponent("Здравствуйте")}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex flex-row gap-2 items-center justify-center bg-white text-blue-600 border-2 border-blue-600 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-blue-50 transition-colors shadow-lg w-full md:w-fit"
-                    aria-label="Задать вопрос в Telegram"
-                  >
-                    Задать вопрос в Telegram
-                    <img
-                      src="/icon-tg.svg"
-                      alt="Telegram"
-                      width={24}
-                      height={24}
-                      className="icon-blue"
-                    />
-                  </a>
-                </div>
-              </div>
-
-              {/* Image */}
-              <div className="order-1 lg:order-2 animate-on-mount-left">
-                <div className="relative rounded-2xl overflow-hidden shadow-2xl bg-white p-2">
-                  <div className="relative aspect-[4/3] lg:aspect-square rounded-xl overflow-hidden">
-                    <Image
-                      src="/peugeot.jpg"
-                      alt="Специализированный медицинский транспорт для перевозки лежачих больных в Евпатории"
-                      fill
-                      className="object-cover object-center lg:object-[center_30%]"
-                      priority
-                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 500px"
-                    />
-                    {/* Gradient overlay для лучшей интеграции */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-blue-600/10 to-transparent pointer-events-none"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
+        <Hero />
 
         {/* Services Section */}
-        <section className="py-16 px-4 bg-white">
-          <div className="container mx-auto max-w-6xl">
-            <AnimateOnScroll direction="up">
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-12 text-center">
-                Наши услуги
-              </h2>
-            </AnimateOnScroll>
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <AnimateOnScroll direction="up" delay={0}>
-                <article className="bg-gray-50 p-6 rounded-lg border border-gray-200 md:h-full">
-                  <div className="text-4xl mb-4">🏥</div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-3">
-                    Перевозка из больниц
-                  </h3>
-                  <p className="text-gray-600">
-                    <strong>Перевозка лежачих больных</strong> из больниц, домов и
-                    пансионатов в <strong>Евпатории</strong> и по{" "}
-                    <strong>Крыму</strong>.
-                  </p>
-                </article>
-              </AnimateOnScroll>
-
-              <AnimateOnScroll direction="up" delay={100}>
-                <article className="bg-gray-50 p-6 rounded-lg border border-gray-200 md:h-full">
-                  <div className="text-4xl mb-4">♿</div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-3">
-                    Транспортировка инвалидов
-                  </h3>
-                  <p className="text-gray-600">
-                    <strong>Транспортировка инвалидов-колясочников</strong> и
-                    маломобильных граждан с полным комфортом.
-                  </p>
-                </article>
-              </AnimateOnScroll>
-
-              <AnimateOnScroll direction="up" delay={200}>
-                <article className="bg-gray-50 p-6 rounded-lg border border-gray-200 md:h-full">
-                  <div className="text-4xl mb-4">🚑</div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-3">
-                    Санитарный транспорт
-                  </h3>
-                  <p className="text-gray-600">
-                    <strong>Санитарный транспорт по Крыму</strong> и{" "}
-                    <strong>междугородние перевозки по России</strong>.
-                  </p>
-                </article>
-              </AnimateOnScroll>
-
-              <AnimateOnScroll direction="up" delay={300}>
-                <article className="bg-gray-50 p-6 rounded-lg border border-gray-200 md:h-full">
-                  <div className="text-4xl mb-4">🏥</div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-3">
-                    Поездки на обследования
-                  </h3>
-                  <p className="text-gray-600">
-                    Поездки на обследования, процедуры и в реабилитационные центры
-                    в <strong>Евпатории</strong> и за её пределами.
-                  </p>
-                </article>
-              </AnimateOnScroll>
-            </div>
-          </div>
-        </section>
+        <Services />
 
         {/* Advantages Section */}
-        <section className="py-16 px-4 bg-blue-50">
-          <div className="container mx-auto max-w-6xl">
-            <AnimateOnScroll direction="up">
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-12 text-center">
-                Почему доверяют именно нам?
-              </h2>
-            </AnimateOnScroll>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              <AnimateOnScroll direction="up" delay={0}>
-                <article className="bg-white p-6 rounded-lg shadow-md md:h-full">
-                  <div className="text-3xl mb-4">🚐</div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-3">
-                    Специализированный транспорт
-                  </h3>
-                  <p className="text-gray-600">
-                    Автомобили, оборудованные <strong>подъёмниками</strong>,{" "}
-                    <strong>фиксаторами</strong> и местами для сопровождающих.
-                    Возможность транспортировки на носилках или в инвалидном
-                    кресле.
-                  </p>
-                </article>
-              </AnimateOnScroll>
-
-              <AnimateOnScroll direction="up" delay={100}>
-                <article className="bg-white p-6 rounded-lg shadow-md md:h-full">
-                  <div className="text-3xl mb-4">🛡️</div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-3">
-                    Безопасность и комфорт
-                  </h3>
-                  <p className="text-gray-600">
-                    Плавный ход, <strong>климат-контроль</strong>,{" "}
-                    <strong>стерильный салон</strong>. Все условия для
-                    минимизации дискомфорта в пути.
-                  </p>
-                </article>
-              </AnimateOnScroll>
-
-              <AnimateOnScroll direction="up" delay={200}>
-                <article className="bg-white p-6 rounded-lg shadow-md md:h-full">
-                  <div className="text-3xl mb-4">👨‍⚕️</div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-3">
-                    Опытные водители и сопровождающие
-                  </h3>
-                  <p className="text-gray-600">
-                    Наши сотрудники проходят специальную подготовку по
-                    транспортировке пациентов, тактичны и внимательны.
-                  </p>
-                </article>
-              </AnimateOnScroll>
-
-              <AnimateOnScroll direction="up" delay={300}>
-                <article className="bg-white p-6 rounded-lg shadow-md md:h-full">
-                  <div className="text-3xl mb-4">⏰</div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-3">
-                    Работаем 24/7
-                  </h3>
-                  <p className="text-gray-600">
-                    Готовы помочь в любой день и время суток.{" "}
-                    <strong>Срочные и плановые перевозки</strong> в{" "}
-                    <strong>Евпатории</strong> и по <strong>Крыму</strong>.
-                  </p>
-                </article>
-              </AnimateOnScroll>
-
-              <AnimateOnScroll direction="up" delay={400}>
-                <article className="bg-white p-6 rounded-lg shadow-md md:col-span-2 lg:col-span-1 md:h-full">
-                  <div className="text-3xl mb-4">🔑</div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-3">
-                    «Под ключ» в Крыму и России
-                  </h3>
-                  <p className="text-gray-600">
-                    Мы берём на себя организацию всей поездки: от подготовки
-                    документов (при необходимости) и погрузки до сопровождения до
-                    конечной точки.
-                  </p>
-                </article>
-              </AnimateOnScroll>
-            </div>
-          </div>
-        </section>
+        <Advantages />
 
         {/* Geography Section */}
-        <section className="py-16 px-4 bg-white">
-          <div className="container mx-auto max-w-6xl">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-12 text-center">
-              Мы находимся в <span className="text-blue-600">Евпатории</span> и
-              работаем по всему <strong>Крыму</strong> и <strong>России</strong>
-            </h2>
-            <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-8 rounded-lg">
-              <div className="grid md:grid-cols-2 gap-8">
-                <div>
-                  <h3 className="text-2xl font-semibold text-gray-900 mb-4">
-                    Территория обслуживания
-                  </h3>
-                  <ul className="space-y-3 text-gray-700">
-                    <li className="flex items-start">
-                      <span className="text-blue-600 mr-2">📍</span>
-                      <span>
-                        <strong>Евпатория</strong> — основной регион работы
-                      </span>
-                    </li>
-                    <li className="flex items-start">
-                      <span className="text-blue-600 mr-2">📍</span>
-                      <span>
-                        <strong>Весь Крым</strong> — перевозки по полуострову
-                      </span>
-                    </li>
-                    <li className="flex items-start">
-                      <span className="text-blue-600 mr-2">📍</span>
-                      <span>
-                        <strong>Вся Россия</strong> — междугородние перевозки
-                      </span>
-                    </li>
-                  </ul>
-                </div>
-                <div>
-                  <h3 className="text-2xl font-semibold text-gray-900 mb-4">
-                    Популярные направления
-                  </h3>
-                  <ul className="space-y-3 text-gray-700">
-                    <li>• Симферополь</li>
-                    <li>• Севастополь</li>
-                    <li>• Ялта</li>
-                    <li>• Алушта</li>
-                    <li>• Феодосия</li>
-                    <li>• Керчь</li>
-                    <li>• Херсонская область</li>
-                    <li>• ДНР, ЛНР</li>
-                    <li>• Москва</li>
-                    <li>• Санкт-Петербург</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-            <p className="mt-8 text-center text-gray-600">
-              <strong>Перевозка лежачих больных из Евпатории</strong> и по{" "}
-              <strong>Крыму</strong> осуществляется на специализированном
-              транспорте с медицинским оборудованием. Мы обеспечиваем безопасную
-              транспортировку пациентов в любой город России.
-            </p>
-          </div>
-        </section>
+        <Geography />
 
         {/* Equipment Section */}
         <Equipment />
@@ -448,95 +191,10 @@ export default function Home() {
         <Discounts />
 
         {/* Когда нужна перевозка — use cases, long-tail */}
-        <section className="py-16 px-4 bg-white" aria-labelledby="when-needed-heading">
-          <div className="container mx-auto max-w-6xl">
-            <h2 id="when-needed-heading" className="text-3xl md:text-4xl font-bold text-gray-900 mb-12 text-center">
-              Когда нужна перевозка лежачих больных и инвалидов
-            </h2>
-            <ul className="grid md:grid-cols-2 lg:grid-cols-3 gap-6" role="list">
-              <li>
-                <article className="p-6 bg-gray-50 rounded-xl border border-gray-200 h-full">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Из больницы домой</h3>
-                  <p className="text-gray-600">
-                    <strong>Перевозка лежачего больного из больницы домой в Евпатории</strong> — выписка, погрузка и доставка до двери. Бережная транспортировка после операции или лечения.
-                  </p>
-                </article>
-              </li>
-              <li>
-                <article className="p-6 bg-gray-50 rounded-xl border border-gray-200 h-full">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">На процедуры и обследования</h3>
-                  <p className="text-gray-600">
-                    <strong>Транспортировка на процедуры</strong>, в поликлинику, на МРТ и обследования. Регулярные поездки в медучреждения Евпатории и Крыма.
-                  </p>
-                </article>
-              </li>
-              <li>
-                <article className="p-6 bg-gray-50 rounded-xl border border-gray-200 h-full">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">В реабилитационный центр и санаторий</h3>
-                  <p className="text-gray-600">
-                    <strong>Перевозка в реабилитационный центр</strong> и санатории Крыма. Из Евпатории в Симферополь, Ялту и другие города — с сопровождением при необходимости.
-                  </p>
-                </article>
-              </li>
-              <li>
-                <article className="p-6 bg-gray-50 rounded-xl border border-gray-200 h-full">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">После операции</h3>
-                  <p className="text-gray-600">
-                    <strong>Перевозка после операции</strong> — щадящая транспортировка лежачих пациентов. Спецтранспорт с фиксацией, без тряски и резких движений.
-                  </p>
-                </article>
-              </li>
-              <li>
-                <article className="p-6 bg-gray-50 rounded-xl border border-gray-200 h-full">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Между городами</h3>
-                  <p className="text-gray-600">
-                    <strong>Междугородняя перевозка лежачих больных</strong> из Евпатории в Москву, Санкт-Петербург и другие города России. Долгие маршруты с комфортом.
-                  </p>
-                </article>
-              </li>
-              <li>
-                <article className="p-6 bg-gray-50 rounded-xl border border-gray-200 h-full">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Из пансионата и обратно</h3>
-                  <p className="text-gray-600">
-                    Транспортировка из дома в пансионат, дом престарелых или обратно. По <strong>Евпатории</strong>, <strong>Крыму</strong> и при необходимости в другие регионы.
-                  </p>
-                </article>
-              </li>
-            </ul>
-          </div>
-        </section>
+        <WhenShipping />
 
         {/* Как мы работаем */}
-        <section className="py-16 px-4 bg-blue-50" aria-labelledby="how-we-work-heading">
-          <div className="container mx-auto max-w-4xl">
-            <h2 id="how-we-work-heading" className="text-3xl md:text-4xl font-bold text-gray-900 mb-12 text-center">
-              Как заказать перевозку лежачего больного в Евпатории
-            </h2>
-            <ol className="space-y-6" start={1}>
-              <li className="flex gap-4 items-start">
-                <span className="flex-shrink-0 w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">1</span>
-                <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Позвоните или напишите</h3>
-                  <p className="text-gray-600">Опишите маршрут и состояние пациента. Мы подберём подходящий транспорт и согласуем время.</p>
-                </div>
-              </li>
-              <li className="flex gap-4 items-start">
-                <span className="flex-shrink-0 w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">2</span>
-                <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Встреча в назначенном месте</h3>
-                  <p className="text-gray-600">Машина приедет в больницу, дом или пансионат. Помощь с погрузкой на носилках или в кресле.</p>
-                </div>
-              </li>
-              <li className="flex gap-4 items-start">
-                <span className="flex-shrink-0 w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">3</span>
-                <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Безопасная доставка</h3>
-                  <p className="text-gray-600">Перевозка в пункт назначения с учётом состояния пациента. При необходимости — сопровождение родственником.</p>
-                </div>
-              </li>
-            </ol>
-          </div>
-        </section>
+        <OurWork />
 
         {/* FAQ — расширенный блок для семантики и сниппетов */}
         <Faq />
