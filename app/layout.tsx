@@ -61,7 +61,12 @@ export const metadata: Metadata = {
     },
   },
   verification: {
-    // Добавьте здесь коды верификации для Яндекс и Google при необходимости
+    ...(process.env.YANDEX_VERIFICATION && {
+      yandex: process.env.YANDEX_VERIFICATION,
+    }),
+    ...(process.env.GOOGLE_SITE_VERIFICATION && {
+      google: process.env.GOOGLE_SITE_VERIFICATION,
+    }),
   },
   icons: {
     icon: [
