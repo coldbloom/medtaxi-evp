@@ -12,6 +12,7 @@ import { Geography } from "@/app/components/sections/main/Geography/Geography";
 import { Equipment } from "@/app/components/sections/main/Equipment";
 import { WhenShipping } from "@/app/components/sections/main/WhenShipping";
 import { OurWork } from "@/app/components/sections/main/OurWork";
+import { Header } from "@/app/components/sections/Header";
 
 export const metadata: Metadata = {
   title: "Перевозка лежачих больных и инвалидов в Евпатории | Медтакси Крым",
@@ -142,50 +143,7 @@ export default function Home() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqStructuredData) }}
       />
 
-      <div className="sticky top-0 z-30">
-        <header className="bg-white shadow-sm">
-          <div className="container mx-auto px-4 py-4 max-w-7xl">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 md:gap-4 w-[40px] md:w-[60px]">
-                <Image
-                  src="/logo.svg"
-                  alt="Медтакси Евпатория - Логотип"
-                  width={10}
-                  height={10}
-                  priority
-                  className="w-auto h-auto"
-                />
-                <div>
-                  <h1 className="text-lg font-bold text-blue-600">
-                    Медтакси Евпатория
-                  </h1>
-                  {/*<p className="text-sm text-gray-600 mt-1">*/}
-                  {/*  Перевозка лежачих больных и инвалидов*/}
-                  {/*</p>*/}
-                </div>
-              </div>
-              <a
-                href="tel:+79789380221"
-                className="bg-blue-600 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors text-sm md:text-lg"
-                aria-label="Позвонить по телефону +79789380221"
-              >
-                +7 (978) 938-02-21
-              </a>
-            </div>
-          </div>
-        </header>
-
-        <div className="marquee-bar overflow-hidden bg-blue-600 py-2 text-white" aria-hidden>
-          <div className="marquee-track">
-            <span className="whitespace-nowrap px-8 text-sm font-medium md:text-base">
-              Есть предложение дешевле?&nbsp;&nbsp;&nbsp;Позвоните.&nbsp;&nbsp;&nbsp;Скорректируем нашу цену и добавим уверенности!
-            </span>
-            <span className="whitespace-nowrap px-8 text-sm font-medium md:text-base">
-              Есть предложение дешевле? Позвоните. Скорректируем нашу цену и добавим уверенности.
-            </span>
-          </div>
-        </div>
-      </div>
+      <Header />
 
       <main id="main-content" className="relative">
         {/* Hero Section */}
