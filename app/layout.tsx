@@ -60,14 +60,6 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
-  verification: {
-    ...(process.env.YANDEX_VERIFICATION && {
-      yandex: process.env.YANDEX_VERIFICATION,
-    }),
-    ...(process.env.GOOGLE_SITE_VERIFICATION && {
-      google: process.env.GOOGLE_SITE_VERIFICATION,
-    }),
-  },
   icons: {
     icon: [
       { url: "/logo.svg", type: "image/svg+xml" },
@@ -87,6 +79,7 @@ export default function RootLayout({
     <html lang="ru">
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="yandex-verification" content="473ebc6fd8a5398f" />
         <meta name="theme-color" content="#2563eb" />
         <meta name="geo.region" content="RU-CR" />
         <meta name="geo.placename" content="Евпатория" />
