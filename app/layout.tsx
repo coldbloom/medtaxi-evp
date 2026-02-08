@@ -83,6 +83,7 @@ export default function RootLayout({
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="yandex-verification" content="473ebc6fd8a5398f" />
+        <meta name="google-site-verification" content="j5vuo9bH1ow7xO4qzZ76ciMVfRZDl0pjLs-16_OVgPk" />
         <meta name="theme-color" content="#2563eb" />
         <meta name="geo.region" content="RU-CR" />
         <meta name="geo.placename" content="Евпатория" />
