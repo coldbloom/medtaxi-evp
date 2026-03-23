@@ -40,7 +40,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/peugeot.jpg",
+        url: "https://medtaxi-evp.ru/peugeot.jpg",
         width: 1200,
         height: 630,
         alt: "Специализированный транспорт для перевозки лежачих больных — Медтакси Евпатория",
@@ -67,9 +67,12 @@ export const metadata: Metadata = {
     icon: [
       { url: "/logo.svg", type: "image/svg+xml" },
       { url: "/logo.svg", type: "image/svg+xml", sizes: "any" },
+      // PNG: Google/Яндекс в выдаче сами масштабируют до ~16px — подойдут 192 и 512
+      { url: "/favicon-192x192.png", type: "image/png", sizes: "192x192" },
+      { url: "/favicon-512x512.png", type: "image/png", sizes: "512x512" },
     ],
-    shortcut: "/logo.svg",
-    apple: "/logo.svg",
+    shortcut: "/favicon-192x192.png",
+    apple: "/favicon-192x192.png",
   },
 };
 

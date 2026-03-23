@@ -17,9 +17,9 @@ export const Header = () => {
                 className="w-auto h-auto"
               />
               <div>
-                <h1 className="text-lg font-bold text-blue-600">
+                <h2 className="text-lg font-bold text-blue-600">
                   Медтакси Евпатория
-                </h1>
+                </h2>
                 {/*<p className="text-sm text-gray-600 mt-1">*/}
                 {/*  Перевозка лежачих больных и инвалидов*/}
                 {/*</p>*/}

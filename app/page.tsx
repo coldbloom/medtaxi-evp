@@ -62,6 +62,7 @@ const structuredData = {
 const breadcrumbStructuredData = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
+  "@id": "https://www.medtaxi-evp.ru/#breadcrumb",
   itemListElement: [
     {
       "@type": "ListItem",
@@ -70,6 +71,24 @@ const breadcrumbStructuredData = {
       item: "https://medtaxi-evp.ru",
     },
   ],
+};
+
+// Явно указываем главное изображение страницы и хлебные крошки для выдачи
+const webPageStructuredData = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "@id": "https://www.medtaxi-evp.ru/#webpage",
+  url: "https://www.medtaxi-evp.ru",
+  name: "Перевозка лежачих больных и инвалидов в Евпатории | Медтакси Крым",
+  description: "Специализированная перевозка лежачих больных и инвалидов в Евпатории, Крыму и по всей России. Профессиональная бригада, медицинское оборудование, работа 24/7.",
+  primaryImageOfPage: {
+    "@type": "ImageObject",
+    url: "https://www.medtaxi-evp.ru/peugeot.jpg",
+    width: 1200,
+    height: 630,
+  },
+  breadcrumb: { "@id": "https://medtaxi-evp.ru/#breadcrumb" },
+  mainEntity: { "@id": "https://medtaxi-evp.ru/#organization" },
 };
 
 const faqStructuredData = {
@@ -137,6 +156,10 @@ export default function Home() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbStructuredData) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageStructuredData) }}
       />
       <script
         type="application/ld+json"

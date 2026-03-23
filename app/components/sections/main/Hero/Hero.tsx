@@ -9,10 +9,10 @@ export const Hero = () => {
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
           {/* Text Content */}
           <div className="order-2 lg:order-1 animate-on-mount-right">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
               Перевозка лежачих больных и инвалидов в{" "}
-              <span className="text-blue-600">Евпатории</span>
-            </h2>
+              <strong className="text-blue-600">Евпатории</strong>
+            </h1>
             <p className="text-lg md:text-xl text-gray-700 mb-6 leading-relaxed">
               <strong>Специализированный транспорт</strong> с медоборудованием и{" "}
               <strong>профессиональной бригадой</strong>. Бережно, как дома, даже
