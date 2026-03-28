@@ -62,7 +62,7 @@ const structuredData = {
 const breadcrumbStructuredData = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
-  "@id": "https://www.medtaxi-evp.ru/#breadcrumb",
+  "@id": "https://medtaxi-evp.ru/#breadcrumb",
   itemListElement: [
     {
       "@type": "ListItem",
@@ -77,13 +77,13 @@ const breadcrumbStructuredData = {
 const webPageStructuredData = {
   "@context": "https://schema.org",
   "@type": "WebPage",
-  "@id": "https://www.medtaxi-evp.ru/#webpage",
-  url: "https://www.medtaxi-evp.ru",
+  "@id": "https://medtaxi-evp.ru/#webpage",
+  url: "https://medtaxi-evp.ru",
   name: "Перевозка лежачих больных и инвалидов в Евпатории | Медтакси Крым",
   description: "Специализированная перевозка лежачих больных и инвалидов в Евпатории, Крыму и по всей России. Профессиональная бригада, медицинское оборудование, работа 24/7.",
   primaryImageOfPage: {
     "@type": "ImageObject",
-    url: "https://www.medtaxi-evp.ru/peugeot.jpg",
+    url: "https://medtaxi-evp.ru/peugeot.jpg",
     width: 1200,
     height: 630,
   },
