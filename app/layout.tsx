@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import "./globals.css";
 
-const YANDEX_METRIKA_ID = 106710031;
+const YANDEX_METRIKA_ID = 108310397;
 
 export const metadata: Metadata = {
   title: "Перевозка лежачих больных и инвалидов в Евпатории | Медтакси Крым",
@@ -94,7 +94,19 @@ export default function RootLayout({
         <meta name="ICBM" content="45.1906, 33.3676" />
       </head>
       <body className="antialiased">
+        {/* noscript сразу после открытия body — требование Яндекса */}
+        <noscript>
+          <div>
+            <img
+              src={`https://mc.yandex.ru/watch/${YANDEX_METRIKA_ID}`}
+              style={{ position: "absolute", left: -9999 }}
+              alt=""
+            />
+          </div>
+        </noscript>
+
         {children}
+
         <Script
           id="yandex-metrika"
           strategy="afterInteractive"
@@ -110,15 +122,6 @@ export default function RootLayout({
             `,
           }}
         />
-        <noscript>
-          <div>
-            <img
-              src={`https://mc.yandex.ru/watch/${YANDEX_METRIKA_ID}`}
-              style={{ position: "absolute", left: -9999 }}
-              alt=""
-            />
-          </div>
-        </noscript>
       </body>
     </html>
   );
