@@ -65,13 +65,13 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: "/logo.svg", type: "image/svg+xml" },
-      { url: "/logo.svg", type: "image/svg+xml", sizes: "any" },
-      // PNG: Google/Яндекс в выдаче сами масштабируют до ~16px — подойдут 192 и 512
+      { url: "/favicon.ico", sizes: "48x48" },
       { url: "/favicon-192x192.png", type: "image/png", sizes: "192x192" },
       { url: "/favicon-512x512.png", type: "image/png", sizes: "512x512" },
+      { url: "/logo.svg", type: "image/svg+xml" },
+      { url: "/logo.svg", type: "image/svg+xml", sizes: "any" },
     ],
-    shortcut: "/favicon-192x192.png",
+    shortcut: "/favicon.ico",
     apple: "/favicon-192x192.png",
   },
 };
