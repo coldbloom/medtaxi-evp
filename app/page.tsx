@@ -353,7 +353,7 @@ export default function Home() {
             <div>
               <h3 className="text-xl font-bold mb-4">Медтакси Евпатория</h3>
               <p className="text-gray-400">
-                Перевозка лежачих больных и инвалидов в{" "}
+                Перевозка <strong>лежачих больных и инвалидов</strong> в{" "}
                 <strong>Евпатории</strong>, по <strong>Крыму</strong> и всей{" "}
                 <strong>России</strong>.
               </p>

@@ -5,9 +5,9 @@ export const Advantages = () => {
     <section className="py-16 px-4 bg-blue-50">
       <div className="container mx-auto max-w-6xl">
         <AnimateOnScroll direction="up">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-12 text-center">
+          <h4 className="text-3xl md:text-4xl font-bold text-gray-900 mb-12 text-center">
             Почему доверяют именно нам?
-          </h2>
+          </h4>
         </AnimateOnScroll>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           <AnimateOnScroll direction="up" delay={0}>
@@ -18,7 +18,7 @@ export const Advantages = () => {
               </h3>
               <p className="text-gray-600">
                 Автомобили, оборудованные <strong>подъёмниками</strong>,{" "}
-                <strong>фиксаторами</strong> и местами для сопровождающих.
+                фиксаторами и местами для сопровождающих.
                 Возможность транспортировки на носилках или в инвалидном
                 кресле.
               </p>
@@ -32,8 +32,8 @@ export const Advantages = () => {
                 Безопасность и комфорт
               </h3>
               <p className="text-gray-600">
-                Плавный ход, <strong>климат-контроль</strong>,{" "}
-                <strong>стерильный салон</strong>. Все условия для
+                Плавный ход, климат-контроль,{" "}
+                стерильный салон. Все условия для
                 минимизации дискомфорта в пути.
               </p>
             </article>
@@ -60,7 +60,7 @@ export const Advantages = () => {
               </h3>
               <p className="text-gray-600">
                 Готовы помочь в любой день и время суток.{" "}
-                <strong>Срочные и плановые перевозки</strong> в{" "}
+                Срочные и плановые <strong>перевозки лежачих больных</strong> в{" "}
                 <strong>Евпатории</strong> и по <strong>Крыму</strong>.
               </p>
             </article>

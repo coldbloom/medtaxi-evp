@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import "./globals.css";
 
-const YANDEX_METRIKA_ID = 108310397;
+const YANDEX_METRIKA_ID = 108491610;
 
 export const metadata: Metadata = {
   title: "Перевозка лежачих больных и инвалидов в Евпатории | Медтакси Крым",
