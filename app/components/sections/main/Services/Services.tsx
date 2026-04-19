@@ -6,9 +6,9 @@ export const Services = () => {
     <section className="py-16 px-4 bg-white">
       <div className="container mx-auto max-w-6xl">
         <AnimateOnScroll direction="up">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-12 text-center">
+          <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-12 text-center">
             Наши услуги
-          </h2>
+          </h3>
         </AnimateOnScroll>
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           <AnimateOnScroll direction="up" delay={0}>

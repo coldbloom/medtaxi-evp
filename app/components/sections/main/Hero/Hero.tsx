@@ -59,8 +59,7 @@ export const Hero = () => {
                   priority
                   sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 500px"
                 />
-                {/* Gradient overlay для лучшей интеграции */}
-                <div className="absolute inset-0 bg-gradient-to-t from-blue-600/10 to-transparent pointer-events-none"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-blue-600/10 to-transparent pointer-events-none" />
               </div>
             </div>
           </div>

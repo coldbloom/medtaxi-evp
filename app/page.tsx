@@ -15,7 +15,7 @@ import { OurWork } from "@/app/components/sections/main/OurWork";
 import { Header } from "@/app/components/sections/Header";
 
 export const metadata: Metadata = {
-  title: "Перевозка лежачих больных и инвалидов в Евпатории | Медтакси Крым",
+  title: "Перевозка лежачих больных и инвалидов в Евпатории | Медтакси Евпатория",
   description:
     "Специализированная перевозка лежачих больных и инвалидов в Евпатории, Крыму и по всей России. Профессиональная бригада, медицинское оборудование, работа 24/7.",
   openGraph: {
@@ -79,7 +79,7 @@ const webPageStructuredData = {
   "@type": "WebPage",
   "@id": "https://medtaxi-evp.ru/#webpage",
   url: "https://medtaxi-evp.ru",
-  name: "Перевозка лежачих больных и инвалидов в Евпатории | Медтакси Крым",
+  name: "Перевозка лежачих больных и инвалидов в Евпатории | Медтакси Евпатория",
   description: "Специализированная перевозка лежачих больных и инвалидов в Евпатории, Крыму и по всей России. Профессиональная бригада, медицинское оборудование, работа 24/7.",
   primaryImageOfPage: {
     "@type": "ImageObject",
