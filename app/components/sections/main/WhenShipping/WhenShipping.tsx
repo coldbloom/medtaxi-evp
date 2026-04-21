@@ -12,7 +12,7 @@ export const WhenShipping = () => {
             <div className="flex w-full justify-center bg-gray-950">
               <Image
                 src="/mercedas-optimized.jpg"
-                alt="Медицинский транспорт Mercedes Медтакси у приёмного отделения больницы в Евпатории — вывеска «Приёмное отделение»"
+                alt="Медицинский транспорт Mercedes Медтакси у приёмного отделения больницы в Евпатории"
                 width={767}
                 height={656}
                 className="mx-auto block h-auto w-full object-contain"
