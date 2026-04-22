@@ -297,6 +297,21 @@ export default function Home() {
               </a>
             </div>
             <div className="flex gap-4 items-center justify-center mt-6">
+              <a
+                href="https://max.ru/u/f9LHodD0cOI7hGFwnp4y8CBCeTVIs3kkyT-JqLq2wJc3ES2VjFOgy02xevs"
+                className="inline-flex items-center justify-center bg-white text-blue-600 px-6 py-3 rounded-lg font-bold hover:bg-gray-100 transition-colors shadow-lg"
+                aria-label="Написать в Max"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img
+                  src="/max-icon.svg"
+                  alt="Max"
+                  width={24}
+                  height={24}
+                  className="icon-blue"
+                />
+              </a>
               <a 
                 href={`https://t.me/ritevp?text=${encodeURIComponent("Здравствуйте")}`}
                 className="inline-flex items-center justify-center bg-white text-blue-600 px-6 py-3 rounded-lg font-bold hover:bg-gray-100 transition-colors shadow-lg"

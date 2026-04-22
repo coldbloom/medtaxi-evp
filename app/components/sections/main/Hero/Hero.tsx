@@ -4,7 +4,7 @@ import Image from "next/image";
 
 export const Hero = () => {
   return (
-    <section className="bg-gradient-to-br from-blue-50 to-blue-100 py-12 md:py-20 px-4">
+    <section className="bg-gradient-to-br from-blue-50 to-blue-100 pt-6 pb-12 md:py-20 px-4">
       <div className="container mx-auto max-w-7xl">
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
           {/* Text Content */}

@@ -1,5 +1,7 @@
 import Image from "next/image";
 import { RunningLine } from "@/app/components/sections/Header/RunningLine";
+import s from './Header.module.scss';
+import cn from "clsx";
 
 export const Header = () => {
   return (
@@ -16,22 +18,28 @@ export const Header = () => {
                 priority
                 className="w-auto h-auto"
               />
-              <div>
-                <h2 className="text-lg font-bold text-blue-600">
-                  Медтакси Евпатория
-                </h2>
-                {/*<p className="text-sm text-gray-600 mt-1">*/}
-                {/*  Перевозка лежачих больных и инвалидов*/}
-                {/*</p>*/}
-              </div>
+              <h2 className="text-lg font-bold text-blue-600">
+                Медтакси Евпатория
+              </h2>
             </div>
-            <a
-              href="tel:+79789380221"
-              className="bg-blue-600 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors text-sm md:text-lg"
-              aria-label="Позвонить по телефону +79789380221"
-            >
-              +7 (978) 938-02-21
-            </a>
+            <div className={s.iconsWrapper}>
+              <a href="https://max.ru/u/f9LHodD0cOI7hGFwnp4y8CBCeTVIs3kkyT-JqLq2wJc3ES2VjFOgy02xevs" className={cn(s.link, s.maxColor)}>
+                <img src="/max-icon.svg" alt="" className={s.icon} />
+              </a>
+              <a href="https://t.me/konstankk" className={cn(s.link, s.tgColor)}>
+                <img src="/tg-icon.svg" alt="" className={s.icon} />
+              </a>
+              <a href="tel:+79895052785" className={cn(s.link, s.phoneColor, s.phoneIconMobile)}>
+                <img src="/phone-icon.svg" alt="" className={s.icon} />
+              </a>
+              <a
+                href="tel:+79895052785"
+                className={s.phoneTextDesktop}
+                aria-label="Позвонить по телефону +79895052785"
+              >
+                +7 (989) 505-27-85
+              </a>
+            </div>
           </div>
         </div>
       </header>
