@@ -51,6 +51,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Перевозка лежачих больных и инвалидов в Евпатории | Медтакси Евпатория",
     description: "Специализированная перевозка лежачих больных и инвалидов в Евпатории, Крыму и по всей России. Работа 24/7.",
+    images: ["/peugeot.jpg"],
   },
   robots: {
     index: true,

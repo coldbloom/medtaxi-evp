@@ -18,10 +18,6 @@ export const metadata: Metadata = {
   title: "Перевозка лежачих больных и инвалидов в Евпатории | Медтакси Евпатория",
   description:
     "Специализированная перевозка лежачих больных и инвалидов в Евпатории, Крыму и по всей России. Профессиональная бригада, медицинское оборудование, работа 24/7.",
-  openGraph: {
-    url: "https://medtaxi-evp.ru",
-    type: "website",
-  },
 };
 
 // Структурированные данные для поисковых систем
@@ -49,11 +45,42 @@ const structuredData = {
     { "@type": "State", name: "Крым" },
     { "@type": "Country", name: "Россия" },
   ],
-  serviceType: [
-    "Перевозка лежачих больных",
-    "Перевозка инвалидов",
-    "Санитарный транспорт",
-    "Медицинская транспортировка",
+  offers: [
+    {
+      "@type": "Offer",
+      itemOffered: {
+        "@type": "Service",
+        name: "Перевозка лежачих больных",
+      },
+    },
+    {
+      "@type": "Offer",
+      itemOffered: {
+        "@type": "Service",
+        name: "Перевозка инвалидов",
+      },
+    },
+    {
+      "@type": "Offer",
+      itemOffered: {
+        "@type": "Service",
+        name: "Санитарный транспорт",
+      },
+    },
+    {
+      "@type": "Offer",
+      itemOffered: {
+        "@type": "Service",
+        name: "Медицинская транспортировка",
+      },
+    },
+    {
+      "@type": "Offer",
+      itemOffered: {
+        "@type": "Service",
+        name: "Перевозка людей с ограниченными возможностями",
+      },
+    },
   ],
   priceRange: "$$",
   openingHours: "Mo-Su 00:00-23:59",
