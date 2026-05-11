@@ -4,6 +4,7 @@ import s from './Header.module.scss';
 import cn from "clsx";
 import { Burger } from "@/app/components/sections/Header/Burger";
 import Link from "next/link";
+import { DesktopNav } from "@/app/components/sections/Header/DesktopNav/DesktopNav";
 
 export const Header = () => {
   return (
@@ -26,6 +27,7 @@ export const Header = () => {
                 </h2>
               </div>
             </Link>
+            <DesktopNav />
             <div className={s.iconsWrapper}>
               <a href="https://max.ru/u/f9LHodD0cOI7hGFwnp4y8CBCeTVIs3kkyT-JqLq2wJc3ES2VjFOgy02xevs" className={cn(s.link, s.maxColor)}>
                 <img src="/max-icon.svg" alt="" className={s.icon} />
