@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Script from "next/script";
+// import { ScrollToTop } from "@/app/components/ScrollToTop";
 import "./globals.css";
 
 const YANDEX_METRIKA_ID = 108491610;
@@ -105,6 +106,7 @@ export default function RootLayout({
           </div>
         </noscript>
 
+        {/*<ScrollToTop />*/}
         {children}
 
         <Script

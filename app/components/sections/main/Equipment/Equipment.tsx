@@ -1,5 +1,6 @@
 import React from "react";
 import { EquipmentSlider } from "./EquipmentSlider";
+import {HeadingSection} from "@/app/components/sections/HeadingSection";
 
 export type EquipmentItem = {
   title: string;
@@ -31,16 +32,11 @@ const EQUIPMENT_ITEMS: EquipmentItem[] = [
 export function Equipment() {
   return (
     <section
-      className="py-16 px-4 bg-white"
+      className="pb-16 px-4 bg-white"
       aria-labelledby="equipment-heading"
     >
       <div className="container mx-auto max-w-6xl">
-        <h2
-          id="equipment-heading"
-          className="mb-12 text-center text-3xl font-bold text-gray-900 md:text-4xl"
-        >
-          Оборудование для перевозки
-        </h2>
+        <HeadingSection tag="h2" id="equipment-heading">Оборудование для перевозки</HeadingSection>
         <EquipmentSlider items={EQUIPMENT_ITEMS} />
       </div>
     </section>

@@ -1,15 +1,17 @@
+import {HeadingSection} from "@/app/components/sections/HeadingSection";
+
 export const Geography = () => {
   return (
     <section className="py-16 px-4 bg-white">
       <div className="container mx-auto max-w-6xl">
-        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-12 text-center">
-          Мы находимся в <span className="text-blue-600">Евпатории</span> и
+        <HeadingSection tag="h2">
+          Мы находимся в <strong><span className="text-blue-600">Евпатории</span></strong> и
           работаем по всему <strong>Крыму</strong> и <strong>России</strong>
-        </h2>
+        </HeadingSection>
         <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-8 rounded-lg">
           <div className="grid md:grid-cols-2 gap-8">
             <div>
-              <h3 className="text-2xl font-semibold text-gray-900 mb-4">
+              <h3 className="text-xl md:text-2xl font-semibold text-gray-900 mb-4">
                 Территория обслуживания
               </h3>
               <ul className="space-y-3 text-gray-700">
@@ -34,7 +36,7 @@ export const Geography = () => {
               </ul>
             </div>
             <div>
-              <h3 className="text-2xl font-semibold text-gray-900 mb-4">
+              <h3 className="text-xl md:text-2xl font-semibold text-gray-900 mb-4">
                 Популярные направления
               </h3>
               <ul className="space-y-3 text-gray-700">

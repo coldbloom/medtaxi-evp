@@ -1,5 +1,6 @@
 import React from "react";
 import { ReviewsCarousel } from "./ReviewsCarousel";
+import {HeadingSection} from "@/app/components/sections/HeadingSection";
 
 export interface ReviewItem {
   text: string;
@@ -33,12 +34,7 @@ export const Reviews = () => {
   return (
     <section className="py-16 px-4 bg-gray-50" aria-labelledby="reviews-heading">
       <div className="container mx-auto max-w-6xl">
-        <h2
-          id="reviews-heading"
-          className="text-3xl md:text-4xl font-bold text-gray-900 mb-12 text-center"
-        >
-          Отзывы наших клиентов
-        </h2>
+        <HeadingSection tag="h2" id="reviews-heading">Отзывы наших клиентов</HeadingSection>
         <ReviewsCarousel items={reviews} />
         <div className="mt-12 text-center p-6 bg-blue-50 rounded-2xl border border-blue-100 flex flex-col items-center">
           <p className="text-lg text-gray-700 mb-4">

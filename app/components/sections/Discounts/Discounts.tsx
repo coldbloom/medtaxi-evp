@@ -1,4 +1,5 @@
 import { ContactModalTrigger } from '@/app/components/ContactModal';
+import { HeadingSection } from "@/app/components/sections/HeadingSection";
 
 const discounts = [
   {
@@ -45,12 +46,7 @@ export const Discounts = () => {
       aria-labelledby="discounts-heading"
     >
       <div className="container mx-auto max-w-6xl">
-        <h2
-          id="discounts-heading"
-          className="text-3xl md:text-4xl font-bold text-gray-900 mb-12 text-center"
-        >
-          Наши скидки
-        </h2>
+        <HeadingSection tag="h2" id="equipment-heading">Наши скидки</HeadingSection>
 
         <ul className="flex flex-col gap-6 mb-10 lg:flex-row lg:justify-between">
           {discounts.map(discount =>

@@ -1,7 +1,29 @@
+@use '@/app/utils/variables' as variables;
+
+.wrapper {
+  height: variables.$header-height;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logoText {
+  font-size: 18px;
+
+  @media (max-width: 400px) {
+    font-size: 16px;
+  }
+}
+
 .iconsWrapper {
   display: flex;
   flex-direction: row;
   gap: 10px;
+
+  @media (max-width: 400px) {
+    gap: 8px;
+  }
 
   .phoneTextDesktop {
     display: none;
@@ -42,6 +64,11 @@
     cursor: pointer;
     box-sizing: border-box;
 
+    @media (max-width: 400px) {
+      width: 34px;
+      height: 34px;
+    }
+
     &.maxColor {
       background: linear-gradient(45deg, #3dc0fc, #3d4beb, #8242e3);
     }
@@ -64,5 +91,10 @@
     width: 24px;
     height: 24px;
     object-fit: contain;
+
+    @media (max-width: 400px) {
+      width: 19px;
+      height: 19px;
+    }
   }
 }

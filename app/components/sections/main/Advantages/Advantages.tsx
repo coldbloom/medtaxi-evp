@@ -1,13 +1,12 @@
 import AnimateOnScroll from "@/app/components/AnimateOnScroll";
+import {HeadingSection} from "@/app/components/sections/HeadingSection";
 
 export const Advantages = () => {
   return (
     <section className="py-16 px-4 bg-blue-50">
       <div className="container mx-auto max-w-6xl">
         <AnimateOnScroll direction="up">
-          <h4 className="text-3xl md:text-4xl font-bold text-gray-900 mb-12 text-center">
-            Почему доверяют именно нам?
-          </h4>
+          <HeadingSection tag="h4">Почему доверяют именно нам?</HeadingSection>
         </AnimateOnScroll>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           <AnimateOnScroll direction="up" delay={0}>

@@ -1,0 +1,27 @@
+@use '@/app/utils/variables' as variables;
+
+.modalPage.modalPage {
+  height: calc(100% - #{variables.$header-height});
+  width: 80vw;
+}
+
+.backdrop {
+  top: variables.$header-height!important;
+}
+
+.burgerBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: inherit;
+  line-height: 0;
+  margin-left: 10px;
+
+  @media (min-width: 1024px) {
+    display: none;
+  }
+}

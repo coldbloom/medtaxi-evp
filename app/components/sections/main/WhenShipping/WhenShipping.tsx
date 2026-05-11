@@ -1,4 +1,5 @@
 import Image from "next/image";
+import {HeadingSection} from "@/app/components/sections/HeadingSection";
 
 export const WhenShipping = () => {
   return (
@@ -31,12 +32,7 @@ export const WhenShipping = () => {
 
       <section className="py-16 px-4 bg-white" aria-labelledby="when-needed-heading">
         <div className="container mx-auto max-w-6xl">
-          <h2
-            id="when-needed-heading"
-            className="mb-12 text-center text-3xl font-bold text-gray-900 md:text-4xl"
-          >
-            Когда нужна перевозка лежачих больных и инвалидов
-          </h2>
+          <HeadingSection tag="h2" id="when-needed-heading">Когда нужна перевозка лежачих больных и инвалидов</HeadingSection>
 
           <ul className="grid md:grid-cols-2 lg:grid-cols-3 gap-6" role="list">
           <li>

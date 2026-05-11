@@ -10,7 +10,7 @@ export const Hero = () => {
           {/* Text Content */}
           <div className="order-2 lg:order-1 animate-on-mount-right">
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
-              Перевозка лежачих больных и инвалидов в{" "}
+              Перевозка лежачих больных в{" "}
               <strong className="text-blue-600">Евпатории</strong>
             </h1>
             <p className="text-lg md:text-xl text-gray-700 mb-6 leading-relaxed">

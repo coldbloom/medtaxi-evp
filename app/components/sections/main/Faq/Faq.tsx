@@ -1,5 +1,6 @@
 import React from "react";
 import { FaqAccordion, type FaqItem } from "./FaqAccordion";
+import {HeadingSection} from "@/app/components/sections/HeadingSection";
 
 const faqItems: FaqItem[] = [
   {
@@ -41,12 +42,7 @@ export const Faq = () => {
       aria-labelledby="faq-heading"
     >
       <div className="container mx-auto max-w-3xl">
-        <h2
-          id="faq-heading"
-          className="text-3xl md:text-4xl font-bold text-gray-900 mb-12 text-center"
-        >
-          Частые вопросы о перевозке лежачих больных
-        </h2>
+        <HeadingSection tag="h2" id="faq-heading">Частые вопросы о перевозке лежачих больных</HeadingSection>
         <FaqAccordion items={faqItems} />
       </div>
     </section>

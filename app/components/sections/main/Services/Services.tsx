@@ -1,14 +1,13 @@
 import React from 'react';
 import AnimateOnScroll from "@/app/components/AnimateOnScroll";
+import { HeadingSection } from '@/app/components/sections/HeadingSection';
 
 export const Services = () => {
   return (
     <section className="py-16 px-4 bg-white">
       <div className="container mx-auto max-w-6xl">
         <AnimateOnScroll direction="up">
-          <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-12 text-center">
-            Наши услуги
-          </h3>
+          <HeadingSection>Наши услуги</HeadingSection>
         </AnimateOnScroll>
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           <AnimateOnScroll direction="up" delay={0}>

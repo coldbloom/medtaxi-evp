@@ -73,7 +73,7 @@ export function Carousel({
         </>
       )}
 
-      <div className="overflow-hidden pb-8" ref={emblaRef} aria-label={ariaLabel}>
+      <div className="overflow-hidden pb-6 sm:pb-8" ref={emblaRef} aria-label={ariaLabel}>
         <div className="flex touch-pan-y gap-4">
           {slides.map((slide, index) => (
             <div
@@ -95,7 +95,7 @@ export function Carousel({
               aria-label={`Слайд ${i + 1}`}
               aria-current={i === selectedIndex}
               className={cn(
-                "h-3.5 w-3.5 rounded-full border-0 p-0 transition-colors",
+                "h-2.5 w-2.5 sm:h-3.5 sm:w-3.5 rounded-full border-0 p-0 transition-colors",
                 i === selectedIndex ? "bg-blue-600 scale-110" : "bg-gray-300 hover:bg-gray-400"
               )}
             />
