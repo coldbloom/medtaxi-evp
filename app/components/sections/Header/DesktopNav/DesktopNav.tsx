@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import cn from 'clsx';
 import s from './DesktopNav.module.scss';
+import { serviceOffers } from '@/app/lib/serviceOffers';
 
 const pages = [
   { title: 'Главная', href: '/' },
@@ -22,10 +23,12 @@ const servicesPages = [
     href: '/uslugi/perevozka-invalidov-kolyasochnikov',
   },
   { title: 'Междугородние перевозки', href: '/uslugi/mezhdugorodnye-perevozki' },
-  { title: 'Евпатория — Краснодар', href: '/uslugi/perevozka-evpatoria-krasnodar' },
-  { title: 'Евпатория — Ростов', href: '/uslugi/perevozka-evpatoria-rostov' },
-  { title: 'Евпатория — Донецк', href: '/uslugi/perevozka-evpatoria-donetsk' },
 ];
+
+const generatedServicesPages = serviceOffers.map((offer) => ({
+  title: offer.shortName,
+  href: offer.route,
+}));
 
 export const DesktopNav = () => {
   const pathname = usePathname();
@@ -68,9 +71,9 @@ export const DesktopNav = () => {
 
           {isServicesOpen && (
             <div className={s.dropdownMenu} role="menu">
-              {servicesPages.map((service) => (
+              {[...servicesPages, ...generatedServicesPages].map((service) => (
                 <Link
-                  key={service.href}
+                  key={`${service.href}-${service.title}`}
                   href={service.href}
                   className={cn(s.dropdownLink, pathname === service.href && s.activeDropdownLink)}
                   role="menuitem"
