@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect, useState, useCallback, memo, ReactNode } from 'react';
+import { useEffect, useCallback, memo, ReactNode } from 'react';
 import clsx from 'clsx';
 import { createPortal } from 'react-dom';
 import './Modal.scss';
@@ -18,15 +18,7 @@ interface ModalProps {
 
 const Modal: React.FC<ModalProps> = memo(
   ({ isOpen, onClose, title, children, maxWidth = 'md', className = '', disableClose = false }) => {
-    const [mounted, setMounted] = useState(false);
-
     useEffect(() => {
-      setMounted(true);
-    }, []);
-
-    useEffect(() => {
-      if (!mounted) return;
-
       if (isOpen) {
         document.body.style.overflow = 'hidden';
       } else {
@@ -36,7 +28,7 @@ const Modal: React.FC<ModalProps> = memo(
       return () => {
         document.body.style.overflow = '';
       };
-    }, [isOpen, mounted]);
+    }, [isOpen]);
 
     const handleOverlayClick = useCallback(
       (e: React.MouseEvent<HTMLDivElement>) => {
@@ -60,7 +52,7 @@ const Modal: React.FC<ModalProps> = memo(
       return () => document.removeEventListener('keydown', handleKeyDown);
     }, [isOpen, onClose, disableClose]);
 
-    if (!mounted) return null;
+    if (typeof document === 'undefined') return null;
 
     return createPortal(
       <div
