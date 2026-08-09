@@ -3,6 +3,11 @@ import { serviceOffers, SITE_URL } from "@/app/lib/serviceOffers";
 
 const staticPages = [
   {
+    url: `${SITE_URL}/donetsk`,
+    changeFrequency: "weekly" as const,
+    priority: 0.95,
+  },
+  {
     url: `${SITE_URL}/prices`,
     changeFrequency: "monthly" as const,
     priority: 0.8,

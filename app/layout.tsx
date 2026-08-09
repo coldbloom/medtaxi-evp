@@ -89,10 +89,6 @@ export default function RootLayout({
         <meta name="yandex-verification" content="473ebc6fd8a5398f" />
         <meta name="google-site-verification" content="j5vuo9bH1ow7xO4qzZ76ciMVfRZDl0pjLs-16_OVgPk" />
         <meta name="theme-color" content="#2563eb" />
-        <meta name="geo.region" content="RU-CR" />
-        <meta name="geo.placename" content="Евпатория" />
-        <meta name="geo.position" content="45.1906;33.3676" />
-        <meta name="ICBM" content="45.1906, 33.3676" />
       </head>
       <body className="antialiased">
         {/* noscript сразу после открытия body — требование Яндекса */}

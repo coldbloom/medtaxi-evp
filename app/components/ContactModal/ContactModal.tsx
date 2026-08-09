@@ -2,7 +2,13 @@
 
 import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
-import toast, { Toaster } from 'react-hot-toast';
+import dynamic from "next/dynamic";
+import toast from "react-hot-toast";
+
+const ClientToaster = dynamic(
+  () => import("react-hot-toast").then((mod) => mod.Toaster),
+  { ssr: false }
+);
 
 const notify = () => toast.success('Мы свяжемся с вами!', {
   duration: 4000,
@@ -19,9 +25,16 @@ const notifyError = () => toast.error('Произошла ошибка, попр
 interface ContactModalProps {
   isOpen: boolean;
   onClose: () => void;
+  contactPhoneHref?: string;
+  contactPhoneLabel?: string;
 }
 
-export function ContactModal({ isOpen, onClose }: ContactModalProps) {
+export function ContactModal({
+  isOpen,
+  onClose,
+  contactPhoneHref = "+79789380221",
+  contactPhoneLabel = "+7 (978) 938-02-21",
+}: ContactModalProps) {
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -29,6 +42,35 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
+
+  const formatPhone = (rawValue: string) => {
+    const digits = rawValue.replace(/\D/g, "");
+    let localDigits = digits;
+
+    // Если ввели номер, начиная с 7/8, убираем код страны
+    if (localDigits.startsWith("7") || localDigits.startsWith("8")) {
+      localDigits = localDigits.slice(1);
+    }
+
+    localDigits = localDigits.slice(0, 10);
+
+    if (localDigits.length === 0) return "+7 ";
+
+    let formatted = "+7";
+    formatted += ` (${localDigits.slice(0, 3)}`;
+
+    if (localDigits.length >= 4) {
+      formatted += `) ${localDigits.slice(3, 6)}`;
+    }
+    if (localDigits.length >= 7) {
+      formatted += `-${localDigits.slice(6, 8)}`;
+    }
+    if (localDigits.length >= 9) {
+      formatted += `-${localDigits.slice(8, 10)}`;
+    }
+
+    return formatted;
+  };
 
   // Блокировка скролла при открытии
   useEffect(() => {
@@ -70,6 +112,16 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
     e.preventDefault();
     setIsSubmitting(true);
 
+    const digits = formData.phone.replace(/\D/g, "");
+    if (digits.length < 11) {
+      toast.error("Введите номер полностью", {
+        duration: 3000,
+        position: "bottom-center",
+      });
+      setIsSubmitting(false);
+      return;
+    }
+
     try {
       const endpoint = process.env.NEXT_PUBLIC_API_URL
         ? `${process.env.NEXT_PUBLIC_API_URL}/feedback`
@@ -110,70 +162,45 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
   ) => {
     const { name, value } = e.target;
     
-    // Маска для телефона
     if (name === "phone") {
-      const cleaned = value.replace(/\D/g, "");
-      let formatted = "";
-      
-      if (cleaned.length > 0) {
-        formatted = "+7";
-        if (cleaned.length > 1) {
-          formatted += ` (${cleaned.slice(1, 4)}`;
-          if (cleaned.length > 4) {
-            formatted += `) ${cleaned.slice(4, 7)}`;
-            if (cleaned.length > 7) {
-              formatted += `-${cleaned.slice(7, 9)}`;
-              if (cleaned.length > 9) {
-                formatted += `-${cleaned.slice(9, 11)}`;
-              }
-            }
-          }
-        }
-      }
-      
-      setFormData((prev) => ({ ...prev, [name]: formatted }));
+      setFormData((prev) => ({ ...prev, [name]: formatPhone(value) }));
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
   };
 
-  if (!isOpen || typeof document === "undefined") return null;
-
-  return createPortal(
+  return (
     <>
-      {/* Backdrop с размытием - покрывает весь экран */}
-      <div
-        className={`fixed inset-0 z-40 bg-black/70 backdrop-blur-md transition-opacity duration-300 ${
-          isOpen ? "opacity-100" : "opacity-0"
-        }`}
-        onClick={onClose}
-        aria-hidden="true"
-      />
+      <ClientToaster />
+      {isOpen &&
+        createPortal(
+          <>
+            {/* Backdrop с размытием - покрывает весь экран */}
+            <div
+              className="fixed inset-0 z-40 bg-black/70 backdrop-blur-md transition-opacity duration-300 opacity-100"
+              onClick={onClose}
+              aria-hidden="true"
+            />
 
-      {/* Контейнер модального окна - по центру экрана */}
-      <div
-        className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none"
-        onClick={(e) => {
-          // Закрытие при клике вне модального окна
-          if (e.target === e.currentTarget) {
-            onClose();
-          }
-        }}
-      >
-
-        {/* Модальное окно с анимацией - всегда по центру, помещается в экран */}
-        <div
-          ref={modalRef}
-          className={`w-full max-w-lg max-h-[90vh] bg-white rounded-2xl shadow-2xl transform transition-all duration-300 flex flex-col pointer-events-auto ${
-            isOpen
-              ? "scale-100 opacity-100 translate-y-0"
-              : "scale-95 opacity-0 translate-y-4"
-          }`}
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="modal-title"
-          onClick={(e) => e.stopPropagation()}
-        >
+            {/* Контейнер модального окна - по центру экрана */}
+            <div
+              className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none"
+              onClick={(e) => {
+                // Закрытие при клике вне модального окна
+                if (e.target === e.currentTarget) {
+                  onClose();
+                }
+              }}
+            >
+              {/* Модальное окно с анимацией - всегда по центру, помещается в экран */}
+              <div
+                ref={modalRef}
+                className="w-full max-w-lg max-h-[90vh] bg-white rounded-2xl shadow-2xl transform transition-all duration-300 flex flex-col pointer-events-auto scale-100 opacity-100 translate-y-0"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="modal-title"
+                onClick={(e) => e.stopPropagation()}
+              >
         {/* Заголовок - фиксированный */}
         <div className="flex items-center justify-between p-4 sm:p-6 border-b border-gray-200 flex-shrink-0">
           <h2
@@ -242,6 +269,27 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
               name="phone"
               value={formData.phone}
               onChange={handleChange}
+              onFocus={(e) => {
+                const input = e.currentTarget;
+
+                if (!input.value) {
+                  setFormData((prev) => ({ ...prev, phone: "+7 " }));
+                  requestAnimationFrame(() => {
+                    if (!input.isConnected) return;
+
+                    const position = input.value.length;
+                    input.setSelectionRange(position, position);
+                  });
+                  return;
+                }
+                const position = input.value.length;
+                input.setSelectionRange(position, position);
+              }}
+              onBlur={(e) => {
+                if (e.currentTarget.value.trim() === "+7") {
+                  setFormData((prev) => ({ ...prev, phone: "" }));
+                }
+              }}
               required
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
               placeholder="+7 (___) ___-__-__"
@@ -318,7 +366,7 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
             </p>
             <div className="flex items-center justify-center gap-4">
               <a
-                href="tel:+79789380221"
+                href={`tel:${contactPhoneHref}`}
                 className="flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium text-sm sm:text-base transition-colors"
               >
                 <svg
@@ -334,15 +382,16 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
                     d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
                   />
                 </svg>
-                +7 (978) 938-02-21
+                {contactPhoneLabel}
               </a>
             </div>
           </div>
-          <Toaster />
         </form>
         </div>
       </div>
-    </>,
-    document.body
+          </>,
+          document.body
+        )}
+    </>
   );
 }
