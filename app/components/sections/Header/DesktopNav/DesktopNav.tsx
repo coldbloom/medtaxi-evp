@@ -10,6 +10,7 @@ import { serviceOffers } from '@/app/lib/serviceOffers';
 const pages = [
   { title: 'Главная', href: '/' },
   { title: 'Цены', href: '/prices' },
+  { title: 'Донецк', href: '/donetsk' },
   { title: 'Контакты', href: '/contacts' },
 ];
 

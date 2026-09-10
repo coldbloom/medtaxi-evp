@@ -4,6 +4,7 @@ import { serviceOffers, SITE_URL } from "@/app/lib/serviceOffers";
 const staticPages = [
   {
     url: `${SITE_URL}/donetsk`,
+    lastModified: new Date("2026-09-10T00:00:00+03:00"),
     changeFrequency: "weekly" as const,
     priority: 0.95,
   },
@@ -41,21 +42,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     {
       url: SITE_URL,
-      lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 1,
     },
-    ...staticPages.map((page) => ({
-      ...page,
-      lastModified: new Date(),
-    })),
-    ...servicePages.map((page) => ({
-      ...page,
-      lastModified: new Date(),
-    })),
+    ...staticPages,
+    ...servicePages,
     ...serviceOffers.map((offer) => ({
       url: `${SITE_URL}${offer.route}`,
-      lastModified: new Date(),
       changeFrequency: "weekly" as const,
       priority: 0.8,
     })),

@@ -1,7 +1,9 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { DonetskContactTrigger } from "./DonetskContactTrigger";
+import { CodeCake } from "@/app/components/CodeCake";
+import { DonetskContactModal, DonetskContactTrigger } from "./DonetskContactTrigger";
+import { DonetskPhoneLink } from "./DonetskPhoneLink";
 
 export const dynamic = "force-static";
 
@@ -10,11 +12,22 @@ const PAGE_PATH = "/donetsk";
 const PAGE_URL = `${SITE_URL}${PAGE_PATH}`;
 const PHONE_HREF = "+79895052785";
 const PHONE_LABEL = "+7 (989) 505-27-85";
+const MIN_PRICE = 3500;
+const MIN_PRICE_LABEL = "3 500 ₽";
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#10211d",
+};
 
 export const metadata: Metadata = {
-  title: "Перевозка лежачих больных в Донецке ДНР — круглосуточно",
+  title: "Перевозка лежачих больных в Донецке и ДНР 24/7 | Медтакси",
   description:
-    "Бережная перевозка лежачих больных и маломобильных людей в Донецке и по ДНР. Спецтранспорт, носилки, помощь от кровати до кровати. Звоните 24/7: +7 989 505-27-85.",
+    "Перевозка лежачих больных в Донецке и по ДНР от 3 500 ₽. Спецтранспорт, носилки, помощь от кровати до кровати. Заказ 24/7: +7 989 505-27-85.",
+  authors: [{ name: "Медтакси Донецк" }],
+  creator: "Медтакси Донецк",
+  publisher: "Медтакси Донецк",
   keywords: [
     "перевозка лежачих больных Донецк",
     "перевозка больных ДНР",
@@ -23,12 +36,14 @@ export const metadata: Metadata = {
     "перевозка инвалидов Донецк",
     "перевозка больного из больницы домой Донецк",
     "транспортировка лежачих больных ДНР",
+    "перевозка лежачих больных Донецк цена",
+    "медицинское такси Донецк цена",
   ],
   alternates: { canonical: PAGE_PATH },
   openGraph: {
-    title: "Перевозка лежачих больных в Донецке и по ДНР",
+    title: "Перевозка лежачих больных в Донецке и по ДНР 24/7",
     description:
-      "Специализированный транспорт, бережная погрузка и сопровождение от адреса до адреса. Работаем круглосуточно.",
+      "Специализированный транспорт, помощь от кровати до кровати. Минимальная стоимость подачи — 3 500 ₽. Работаем круглосуточно.",
     url: PAGE_URL,
     siteName: "Медтакси",
     locale: "ru_RU",
@@ -44,8 +59,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Перевозка лежачих больных в Донецке ДНР",
-    description: "Медтакси в Донецке: спецтранспорт и перевозка от кровати до кровати 24/7.",
+    title: "Перевозка лежачих больных в Донецке и ДНР 24/7",
+    description: "Медтакси в Донецке: перевозка от кровати до кровати, подача от 3 500 ₽.",
     images: [`${SITE_URL}/mercedas-optimized.jpg`],
   },
   robots: {
@@ -89,6 +104,33 @@ const situations = [
   },
 ];
 
+const patientTypes = [
+  {
+    title: "После операции",
+    text: "Доставим из стационара домой, на контрольный осмотр или реабилитацию в согласованном положении.",
+  },
+  {
+    title: "После переломов и травм",
+    text: "Организуем поездку, когда пациенту трудно сидеть, вставать или пользоваться обычным автомобилем.",
+  },
+  {
+    title: "Пожилые люди",
+    text: "Поможем пройти путь от кровати до автомобиля и бережно сопроводим до места назначения.",
+  },
+  {
+    title: "Инвалиды-колясочники",
+    text: "Заранее уточним особенности кресла, подъезда и пересаживания, чтобы подготовить поездку.",
+  },
+  {
+    title: "Лежачие пациенты",
+    text: "Перевезём на носилках или каталке с фиксацией в салоне специализированного автомобиля.",
+  },
+  {
+    title: "Маломобильные пассажиры",
+    text: "Подберём формат сопровождения для человека, которому сложно самостоятельно спуститься и сесть в машину.",
+  },
+];
+
 const steps = [
   {
     title: "Расскажите о поездке",
@@ -112,7 +154,7 @@ const faqItems = [
   {
     question: "Сколько стоит перевозка лежачего больного в Донецке?",
     answer:
-      "Стоимость зависит от адресов, расстояния, этажей, наличия лифта, веса и состояния пациента. Позвоните по номеру +7 (989) 505-27-85 — уточним детали и назовём цену до выезда.",
+      "Минимальная стоимость подачи специализированного автомобиля — 3 500 рублей. Итоговая цена зависит от адресов, расстояния, этажей, наличия лифта, веса и состояния пациента. Позвоните по номеру +7 (989) 505-27-85 — уточним детали и назовём полную стоимость до выезда.",
   },
   {
     question: "Работаете ли вы ночью и в выходные?",
@@ -128,6 +170,11 @@ const faqItems = [
     question: "Можно ли ехать родственнику вместе с пациентом?",
     answer:
       "Как правило, да. Возможность и число сопровождающих согласуем при заказе с учётом маршрута и комплектации автомобиля.",
+  },
+  {
+    question: "Что нужно сообщить диспетчеру для расчёта стоимости?",
+    answer:
+      "Назовите адрес отправления и назначения, дату и время поездки, этажи, наличие и размер лифта, примерный вес и состояние пациента. Также сообщите, сможет ли пациент сидеть и требуется ли помощь при переносе.",
   },
   {
     question: "Выезжаете ли вы из Донецка в другие города?",
@@ -153,39 +200,60 @@ const serviceSchema = {
     { "@type": "AdministrativeArea", name: "ДНР" },
   ],
   provider: {
-    "@type": "MedicalBusiness",
-    "@id": `${PAGE_URL}#business`,
+    "@type": "Organization",
+    "@id": `${PAGE_URL}#organization`,
     name: "Медтакси Донецк",
     url: PAGE_URL,
     telephone: PHONE_HREF,
     image: `${SITE_URL}/mercedas-optimized.jpg`,
-    priceRange: "₽₽",
-    openingHoursSpecification: {
-      "@type": "OpeningHoursSpecification",
-      dayOfWeek: [
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday",
-        "Sunday",
-      ],
-      opens: "00:00",
-      closes: "23:59",
-    },
-    address: {
-      "@type": "PostalAddress",
-      addressLocality: "Донецк",
-      addressRegion: "ДНР",
-      addressCountry: "RU",
-    },
+    logo: `${SITE_URL}/logo.svg`,
   },
+  offers: {
+    "@type": "Offer",
+    price: String(MIN_PRICE),
+    priceCurrency: "RUB",
+    description: "Минимальная стоимость подачи специализированного автомобиля в Донецке",
+    availability: "https://schema.org/InStock",
+  },
+  hoursAvailable: {
+    "@type": "OpeningHoursSpecification",
+    dayOfWeek: [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+      "Sunday",
+    ],
+    opens: "00:00",
+    closes: "23:59",
+  },
+};
+
+const webPageSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "@id": `${PAGE_URL}#webpage`,
+  url: PAGE_URL,
+  name: "Перевозка лежачих больных в Донецке и ДНР 24/7",
+  description:
+    "Перевозка лежачих и маломобильных пациентов в Донецке и по ДНР на специализированном транспорте.",
+  inLanguage: "ru-RU",
+  primaryImageOfPage: {
+    "@type": "ImageObject",
+    url: `${SITE_URL}/mercedas-optimized.jpg`,
+    width: 767,
+    height: 656,
+  },
+  breadcrumb: { "@id": `${PAGE_URL}#breadcrumb` },
+  mainEntity: { "@id": `${PAGE_URL}#service` },
 };
 
 const breadcrumbSchema = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
+  "@id": `${PAGE_URL}#breadcrumb`,
   itemListElement: [
     { "@type": "ListItem", position: 1, name: "Главная", item: SITE_URL },
     { "@type": "ListItem", position: 2, name: "Перевозка больных в Донецке", item: PAGE_URL },
@@ -209,14 +277,15 @@ const buttonSecondary =
 
 export default function DonetskPage() {
   return (
-    <div className="min-h-screen overflow-hidden bg-[#f4f1e9] text-[#17231f] selection:bg-[#f3b941] selection:text-[#14221e]">
+    <div className="min-h-screen overflow-hidden bg-[#f4f1e9] pb-[65px] text-[#17231f] selection:bg-[#f3b941] selection:text-[#14221e] md:pb-0">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
 
       <header className="relative z-30 border-b border-white/10 bg-[#10211d] text-white">
         <div className="mx-auto flex min-h-18 max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
-          <Link href={PAGE_PATH} className="group flex items-center gap-3" aria-label="Медтакси Донецк — главная страницы">
+          <Link href={PAGE_PATH} className="group flex items-center gap-3" aria-label="Медтакси Донецк — главная страница">
             <span className="grid size-11 place-items-center rounded-2xl bg-[#f3b941] text-[#10211d] shadow-lg shadow-black/10" aria-hidden="true">
               <svg viewBox="0 0 24 24" className="size-6" fill="none" stroke="currentColor" strokeWidth="2.2">
                 <path d="M12 3v18M3 12h18" strokeLinecap="round" />
@@ -229,17 +298,17 @@ export default function DonetskPage() {
           </Link>
 
           <nav className="hidden items-center gap-7 text-sm font-semibold text-[#dce8e3] md:flex" aria-label="Навигация по странице">
+            <a href="#price" className="transition hover:text-[#f3b941]">Стоимость</a>
             <a href="#services" className="transition hover:text-[#f3b941]">Когда поможем</a>
             <a href="#transport" className="transition hover:text-[#f3b941]">Транспорт</a>
-            <a href="#how" className="transition hover:text-[#f3b941]">Как заказать</a>
             <a href="#faq" className="transition hover:text-[#f3b941]">Вопросы</a>
           </nav>
 
           <div className="flex items-center gap-2 sm:gap-3">
-            <a href={`tel:${PHONE_HREF}`} className="rounded-full border border-white/15 bg-white/8 px-3 py-2 text-sm font-extrabold transition hover:bg-white/14 sm:px-5" aria-label={`Позвонить ${PHONE_LABEL}`}>
+            <DonetskPhoneLink href={`tel:${PHONE_HREF}`} ctaPosition="header" className="rounded-full border border-white/15 bg-white/8 px-3 py-2 text-sm font-extrabold transition hover:bg-white/14 sm:px-5" aria-label={`Позвонить ${PHONE_LABEL}`}>
               <span className="sm:hidden">Позвонить</span>
               <span className="hidden sm:inline">{PHONE_LABEL}</span>
-            </a>
+            </DonetskPhoneLink>
           </div>
         </div>
       </header>
@@ -275,14 +344,14 @@ export default function DonetskPage() {
               </p>
 
               <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-                <a href={`tel:${PHONE_HREF}`} className={buttonPrimary} aria-label={`Позвонить ${PHONE_LABEL}`}>
+                <DonetskPhoneLink href={`tel:${PHONE_HREF}`} ctaPosition="hero" className={buttonPrimary} aria-label={`Позвонить ${PHONE_LABEL}`}>
                   Позвонить&nbsp;<span className="whitespace-nowrap">{PHONE_LABEL}</span>
-                </a>
-                <DonetskContactTrigger className={buttonSecondary} />
+                </DonetskPhoneLink>
+                <DonetskContactTrigger className={buttonSecondary} ctaPosition="hero" />
               </div>
 
               <ul className="mt-9 grid max-w-2xl gap-3 text-sm font-semibold text-[#d8e5df] sm:grid-cols-3" role="list">
-                {["Выезд 24/7", "От адреса до адреса", "Цена до выезда"].map((item) => (
+                {["Заявки 24/7", "От кровати до кровати", `Цена до выезда`].map((item) => (
                   <li key={item} className="flex items-center gap-2">
                     <span className="grid size-5 place-items-center rounded-full bg-[#39715f] text-xs text-white" aria-hidden="true">✓</span>
                     {item}
@@ -330,12 +399,53 @@ export default function DonetskPage() {
           </div>
         </section>
 
+        <section id="price" className="bg-[#fbfaf6] px-4 py-20 sm:px-6 lg:px-8 lg:py-24" aria-labelledby="price-heading">
+          <div className="mx-auto grid max-w-7xl overflow-hidden rounded-[2rem] border border-[#d8d2c6] bg-white shadow-[0_24px_60px_rgba(52,62,57,.08)] lg:grid-cols-[.82fr_1.18fr]">
+            <div className="bg-[#f3b941] p-7 text-[#142b24] sm:p-10 lg:p-12">
+              <p className="text-sm font-black uppercase tracking-[0.18em] opacity-65">Стоимость перевозки в Донецке</p>
+              <h2 id="price-heading" className="mt-5 text-3xl font-black tracking-[-0.04em] sm:text-5xl">
+                Подача автомобиля от <span className="whitespace-nowrap">{MIN_PRICE_LABEL}</span>
+              </h2>
+              <p className="mt-5 max-w-xl leading-relaxed text-[#35443f]">
+                Минимальная стоимость относится к подаче специализированного автомобиля. Полную цену поездки назовём после уточнения деталей и зафиксируем до выезда.
+              </p>
+            </div>
+
+            <div className="p-7 sm:p-10 lg:p-12">
+              <h3 className="text-2xl font-black tracking-tight text-[#173d32]">Что влияет на итоговый расчёт</h3>
+              <ul className="mt-7 grid gap-4 sm:grid-cols-2" role="list">
+                {["Адреса и расстояние", "Этажи и наличие лифта", "Вес и состояние пациента", "Необходимая помощь при переносе", "Ожидание и обратная поездка", "Междугородний маршрут"].map((item) => (
+                  <li key={item} className="flex items-start gap-3 text-[#56635d]">
+                    <span className="mt-0.5 grid size-6 shrink-0 place-items-center rounded-full bg-[#dfe9e4] text-xs font-black text-[#245445]" aria-hidden="true">✓</span>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+              <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+                <DonetskPhoneLink
+                  href={`tel:${PHONE_HREF}`}
+                  ctaPosition="price"
+                  className="inline-flex min-h-14 items-center justify-center rounded-full bg-[#173d32] px-7 py-3.5 text-center font-extrabold text-white transition hover:-translate-y-0.5 hover:bg-[#245445]"
+                  aria-label={`Узнать точную стоимость по телефону ${PHONE_LABEL}`}
+                >
+                  Узнать точную стоимость
+                </DonetskPhoneLink>
+                <DonetskContactTrigger
+                  className="inline-flex min-h-14 items-center justify-center rounded-full border border-[#aebbb5] px-7 py-3.5 text-center font-bold text-[#173d32] transition hover:-translate-y-0.5 hover:bg-[#eef3f0]"
+                  label="Заказать звонок"
+                  ctaPosition="price"
+                />
+              </div>
+            </div>
+          </div>
+        </section>
+
         <section id="services" className="px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
           <div className="mx-auto max-w-7xl">
             <div className="grid gap-7 lg:grid-cols-[.72fr_1.28fr] lg:items-end">
               <div>
                 <p className="text-sm font-black uppercase tracking-[0.2em] text-[#a66a1e]">Когда мы нужны</p>
-                <h2 className="mt-4 text-3xl font-black tracking-[-0.035em] text-[#142b24] sm:text-5xl">Помощь в знакомых и сложных ситуациях</h2>
+                <h2 className="mt-4 text-3xl font-black tracking-[-0.035em] text-[#142b24] sm:text-5xl">Когда нужна перевозка лежачего больного в Донецке</h2>
               </div>
               <p className="max-w-2xl text-lg leading-relaxed text-[#59645f] lg:justify-self-end">
                 Каждую поездку планируем индивидуально: уточняем состояние пациента, особенности дома и пункта назначения, выбираем подходящее оборудование.
@@ -356,6 +466,36 @@ export default function DonetskPage() {
           </div>
         </section>
 
+        <section className="border-y border-[#d8d2c6] bg-white px-4 py-20 sm:px-6 lg:px-8 lg:py-24" aria-labelledby="patients-heading">
+          <div className="mx-auto max-w-7xl">
+            <div className="grid gap-7 lg:grid-cols-[.9fr_1.1fr] lg:items-end">
+              <div>
+                <p className="text-sm font-black uppercase tracking-[0.2em] text-[#a66a1e]">Каких пациентов перевозим</p>
+                <h2 id="patients-heading" className="mt-4 text-3xl font-black tracking-[-0.035em] text-[#142b24] sm:text-5xl">
+                  Перевозим лежачих и маломобильных пациентов
+                </h2>
+              </div>
+              <p className="max-w-2xl text-lg leading-relaxed text-[#59645f] lg:justify-self-end">
+                Организуем перевозку людей после операций, травм и лечения, пожилых и маломобильных пассажиров, инвалидов-колясочников и пациентов, которым сложно самостоятельно добраться до автомобиля.
+              </p>
+            </div>
+
+            <ul className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3" role="list">
+              {patientTypes.map((patient, index) => (
+                <li key={patient.title} className="rounded-[1.5rem] border border-[#d8d2c6] bg-[#fbfaf6] p-6 transition hover:-translate-y-1 hover:border-[#c69a50] hover:shadow-[0_18px_40px_rgba(52,62,57,.08)]">
+                  <div className="flex items-center gap-4">
+                    <span className="grid size-10 shrink-0 place-items-center rounded-full bg-[#dfe9e4] text-sm font-black text-[#245445]" aria-hidden="true">
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                    <h3 className="text-xl font-black tracking-tight text-[#173d32]">{patient.title}</h3>
+                  </div>
+                  <p className="mt-5 leading-relaxed text-[#66706b]">{patient.text}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+
         <section id="transport" className="bg-[#dfe9e4] px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
           <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-2 lg:items-center">
             <div className="relative">
@@ -373,7 +513,7 @@ export default function DonetskPage() {
 
             <div className="lg:pl-10">
               <p className="text-sm font-black uppercase tracking-[0.2em] text-[#6e4b19]">Внутри автомобиля</p>
-              <h2 className="mt-4 text-3xl font-black tracking-[-0.035em] text-[#142b24] sm:text-5xl">Пространство для безопасной поездки</h2>
+              <h2 className="mt-4 text-3xl font-black tracking-[-0.035em] text-[#142b24] sm:text-5xl">Специализированный транспорт для перевозки лежачих больных</h2>
               <p className="mt-6 text-lg leading-relaxed text-[#4f6059]">
                 Салон подготовлен для перевозки лежачего пациента. Каталка фиксируется в автомобиле, а размещение оборудования и сопровождающего продумывается до начала маршрута.
               </p>
@@ -389,6 +529,35 @@ export default function DonetskPage() {
                 Услуга не заменяет скорую помощь. Возможность перевозки пациента в тяжёлом или нестабильном состоянии необходимо заранее согласовать с лечащим врачом.
               </p>
             </div>
+          </div>
+        </section>
+
+        <section className="bg-[#fbfaf6] px-4 py-20 sm:px-6 lg:px-8 lg:py-24" aria-labelledby="preparation-heading">
+          <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[.72fr_1.28fr] lg:items-start">
+            <div>
+              <p className="text-sm font-black uppercase tracking-[0.2em] text-[#a66a1e]">Подготовка к заказу</p>
+              <h2 id="preparation-heading" className="mt-4 text-3xl font-black tracking-[-0.035em] text-[#142b24] sm:text-5xl">
+                Что сообщить диспетчеру
+              </h2>
+              <p className="mt-5 text-lg leading-relaxed text-[#59645f]">
+                Эти сведения помогут сразу подобрать транспорт, оборудование и необходимое число сопровождающих, а также точнее рассчитать стоимость.
+              </p>
+            </div>
+
+            <ol className="grid gap-4 sm:grid-cols-2">
+              {[
+                ["Маршрут и время", "Адрес отправления, пункт назначения, дату и удобное время."],
+                ["Состояние пациента", "Может ли человек сидеть, требуется ли перевозка только лёжа."],
+                ["Этажи и лифт", "Этажи по обоим адресам, наличие и примерный размер лифта."],
+                ["Вес и перенос", "Примерный вес пациента и нужна ли помощь от кровати до автомобиля."],
+              ].map(([title, text], index) => (
+                <li key={title} className="rounded-2xl border border-[#ddd7cc] bg-white p-6">
+                  <span className="text-sm font-black text-[#b47725]">{String(index + 1).padStart(2, "0")}</span>
+                  <h3 className="mt-4 text-xl font-black text-[#173d32]">{title}</h3>
+                  <p className="mt-2 leading-relaxed text-[#65716c]">{text}</p>
+                </li>
+              ))}
+            </ol>
           </div>
         </section>
 
@@ -415,9 +584,9 @@ export default function DonetskPage() {
                 <p className="text-sm font-black uppercase tracking-[0.16em] opacity-65">Диспетчер на связи 24/7</p>
                 <p className="mt-2 text-2xl font-black sm:text-3xl">Обсудим маршрут и назовём стоимость</p>
               </div>
-              <a href={`tel:${PHONE_HREF}`} className="shrink-0 rounded-full bg-[#142b24] px-7 py-4 text-center text-lg font-black text-white transition hover:-translate-y-0.5 hover:bg-[#204a3e]" aria-label={`Позвонить ${PHONE_LABEL}`}>
+              <DonetskPhoneLink href={`tel:${PHONE_HREF}`} ctaPosition="how" className="shrink-0 rounded-full bg-[#142b24] px-7 py-4 text-center text-lg font-black text-white transition hover:-translate-y-0.5 hover:bg-[#204a3e]" aria-label={`Позвонить ${PHONE_LABEL}`}>
                 {PHONE_LABEL}
-              </a>
+              </DonetskPhoneLink>
             </div>
           </div>
         </section>
@@ -426,7 +595,7 @@ export default function DonetskPage() {
           <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[.9fr_1.1fr]">
             <div>
               <p className="text-sm font-black uppercase tracking-[0.2em] text-[#a66a1e]">География</p>
-              <h2 id="geography-heading" className="mt-4 text-3xl font-black tracking-[-0.035em] text-[#142b24] sm:text-5xl">Донецк, ДНР и междугородние маршруты</h2>
+              <h2 id="geography-heading" className="mt-4 text-3xl font-black tracking-[-0.035em] text-[#142b24] sm:text-5xl">Перевозка больных по Донецку, ДНР и между городами</h2>
               <p className="mt-6 text-lg leading-relaxed text-[#59645f]">
                 Забираем из дома, больницы, пансионата или реабилитационного центра. Конечным пунктом может быть любой адрес, доступный для согласованного маршрута.
               </p>
@@ -510,14 +679,15 @@ export default function DonetskPage() {
                   </p>
 
                   <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                    <a
+                    <DonetskPhoneLink
                       href={`tel:${PHONE_HREF}`}
+                      ctaPosition="discount"
                       className={buttonPrimary}
                       aria-label={`Узнать о скидке по телефону ${PHONE_LABEL}`}
                     >
                       Узнать&nbsp;условия{' '}<span className="whitespace-nowrap">{PHONE_LABEL}</span>
-                    </a>
-                    <DonetskContactTrigger className={buttonSecondary} label="Оставить заявку" />
+                    </DonetskPhoneLink>
+                    <DonetskContactTrigger className={buttonSecondary} label="Оставить заявку" ctaPosition="discount" />
                   </div>
                 </div>
               </div>
@@ -563,8 +733,8 @@ export default function DonetskPage() {
             <h2 className="mx-auto mt-5 max-w-4xl text-4xl font-black tracking-[-0.04em] sm:text-6xl">Организуем бережную перевозку вашего близкого</h2>
             <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-[#c8d8d2]">Позвоните или оставьте номер. Уточним детали, предложим подходящий вариант и заранее согласуем стоимость.</p>
             <div className="mt-9 flex flex-col justify-center gap-3 sm:flex-row">
-              <a href={`tel:${PHONE_HREF}`} className={buttonPrimary} aria-label={`Позвонить ${PHONE_LABEL}`}>{PHONE_LABEL}</a>
-              <DonetskContactTrigger className={buttonSecondary} label="Оставить заявку" />
+              <DonetskPhoneLink href={`tel:${PHONE_HREF}`} ctaPosition="final" className={buttonPrimary} aria-label={`Позвонить ${PHONE_LABEL}`}>{PHONE_LABEL}</DonetskPhoneLink>
+              <DonetskContactTrigger className={buttonSecondary} label="Оставить заявку" ctaPosition="final" />
             </div>
           </div>
         </section>
@@ -580,12 +750,37 @@ export default function DonetskPage() {
             </Link>
           </div>
           <div className="sm:text-right">
-            <a href={`tel:${PHONE_HREF}`} className="text-lg font-black text-[#f3b941] hover:text-[#ffd06d]">{PHONE_LABEL}</a>
+            <DonetskPhoneLink href={`tel:${PHONE_HREF}`} ctaPosition="footer" className="text-lg font-black text-[#f3b941] hover:text-[#ffd06d]">{PHONE_LABEL}</DonetskPhoneLink>
             <p className="mt-1 text-sm">Приём заявок круглосуточно</p>
           </div>
         </div>
-        <div className="mx-auto mt-8 max-w-7xl border-t border-white/10 pt-6 text-xs text-[#7f938b]">© {new Date().getFullYear()} Медтакси. Информация на странице не является медицинской консультацией.</div>
+        <div className="mx-auto mt-8 flex max-w-7xl flex-col gap-7 border-t border-white/10 pt-6 text-xs text-[#7f938b] sm:flex-row sm:items-center sm:justify-between">
+          <p>© {new Date().getFullYear()} Медтакси Донецк. Информация на странице не является медицинской консультацией.</p>
+          <div className="shrink-0 opacity-70 transition hover:opacity-100 flex justify-center">
+            <CodeCake />
+          </div>
+        </div>
       </footer>
+
+      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-[#d7d1c5] bg-[#fbfaf6]/95 px-3 py-2 shadow-[0_-12px_35px_rgba(20,43,36,.16)] backdrop-blur md:hidden">
+        <div className="mx-auto grid max-w-lg grid-cols-[1.15fr_.85fr] gap-2">
+          <DonetskPhoneLink
+            href={`tel:${PHONE_HREF}`}
+            ctaPosition="mobile_sticky"
+            className="inline-flex min-h-12 items-center justify-center rounded-full bg-[#f3b941] px-4 text-center text-sm font-black text-[#14221e]"
+            aria-label={`Позвонить ${PHONE_LABEL}`}
+          >
+            Позвонить сейчас
+          </DonetskPhoneLink>
+          <DonetskContactTrigger
+            className="inline-flex min-h-12 items-center justify-center rounded-full bg-[#173d32] px-4 text-center text-sm font-bold text-white"
+            label="Заказать звонок"
+            ctaPosition="mobile_sticky"
+          />
+        </div>
+      </div>
+
+      <DonetskContactModal />
     </div>
   );
 }

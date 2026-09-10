@@ -27,6 +27,9 @@ interface ContactModalProps {
   onClose: () => void;
   contactPhoneHref?: string;
   contactPhoneLabel?: string;
+  onSubmitSuccess?: () => void;
+  onSubmitError?: () => void;
+  variant?: "default" | "donetsk";
 }
 
 export function ContactModal({
@@ -34,6 +37,9 @@ export function ContactModal({
   onClose,
   contactPhoneHref = "+79789380221",
   contactPhoneLabel = "+7 (978) 938-02-21",
+  onSubmitSuccess,
+  onSubmitError,
+  variant = "default",
 }: ContactModalProps) {
   const [formData, setFormData] = useState({
     name: "",
@@ -42,6 +48,13 @@ export function ContactModal({
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
+  const previouslyFocusedElementRef = useRef<HTMLElement | null>(null);
+  const onCloseRef = useRef(onClose);
+  const isDonetskVariant = variant === "donetsk";
+
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
 
   const formatPhone = (rawValue: string) => {
     const digits = rawValue.replace(/\D/g, "");
@@ -84,19 +97,49 @@ export function ContactModal({
     };
   }, [isOpen]);
 
-  // Закрытие по Escape
+  // Закрытие по Escape и удержание фокуса внутри диалога
   useEffect(() => {
     if (!isOpen) return;
 
-    const handleEscape = (e: KeyboardEvent) => {
+    previouslyFocusedElementRef.current = document.activeElement as HTMLElement | null;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        onClose();
+        onCloseRef.current();
+        return;
+      }
+
+      if (e.key !== "Tab" || !modalRef.current) return;
+
+      const focusableElements = Array.from(
+        modalRef.current.querySelectorAll<HTMLElement>(
+          'button:not([disabled]), input:not([disabled]), textarea:not([disabled]), a[href]',
+        ),
+      ).filter((element) => element.offsetParent !== null);
+
+      if (focusableElements.length === 0) {
+        e.preventDefault();
+        return;
+      }
+
+      const firstElement = focusableElements[0];
+      const lastElement = focusableElements[focusableElements.length - 1];
+
+      if (e.shiftKey && document.activeElement === firstElement) {
+        e.preventDefault();
+        lastElement.focus();
+      } else if (!e.shiftKey && document.activeElement === lastElement) {
+        e.preventDefault();
+        firstElement.focus();
       }
     };
 
-    document.addEventListener("keydown", handleEscape);
-    return () => document.removeEventListener("keydown", handleEscape);
-  }, [isOpen, onClose]);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      previouslyFocusedElementRef.current?.focus();
+    };
+  }, [isOpen]);
 
   // Фокус на первом поле при открытии
   useEffect(() => {
@@ -147,10 +190,12 @@ export function ContactModal({
       }
 
       setFormData({ name: "", phone: "", message: "" });
+      onSubmitSuccess?.();
       notify();
       onClose();
     } catch (err) {
       console.error('Ошибка:', err);
+      onSubmitError?.();
       notifyError();
     } finally {
       setIsSubmitting(false);
@@ -195,10 +240,11 @@ export function ContactModal({
               {/* Модальное окно с анимацией - всегда по центру, помещается в экран */}
               <div
                 ref={modalRef}
-                className="w-full max-w-lg max-h-[90vh] bg-white rounded-2xl shadow-2xl transform transition-all duration-300 flex flex-col pointer-events-auto scale-100 opacity-100 translate-y-0"
+                className="w-full max-w-lg max-h-[90vh] bg-white rounded-3xl shadow-2xl transform transition-all duration-300 flex flex-col pointer-events-auto scale-100 opacity-100 translate-y-0"
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="modal-title"
+                aria-describedby="modal-description"
                 onClick={(e) => e.stopPropagation()}
               >
         {/* Заголовок - фиксированный */}
@@ -210,6 +256,7 @@ export function ContactModal({
             Заказать обратный звонок
           </h2>
           <button
+            type="button"
             onClick={onClose}
             className="p-2 text-gray-400 hover:text-gray-600 transition-colors rounded-lg hover:bg-gray-100 flex-shrink-0"
             aria-label="Закрыть модальное окно"
@@ -235,6 +282,10 @@ export function ContactModal({
           onSubmit={handleSubmit} 
           className="p-4 sm:p-6 space-y-4 sm:space-y-6 overflow-y-auto flex-1 min-h-0"
         >
+          <p id="modal-description" className="text-sm leading-relaxed text-gray-600">
+            Оставьте телефон — диспетчер уточнит маршрут, состояние пациента и рассчитает стоимость до выезда.
+          </p>
+
           {/* Имя */}
           <div>
             <label
@@ -250,7 +301,8 @@ export function ContactModal({
               value={formData.name}
               onChange={handleChange}
               required
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+              autoComplete="name"
+              className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:border-transparent outline-none transition-all ${isDonetskVariant ? "focus:ring-[#2f6757]" : "focus:ring-blue-500"}`}
               placeholder="Введите ваше имя"
             />
           </div>
@@ -291,7 +343,9 @@ export function ContactModal({
                 }
               }}
               required
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+              autoComplete="tel"
+              inputMode="tel"
+              className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:border-transparent outline-none transition-all ${isDonetskVariant ? "focus:ring-[#2f6757]" : "focus:ring-blue-500"}`}
               placeholder="+7 (___) ___-__-__"
             />
           </div>
@@ -310,7 +364,7 @@ export function ContactModal({
               value={formData.message}
               onChange={handleChange}
               rows={3}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all resize-none"
+              className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:border-transparent outline-none transition-all resize-none ${isDonetskVariant ? "focus:ring-[#2f6757]" : "focus:ring-blue-500"}`}
               placeholder="Опишите вашу ситуацию или задайте вопрос"
             />
           </div>
@@ -320,7 +374,7 @@ export function ContactModal({
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex-1 bg-blue-600 text-white px-4 sm:px-6 py-3 rounded-lg font-semibold text-sm sm:text-base hover:bg-blue-700 transition-colors shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className={`flex-1 px-4 sm:px-6 py-3 rounded-xl font-semibold text-sm sm:text-base transition-colors shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 ${isDonetskVariant ? "bg-[#f3b941] text-[#14221e] hover:bg-[#ffd06d]" : "bg-blue-600 text-white hover:bg-blue-700"}`}
             >
               {isSubmitting ? (
                 <>
@@ -367,7 +421,7 @@ export function ContactModal({
             <div className="flex items-center justify-center gap-4">
               <a
                 href={`tel:${contactPhoneHref}`}
-                className="flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium text-sm sm:text-base transition-colors"
+                className={`flex items-center gap-2 font-medium text-sm sm:text-base transition-colors ${isDonetskVariant ? "text-[#245445] hover:text-[#173d32]" : "text-blue-600 hover:text-blue-700"}`}
               >
                 <svg
                   className="w-4 h-4 sm:w-5 sm:h-5"

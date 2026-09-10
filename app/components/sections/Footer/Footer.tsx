@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import { CodeCake } from "@/app/components/CodeCake";
 
 export const Footer = () => {
@@ -40,6 +41,12 @@ export const Footer = () => {
               <li>• Транспортировка инвалидов</li>
               <li>• Санитарный транспорт</li>
               <li>• Междугородние перевозки</li>
+              <li>
+                •{' '}
+                <Link href="/donetsk" className="transition-colors hover:text-white">
+                  Перевозка больных в Донецке
+                </Link>
+              </li>
             </ul>
           </div>
         </div>

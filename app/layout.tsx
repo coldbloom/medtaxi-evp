@@ -1,9 +1,15 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 // import { ScrollToTop } from "@/app/components/ScrollToTop";
 import "./globals.css";
 
 const YANDEX_METRIKA_ID = 108491610;
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#2563eb",
+};
 
 export const metadata: Metadata = {
   title: "Перевозка лежачих больных и инвалидов в Евпатории | Медтакси Евпатория",
@@ -85,10 +91,8 @@ export default function RootLayout({
   return (
     <html lang="ru">
       <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="yandex-verification" content="473ebc6fd8a5398f" />
         <meta name="google-site-verification" content="j5vuo9bH1ow7xO4qzZ76ciMVfRZDl0pjLs-16_OVgPk" />
-        <meta name="theme-color" content="#2563eb" />
       </head>
       <body className="antialiased">
         {/* noscript сразу после открытия body — требование Яндекса */}
