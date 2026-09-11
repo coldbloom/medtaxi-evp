@@ -1,9 +1,11 @@
+/* eslint-disable @next/next/no-html-link-for-pages -- Native navigation keeps the standalone landing free of Link hydration and route prefetching. */
 import type { Metadata, Viewport } from "next";
-import Image from "next/image";
-import Link from "next/link";
-import { CodeCake } from "@/app/components/CodeCake";
-import { DonetskContactModal, DonetskContactTrigger } from "./DonetskContactTrigger";
+import { DonetskContactTrigger } from "./DonetskContactTrigger";
+import { DonetskImage } from "./DonetskImage";
+import { DonetskInteractions } from "./DonetskInteractions";
+import { StaticImage } from "./StaticImage";
 import { DonetskPhoneLink } from "./DonetskPhoneLink";
+import { DonetskSocialLink } from "./DonetskSocialLink";
 
 export const dynamic = "force-static";
 
@@ -28,6 +30,14 @@ export const metadata: Metadata = {
   authors: [{ name: "Медтакси Донецк" }],
   creator: "Медтакси Донецк",
   publisher: "Медтакси Донецк",
+  icons: {
+    icon: [
+      { url: "/favicon-192x192.png", type: "image/png", sizes: "192x192" },
+      { url: "/favicon.svg", type: "image/svg+xml", sizes: "any" },
+    ],
+    shortcut: "/favicon.svg",
+    apple: "/favicon-192x192.png",
+  },
   keywords: [
     "перевозка лежачих больных Донецк",
     "перевозка больных ДНР",
@@ -285,7 +295,7 @@ export default function DonetskPage() {
 
       <header className="relative z-30 border-b border-white/10 bg-[#10211d] text-white">
         <div className="mx-auto flex min-h-18 max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
-          <Link href={PAGE_PATH} className="group flex items-center gap-3" aria-label="Медтакси Донецк — главная страница">
+          <a href={PAGE_PATH} className="group flex items-center gap-3" aria-label="Медтакси Донецк — главная страница">
             <span className="grid size-11 place-items-center rounded-2xl bg-[#f3b941] text-[#10211d] shadow-lg shadow-black/10" aria-hidden="true">
               <svg viewBox="0 0 24 24" className="size-6" fill="none" stroke="currentColor" strokeWidth="2.2">
                 <path d="M12 3v18M3 12h18" strokeLinecap="round" />
@@ -295,7 +305,7 @@ export default function DonetskPage() {
               <span className="block text-base font-black leading-tight tracking-tight">Медтакси</span>
               <span className="block text-xs font-semibold uppercase tracking-[0.2em] text-[#bdd0c8]">Донецк · ДНР</span>
             </span>
-          </Link>
+          </a>
 
           <nav className="hidden items-center gap-7 text-sm font-semibold text-[#dce8e3] md:flex" aria-label="Навигация по странице">
             <a href="#price" className="transition hover:text-[#f3b941]">Стоимость</a>
@@ -325,7 +335,7 @@ export default function DonetskPage() {
             <div>
               <nav aria-label="Хлебные крошки" className="mb-7 text-sm text-[#a9c1b7]">
                 <ol className="flex flex-wrap items-center gap-2">
-                  <li><Link href="/" className="hover:text-white">Главная</Link></li>
+                  <li><a href="/" className="hover:text-white">Главная</a></li>
                   <li aria-hidden="true">/</li>
                   <li className="text-white">Донецк</li>
                 </ol>
@@ -365,13 +375,12 @@ export default function DonetskPage() {
                 <p className="text-2xl font-black text-[#f3b941]">24/7</p>
               </div>
               <div className="relative aspect-[1.08/1] overflow-hidden rounded-[2rem] border border-white/10 bg-[#20332c] shadow-[0_35px_80px_rgba(0,0,0,.35)] sm:rounded-[2.5rem]">
-                <Image
-                  src="/mercedas-optimized.jpg"
+                <DonetskImage
+                  name="vehicle"
                   alt="Специализированный автомобиль Mercedes для перевозки лежачих больных в Донецке"
-                  fill
                   priority
                   className="object-cover object-center"
-                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  sizes="(min-width: 1280px) 567px, (min-width: 1024px) calc(48.5vw - 54px), (min-width: 658px) 610px, (min-width: 640px) calc(100vw - 48px), calc(100vw - 32px)"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#10211d]/65 via-transparent to-transparent" />
                 <div className="absolute inset-x-5 bottom-5 rounded-2xl border border-white/15 bg-[#10211d]/80 p-4 backdrop-blur-md sm:inset-x-7 sm:bottom-7 sm:p-5 max-[500px]:hidden">
@@ -501,12 +510,11 @@ export default function DonetskPage() {
             <div className="relative">
               <div className="absolute -bottom-5 -right-5 size-full rounded-[2rem] border border-[#759388]/35" aria-hidden="true" />
               <div className="relative aspect-[1.2/1] overflow-hidden rounded-[2rem] bg-white shadow-[0_30px_70px_rgba(20,43,36,.14)]">
-                <Image
-                  src="/inside.jpg"
+                <DonetskImage
+                  name="interior"
                   alt="Салон медицинского автомобиля с каталкой для перевозки лежачего пациента"
-                  fill
                   className="object-cover"
-                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  sizes="(min-width: 1344px) 616px, (min-width: 1024px) calc(50vw - 56px), (min-width: 640px) calc(100vw - 48px), calc(100vw - 32px)"
                 />
               </div>
             </div>
@@ -694,12 +702,11 @@ export default function DonetskPage() {
 
               <div className="grid bg-[#10211d] sm:grid-cols-2">
                 <figure className="group relative aspect-[16/10] overflow-hidden sm:aspect-[16/9]">
-                  <Image
-                    src="/pens.jpg"
+                  <DonetskImage
+                    name="pensioner"
                     alt="Пенсионер — скидка на перевозку лежачих больных в Донецке"
-                    fill
                     className="object-cover object-center transition duration-700 group-hover:scale-[1.03]"
-                    sizes="(max-width: 640px) 100vw, 50vw"
+                    sizes="(min-width: 1344px) 640px, (min-width: 1024px) calc(50vw - 32px), (min-width: 640px) calc(50vw - 24px), calc(100vw - 32px)"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#10211d]/90 via-[#10211d]/10 to-transparent" />
                   <figcaption className="absolute inset-x-0 bottom-0 p-6 sm:p-7">
@@ -709,12 +716,11 @@ export default function DonetskPage() {
                 </figure>
 
                 <figure className="group relative aspect-[16/10] overflow-hidden sm:aspect-[16/9]">
-                  <Image
-                    src="/svo.jpeg"
+                  <DonetskImage
+                    name="veteran"
                     alt="Военнослужащие — иллюстрация скидки для ветеранов СВО"
-                    fill
                     className="object-cover object-center transition duration-700 group-hover:scale-[1.03]"
-                    sizes="(max-width: 640px) 100vw, 50vw"
+                    sizes="(min-width: 1344px) 640px, (min-width: 1024px) calc(50vw - 32px), (min-width: 640px) calc(50vw - 24px), calc(100vw - 32px)"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#10211d]/90 via-[#10211d]/15 to-transparent" />
                   <figcaption className="absolute inset-x-0 bottom-0 p-6 sm:p-7">
@@ -740,29 +746,61 @@ export default function DonetskPage() {
         </section>
       </main>
 
-      <footer className="border-t border-white/10 bg-[#0c1916] px-4 py-10 text-[#b9c9c3] sm:px-6 lg:px-8">
+      <footer id="contacts" className="border-t border-white/10 bg-[#0c1916] px-4 py-10 text-[#b9c9c3] sm:px-6 lg:px-8">
         <div className="mx-auto flex max-w-7xl flex-col justify-between gap-8 sm:flex-row sm:items-end">
           <div>
             <p className="font-black text-white">Медтакси · Донецк</p>
             <p className="mt-2 max-w-md text-sm leading-relaxed">Перевозка лежачих больных и маломобильных людей в Донецке, по ДНР и между городами.</p>
-            <Link href="/" className="mt-4 inline-flex items-center gap-2 text-sm font-bold text-white transition hover:text-[#f3b941]">
+            <a href="/" className="mt-4 inline-flex items-center gap-2 text-sm font-bold text-white transition hover:text-[#f3b941]">
               <span aria-hidden="true">←</span> Вернуться на главную
-            </Link>
+            </a>
           </div>
           <div className="sm:text-right">
-            <DonetskPhoneLink href={`tel:${PHONE_HREF}`} ctaPosition="footer" className="text-lg font-black text-[#f3b941] hover:text-[#ffd06d]">{PHONE_LABEL}</DonetskPhoneLink>
+            <div className="flex items-center gap-3 sm:justify-end" aria-label="Связаться с Медтакси Донецк">
+              <DonetskSocialLink
+                href="https://max.ru/u/f9LHodD0cOI7hGFwnp4y8CBCeTVIs3kkyT-JqLq2wJc3ES2VjFOgy02xevs"
+                network="max"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="grid size-11 place-items-center rounded-full bg-[linear-gradient(45deg,#3dc0fc,#3d4beb,#8242e3)] shadow-lg shadow-black/15 transition hover:-translate-y-1 hover:shadow-xl focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+                aria-label="Написать в MAX"
+              >
+                <StaticImage src="/max-icon.svg" alt="" width={24} height={24} aria-hidden="true" />
+              </DonetskSocialLink>
+              <DonetskSocialLink
+                href="https://t.me/konstankk"
+                network="telegram"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="grid size-11 place-items-center rounded-full bg-[#2aabee] shadow-lg shadow-black/15 transition hover:-translate-y-1 hover:bg-[#1598dc] hover:shadow-xl focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+                aria-label="Написать в Telegram"
+              >
+                <StaticImage src="/tg-icon.svg" alt="" width={24} height={24} aria-hidden="true" />
+              </DonetskSocialLink>
+              <DonetskPhoneLink
+                href={`tel:${PHONE_HREF}`}
+                ctaPosition="footer_icon"
+                className="grid size-11 place-items-center rounded-full bg-[linear-gradient(220deg,#62fb7c_0%,#00b929_86.56%,#07b71c_92.85%)] shadow-lg shadow-black/15 transition hover:-translate-y-1 hover:shadow-xl focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+                aria-label={`Позвонить по телефону ${PHONE_LABEL}`}
+              >
+                <StaticImage src="/phone-icon.svg" alt="" width={20} height={20} aria-hidden="true" />
+              </DonetskPhoneLink>
+            </div>
+            <DonetskPhoneLink href={`tel:${PHONE_HREF}`} ctaPosition="footer" className="mt-4 inline-block text-lg font-black text-[#f3b941] hover:text-[#ffd06d]">{PHONE_LABEL}</DonetskPhoneLink>
             <p className="mt-1 text-sm">Приём заявок круглосуточно</p>
           </div>
         </div>
         <div className="mx-auto mt-8 flex max-w-7xl flex-col gap-7 border-t border-white/10 pt-6 text-xs text-[#7f938b] sm:flex-row sm:items-center sm:justify-between">
           <p>© {new Date().getFullYear()} Медтакси Донецк. Информация на странице не является медицинской консультацией.</p>
           <div className="shrink-0 opacity-70 transition hover:opacity-100 flex justify-center">
-            <CodeCake />
+            <a href="https://t.me/konstankk" target="_blank" rel="noopener noreferrer" aria-label="Ссылка на контакт разработчика (откроется в новой вкладке)">
+              <StaticImage src="/codecake.svg" alt="Разработано в CODECAKE" width={235} height={37} />
+            </a>
           </div>
         </div>
       </footer>
 
-      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-[#d7d1c5] bg-[#fbfaf6]/95 px-3 py-2 shadow-[0_-12px_35px_rgba(20,43,36,.16)] backdrop-blur md:hidden">
+      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-[#d7d1c5] bg-[#fbfaf6] px-3 py-2 shadow-[0_-12px_35px_rgba(20,43,36,.16)] md:hidden">
         <div className="mx-auto grid max-w-lg grid-cols-[1.15fr_.85fr] gap-2">
           <DonetskPhoneLink
             href={`tel:${PHONE_HREF}`}
@@ -780,7 +818,7 @@ export default function DonetskPage() {
         </div>
       </div>
 
-      <DonetskContactModal />
+      <DonetskInteractions />
     </div>
   );
 }

@@ -1,7 +1,5 @@
+/* eslint-disable @next/next/no-html-link-for-pages -- The root error fallback is serialized on every route; keep it free of client dependencies. */
 import type { Metadata } from "next";
-import Link from "next/link";
-import { Header } from "@/app/components/sections/Header";
-import { Footer } from "@/app/components/sections/Footer";
 
 export const metadata: Metadata = {
   title: "Страница не найдена | Медтакси Евпатория",
@@ -12,7 +10,16 @@ export const metadata: Metadata = {
 export default function NotFound() {
   return (
     <>
-      <Header />
+      <header className="bg-white px-4 py-5 shadow-sm">
+        <nav className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4" aria-label="Навигация">
+          <a href="/" className="text-xl font-bold text-blue-600">Медтакси Евпатория</a>
+          <div className="flex gap-5 text-sm font-semibold text-blue-700">
+            <a href="/prices">Цены</a>
+            <a href="/donetsk">Донецк</a>
+            <a href="/contacts">Контакты</a>
+          </div>
+        </nav>
+      </header>
 
       <main id="main-content">
         <section className="bg-gradient-to-br from-blue-700 to-blue-900 text-white min-h-[calc(100vh-200px)] flex items-center px-4 py-20">
@@ -37,12 +44,12 @@ export default function NotFound() {
 
             {/* Actions */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-              <Link
+              <a
                 href="/"
                 className="inline-flex items-center justify-center bg-white text-blue-700 px-8 py-4 rounded-xl font-bold text-lg hover:bg-blue-50 transition-colors shadow-lg"
               >
                 ← На главную
-              </Link>
+              </a>
               <a
                 href="tel:+79789380221"
                 className="inline-flex items-center justify-center bg-blue-600 border-2 border-blue-300 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-blue-500 transition-colors"
@@ -62,13 +69,13 @@ export default function NotFound() {
                   { href: "/uslugi/mezhdugorodnye-perevozki", label: "Междугородние перевозки" },
                   { href: "/contacts", label: "Контакты" },
                 ].map((link) => (
-                  <Link
+                  <a
                     key={link.href}
                     href={link.href}
                     className="bg-blue-600 bg-opacity-60 hover:bg-opacity-80 text-white text-sm px-5 py-2.5 rounded-full border border-blue-400 transition-colors"
                   >
                     {link.label}
-                  </Link>
+                  </a>
                 ))}
               </div>
             </div>
@@ -76,7 +83,10 @@ export default function NotFound() {
         </section>
       </main>
 
-      <Footer />
+      <footer className="bg-gray-900 px-4 py-8 text-center text-gray-300">
+        <p>Медтакси Евпатория · Работаем круглосуточно</p>
+        <a href="tel:+79789380221" className="mt-2 inline-block font-semibold text-blue-300">+7 (978) 938-02-21</a>
+      </footer>
     </>
   );
 }
