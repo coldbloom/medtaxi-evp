@@ -6,6 +6,9 @@ import { DonetskInteractions } from "./DonetskInteractions";
 import { StaticImage } from "./StaticImage";
 import { DonetskPhoneLink } from "./DonetskPhoneLink";
 import { DonetskSocialLink } from "./DonetskSocialLink";
+import Image from "next/image";
+import { ScrollProgressBar } from "@/app/components/ScrollProgressBar";
+import styles from "./DonetskMotion.module.css";
 
 export const dynamic = "force-static";
 
@@ -216,7 +219,7 @@ const serviceSchema = {
     url: PAGE_URL,
     telephone: PHONE_HREF,
     image: `${SITE_URL}/mercedas-optimized.jpg`,
-    logo: `${SITE_URL}/logo.svg`,
+    logo: `${SITE_URL}/logo-donetsk.svg`,
   },
   offers: {
     "@type": "Offer",
@@ -281,33 +284,36 @@ const faqSchema = {
 };
 
 const buttonPrimary =
-  "min-h-14 rounded-full bg-[#f3b941] px-7 py-3.5 text-center text-base font-extrabold text-[#14221e] shadow-[0_16px_35px_rgba(243,185,65,0.22)] transition hover:-translate-y-0.5 hover:bg-[#ffd06d] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#f3b941]";
+  `${styles.primaryAction} min-h-14 rounded-full bg-[#f3b941] px-7 py-3.5 text-center text-base font-extrabold text-[#14221e] shadow-[0_16px_35px_rgba(243,185,65,0.22)] transition hover:bg-[#ffd06d] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#f3b941]`;
 const buttonSecondary =
   "inline-flex min-h-14 items-center justify-center rounded-full border border-white/25 bg-white/8 px-7 py-3.5 text-center text-base font-bold text-white backdrop-blur transition hover:-translate-y-0.5 hover:bg-white/14 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white";
 
 export default function DonetskPage() {
   return (
-    <div className="min-h-screen overflow-hidden bg-[#f4f1e9] pb-[65px] text-[#17231f] selection:bg-[#f3b941] selection:text-[#14221e] md:pb-0">
+    <div className={`${styles.page} min-h-screen bg-[#f4f1e9] text-[#17231f] selection:bg-[#f3b941] selection:text-[#14221e]`}>
+      <a href="#main-content" className={styles.skipLink}>Перейти к содержимому</a>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
 
-      <header className="relative z-30 border-b border-white/10 bg-[#10211d] text-white">
+      <header className="z-30 border-b border-white/10 bg-[#10211d] text-white">
         <div className="mx-auto flex min-h-18 max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
           <a href={PAGE_PATH} className="group flex items-center gap-3" aria-label="Медтакси Донецк — главная страница">
-            <span className="grid size-11 place-items-center rounded-2xl bg-[#f3b941] text-[#10211d] shadow-lg shadow-black/10" aria-hidden="true">
-              <svg viewBox="0 0 24 24" className="size-6" fill="none" stroke="currentColor" strokeWidth="2.2">
-                <path d="M12 3v18M3 12h18" strokeLinecap="round" />
-              </svg>
-            </span>
+            <Image
+              src="/logo-donetsk.svg"
+              alt="Медтакси Донецк — логотип"
+              width={64}
+              height={64}
+              priority
+            />
             <span>
               <span className="block text-base font-black leading-tight tracking-tight">Медтакси</span>
               <span className="block text-xs font-semibold uppercase tracking-[0.2em] text-[#bdd0c8]">Донецк · ДНР</span>
             </span>
           </a>
 
-          <nav className="hidden items-center gap-7 text-sm font-semibold text-[#dce8e3] md:flex" aria-label="Навигация по странице">
+          <nav className={`${styles.navigation} hidden items-center gap-7 text-sm font-semibold text-[#dce8e3] lg:flex`} aria-label="Навигация по странице">
             <a href="#price" className="transition hover:text-[#f3b941]">Стоимость</a>
             <a href="#services" className="transition hover:text-[#f3b941]">Когда поможем</a>
             <a href="#transport" className="transition hover:text-[#f3b941]">Транспорт</a>
@@ -323,7 +329,10 @@ export default function DonetskPage() {
         </div>
       </header>
 
-      <main id="main-content">
+      {/* Сосед header: sticky ограничен всей страницей, а не высотой шапки. */}
+      <ScrollProgressBar color="#f3b941" className="sticky top-0 z-30 bg-[#10211d]" />
+
+      <main id="main-content" tabIndex={-1}>
         <section className="relative isolate bg-[#10211d] text-white">
           <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden" aria-hidden="true">
             <div className="absolute -left-24 top-24 size-80 rounded-full bg-[#2d6959]/30 blur-3xl" />
@@ -347,7 +356,7 @@ export default function DonetskPage() {
               </div>
 
               <h1 className="max-w-3xl text-4xl font-black leading-[1.02] tracking-[-0.045em] sm:text-5xl lg:text-[4.15rem]">
-                Перевозка лежачих больных <span className="text-[#f3b941]">в Донецке</span>
+                Перевозка лежачих больных <strong className={`${styles.heroAccent} text-[#f3b941]`}>в Донецке</strong>
               </h1>
               <p className="mt-6 max-w-2xl text-lg leading-relaxed text-[#cfddd7] sm:text-xl">
                 Бережно перевозим лежачих и маломобильных людей по Донецку, ДНР и между городами — на специализированном транспорте, от кровати до кровати.
@@ -371,7 +380,7 @@ export default function DonetskPage() {
             </div>
 
             <div className="relative mx-auto w-full max-w-[610px] lg:mx-0">
-              <div className="absolute z-10 -left-5 -top-5 hidden rounded-3xl border border-white/10 bg-white/10 px-5 py-4 backdrop-blur-xl sm:block">
+              <div className={`${styles.heroBadge} absolute z-10 -left-5 -top-5 hidden rounded-3xl border border-white/10 bg-white/10 px-5 py-4 backdrop-blur-xl sm:block`}>
                 <p className="text-2xl font-black text-[#f3b941]">24/7</p>
               </div>
               <div className="relative aspect-[1.08/1] overflow-hidden rounded-[2rem] border border-white/10 bg-[#20332c] shadow-[0_35px_80px_rgba(0,0,0,.35)] sm:rounded-[2.5rem]">
@@ -463,7 +472,7 @@ export default function DonetskPage() {
 
             <div className="mt-12 grid gap-4 md:grid-cols-2">
               {situations.map((item) => (
-                <article key={item.number} className="group rounded-[1.75rem] border border-[#d8d2c6] bg-[#fbfaf6] p-6 transition hover:-translate-y-1 hover:border-[#c69a50] hover:shadow-[0_20px_45px_rgba(52,62,57,.08)] sm:p-8">
+                <article key={item.number} className={`${styles.reveal} rounded-[1.75rem] border border-[#d8d2c6] bg-[#fbfaf6] p-6 sm:p-8`}>
                   <div className="flex items-start justify-between gap-5">
                     <h3 className="text-2xl font-black tracking-tight text-[#173d32]">{item.title}</h3>
                     <span className="text-sm font-black text-[#b47725]">{item.number}</span>
@@ -491,7 +500,7 @@ export default function DonetskPage() {
 
             <ul className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3" role="list">
               {patientTypes.map((patient, index) => (
-                <li key={patient.title} className="rounded-[1.5rem] border border-[#d8d2c6] bg-[#fbfaf6] p-6 transition hover:-translate-y-1 hover:border-[#c69a50] hover:shadow-[0_18px_40px_rgba(52,62,57,.08)]">
+                <li key={patient.title} className={`${styles.reveal} rounded-[1.5rem] border border-[#d8d2c6] bg-[#fbfaf6] p-6`}>
                   <div className="flex items-center gap-4">
                     <span className="grid size-10 shrink-0 place-items-center rounded-full bg-[#dfe9e4] text-sm font-black text-[#245445]" aria-hidden="true">
                       {String(index + 1).padStart(2, "0")}
@@ -507,7 +516,7 @@ export default function DonetskPage() {
 
         <section id="transport" className="bg-[#dfe9e4] px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
           <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-2 lg:items-center">
-            <div className="relative">
+            <div className={`${styles.reveal} relative`}>
               <div className="absolute -bottom-5 -right-5 size-full rounded-[2rem] border border-[#759388]/35" aria-hidden="true" />
               <div className="relative aspect-[1.2/1] overflow-hidden rounded-[2rem] bg-white shadow-[0_30px_70px_rgba(20,43,36,.14)]">
                 <DonetskImage
@@ -559,7 +568,7 @@ export default function DonetskPage() {
                 ["Этажи и лифт", "Этажи по обоим адресам, наличие и примерный размер лифта."],
                 ["Вес и перенос", "Примерный вес пациента и нужна ли помощь от кровати до автомобиля."],
               ].map(([title, text], index) => (
-                <li key={title} className="rounded-2xl border border-[#ddd7cc] bg-white p-6">
+                <li key={title} className={`${styles.reveal} rounded-2xl border border-[#ddd7cc] bg-white p-6`}>
                   <span className="text-sm font-black text-[#b47725]">{String(index + 1).padStart(2, "0")}</span>
                   <h3 className="mt-4 text-xl font-black text-[#173d32]">{title}</h3>
                   <p className="mt-2 leading-relaxed text-[#65716c]">{text}</p>
@@ -643,7 +652,7 @@ export default function DonetskPage() {
 
             <div className="space-y-3">
               {faqItems.map((item, index) => (
-                <details key={item.question} className="group rounded-2xl border border-[#d5cec1] bg-[#f8f6f0] px-5 py-1 open:shadow-sm sm:px-7" open={index === 0}>
+                <details key={item.question} className={`${styles.faqItem} group rounded-2xl border border-[#d5cec1] bg-[#f8f6f0] px-5 py-1 open:shadow-sm sm:px-7`} open={index === 0}>
                   <summary className="flex cursor-pointer list-none items-center justify-between gap-5 py-5 text-lg font-black text-[#173d32] marker:hidden">
                     {item.question}
                     <span className="grid size-8 shrink-0 place-items-center rounded-full bg-[#e2ddd2] text-xl font-normal transition group-open:rotate-45" aria-hidden="true">+</span>
@@ -800,7 +809,7 @@ export default function DonetskPage() {
         </div>
       </footer>
 
-      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-[#d7d1c5] bg-[#fbfaf6] px-3 py-2 shadow-[0_-12px_35px_rgba(20,43,36,.16)] md:hidden">
+      <div className={`${styles.mobileBar} fixed inset-x-0 bottom-0 z-40 border-t border-[#d7d1c5] bg-[#fbfaf6] px-3 py-2 shadow-[0_-12px_35px_rgba(20,43,36,.16)] md:hidden`}>
         <div className="mx-auto grid max-w-lg grid-cols-[1.15fr_.85fr] gap-2">
           <DonetskPhoneLink
             href={`tel:${PHONE_HREF}`}

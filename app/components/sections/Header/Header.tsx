@@ -5,6 +5,7 @@ import cn from "clsx";
 import { Burger } from "@/app/components/sections/Header/Burger";
 import Link from "next/link";
 import { DesktopNav } from "@/app/components/sections/Header/DesktopNav/DesktopNav";
+import { TrackedPhoneLink } from "@/app/components/tracking/TrackedPhoneLink";
 
 export const Header = () => {
   return (
@@ -35,16 +36,17 @@ export const Header = () => {
               <a href="https://t.me/konstankk" className={cn(s.link, s.tgColor)}>
                 <img src="/tg-icon.svg" alt="" className={s.icon} />
               </a>
-              <a href="tel:+79895052785" className={cn(s.link, s.phoneColor, s.phoneIconMobile)}>
+              <TrackedPhoneLink phone="+79895052785" trackingId="header_mobile" className={cn(s.link, s.phoneColor, s.phoneIconMobile)}>
                 <img src="/phone-icon.svg" alt="" className={s.icon} />
-              </a>
-              <a
-                href="tel:+79895052785"
+              </TrackedPhoneLink>
+              <TrackedPhoneLink
+                phone="+79895052785"
+                trackingId="header"
                 className={s.phoneTextDesktop}
                 aria-label="Позвонить по телефону +79895052785"
               >
                 +7 (989) 505-27-85
-              </a>
+              </TrackedPhoneLink>
               <Burger />
             </div>
           </div>

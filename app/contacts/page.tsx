@@ -4,6 +4,7 @@ import { Header } from "@/app/components/sections/Header";
 import { Footer } from "@/app/components/sections/Footer";
 import { CallToActionSection } from "@/app/components/sections/main/CallToActionSection";
 import { ContactModalTrigger } from "@/app/components/ContactModal";
+import { TrackedPhoneLink } from "@/app/components/tracking/TrackedPhoneLink";
 
 const SITE_URL = "https://medtaxi-evp.ru";
 
@@ -56,6 +57,7 @@ const contacts = [
     label: "Телефон (основной)",
     value: "+7 (978) 938-02-21",
     href: "tel:+79789380221",
+    trackingId: "contact_phone_main",
     note: "Виталий — основная линия",
     color: "bg-blue-50 border-blue-200 hover:border-blue-400",
     iconColor: "text-blue-600 bg-blue-100",
@@ -69,6 +71,7 @@ const contacts = [
     label: "Телефон (второй)",
     value: "+7 (989) 505-27-85",
     href: "tel:+79895052785",
+    trackingId: "contact_phone_secondary",
     note: "Константин",
     color: "bg-blue-50 border-blue-200 hover:border-blue-400",
     iconColor: "text-blue-600 bg-blue-100",
@@ -176,25 +179,37 @@ export default function ContactsPage() {
             </p>
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {contacts.map((c) => (
-                <a
-                  key={c.label}
-                  href={c.href}
-                  target={c.external ? "_blank" : undefined}
-                  rel={c.external ? "noopener noreferrer" : undefined}
-                  className={`flex items-start gap-4 p-5 rounded-2xl border-2 transition-all hover:shadow-md ${c.color}`}
-                  aria-label={`${c.label}: ${c.value}`}
-                >
-                  <div className={`flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center ${c.iconColor}`}>
-                    {c.icon}
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">{c.label}</p>
-                    <p className="font-bold text-gray-900 text-lg leading-tight truncate">{c.value}</p>
-                    <p className="text-sm text-gray-500 mt-0.5">{c.note}</p>
-                  </div>
-                </a>
-              ))}
+              {contacts.map((c) => {
+                const linkProps = {
+                  target: c.external ? "_blank" : undefined,
+                  rel: c.external ? "noopener noreferrer" : undefined,
+                  className: `flex items-start gap-4 p-5 rounded-2xl border-2 transition-all hover:shadow-md ${c.color}`,
+                  "aria-label": `${c.label}: ${c.value}`,
+                };
+                const content = (
+                  <>
+                    <div className={`flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center ${c.iconColor}`}>
+                      {c.icon}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">{c.label}</p>
+                      <p className="font-bold text-gray-900 text-lg leading-tight truncate">{c.value}</p>
+                      <p className="text-sm text-gray-500 mt-0.5">{c.note}</p>
+                    </div>
+                  </>
+                );
+
+                // Телефонные карточки участвуют в трекинге; ссылки на мессенджеры обычные.
+                return c.href.startsWith("tel:") && c.trackingId ? (
+                  <TrackedPhoneLink key={c.label} phone={c.href.slice(4)} trackingId={c.trackingId} {...linkProps}>
+                    {content}
+                  </TrackedPhoneLink>
+                ) : (
+                  <a key={c.label} href={c.href} {...linkProps}>
+                    {content}
+                  </a>
+                );
+              })}
             </div>
           </div>
         </section>
@@ -283,20 +298,22 @@ export default function ContactsPage() {
                   <h3 className="font-bold text-xl mb-2">Нужна перевозка срочно?</h3>
                   <p className="text-blue-100 text-sm mb-5">Принимаем звонки круглосуточно — без выходных и праздников.</p>
                   <div className="flex flex-col sm:flex-row gap-3">
-                    <a
-                      href="tel:+79789380221"
+                    <TrackedPhoneLink
+                      phone="+79789380221"
+                      trackingId="urgent_phone_main"
                       className="inline-flex items-center justify-center bg-white text-blue-700 px-6 py-3 rounded-xl font-bold hover:bg-blue-50 transition-colors shadow-sm text-center"
                       aria-label="Позвонить +79789380221"
                     >
                       +7 (978) 938-02-21
-                    </a>
-                    <a
-                      href="tel:+79895052785"
+                    </TrackedPhoneLink>
+                    <TrackedPhoneLink
+                      phone="+79895052785"
+                      trackingId="urgent_phone_secondary"
                       className="inline-flex items-center justify-center bg-blue-500 text-white border border-blue-400 px-6 py-3 rounded-xl font-bold hover:bg-blue-400 transition-colors text-center"
                       aria-label="Позвонить +79895052785"
                     >
                       +7 (989) 505-27-85
-                    </a>
+                    </TrackedPhoneLink>
                   </div>
                 </div>
               </div>

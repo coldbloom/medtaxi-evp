@@ -6,6 +6,7 @@ import { Advantages } from "@/app/components/sections/main/Advantages";
 import { Reviews } from "@/app/components/sections/Reviews";
 import { CallToActionSection } from "@/app/components/sections/main/CallToActionSection";
 import { Discounts } from "@/app/components/sections/Discounts";
+import { TrackedPhoneLink } from "@/app/components/tracking/TrackedPhoneLink";
 
 const SITE_URL = "https://medtaxi-evp.ru";
 const PAGE_URL = `${SITE_URL}/uslugi/perevozka-invalidov-kolyasochnikov`;
@@ -179,13 +180,14 @@ export default function Page() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 mb-10">
-              <a
-                href="tel:+79789380221"
+              <TrackedPhoneLink
+                phone="+79789380221"
+                trackingId="hero"
                 className="inline-flex items-center justify-center bg-white text-blue-700 px-8 py-4 rounded-xl font-bold text-lg hover:bg-blue-50 transition-colors shadow-lg"
                 aria-label="Позвонить +79789380221"
               >
                 Позвонить: +7 (978) 938-02-21
-              </a>
+              </TrackedPhoneLink>
               <a
                 href={`https://t.me/ritevp?text=${encodeURIComponent("Здравствуйте! Нужна перевозка инвалида-колясочника")}`}
                 target="_blank"
@@ -276,13 +278,14 @@ export default function Page() {
                 По Крыму — <strong className="text-white">от 5 000 руб.</strong>&nbsp;&nbsp;·&nbsp;&nbsp;
                 Межгород — по договорённости
               </p>
-              <a
-                href="tel:+79789380221"
+              <TrackedPhoneLink
+                phone="+79789380221"
+                trackingId="price_block"
                 className="inline-flex items-center justify-center bg-white text-blue-700 px-8 py-4 rounded-xl font-bold text-lg hover:bg-blue-50 transition-colors shadow-lg"
                 aria-label="Позвонить для уточнения цены"
               >
                 Узнать точную цену
-              </a>
+              </TrackedPhoneLink>
             </div>
           </div>
         </section>

@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { CodeCake } from "@/app/components/CodeCake";
+import { TrackedPhoneLink } from "@/app/components/tracking/TrackedPhoneLink";
 
 export const Footer = () => {
   return (
@@ -19,12 +20,13 @@ export const Footer = () => {
             <h3 className="text-xl font-bold mb-4">Контакты</h3>
             <p className="text-gray-400 mb-2">
               <strong>Телефон:</strong>{" "}
-              <a
-                href="tel:+79789380221"
+              <TrackedPhoneLink
+                phone="+79789380221"
+                trackingId="footer"
                 className="text-blue-400 hover:text-blue-300"
               >
                 +7 (978) 938-02-21
-              </a>
+              </TrackedPhoneLink>
             </p>
             <p className="text-gray-400">
               <strong>Регион:</strong> <strong>Евпатория</strong>,{" "}

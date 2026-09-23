@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import dynamic from "next/dynamic";
 import toast from "react-hot-toast";
+import { TrackedPhoneLink } from "@/app/components/tracking/TrackedPhoneLink";
 
 const ClientToaster = dynamic(
   () => import("react-hot-toast").then((mod) => mod.Toaster),
@@ -419,8 +420,9 @@ export function ContactModal({
               Или свяжитесь с нами напрямую:
             </p>
             <div className="flex items-center justify-center gap-4">
-              <a
-                href={`tel:${contactPhoneHref}`}
+              <TrackedPhoneLink
+                phone={contactPhoneHref}
+                trackingId="contact_modal"
                 className={`flex items-center gap-2 font-medium text-sm sm:text-base transition-colors ${isDonetskVariant ? "text-[#245445] hover:text-[#173d32]" : "text-blue-600 hover:text-blue-700"}`}
               >
                 <svg
@@ -437,7 +439,7 @@ export function ContactModal({
                   />
                 </svg>
                 {contactPhoneLabel}
-              </a>
+              </TrackedPhoneLink>
             </div>
           </div>
         </form>

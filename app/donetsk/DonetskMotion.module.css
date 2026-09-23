@@ -1,0 +1,185 @@
+/* Только /donetsk: CSS Module не меняет другие страницы и не добавляет JS. */
+.page {
+  --motion-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  /* В отличие от hidden, clip не создаёт ложный scroll container для view(). */
+  overflow-x: clip;
+  padding-bottom: calc(65px + env(safe-area-inset-bottom, 0px));
+}
+
+/* Закреплена только тонкая полоса; большой отступ под шапку не нужен. */
+.page section[id],
+.page main[id] {
+  scroll-margin-top: 1.5rem;
+}
+
+/* Клавиатурой можно сразу перейти к содержимому, минуя шапку. */
+.skipLink {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 60;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  background: #f3b941;
+  color: #10211d;
+  font-weight: 700;
+  transform: translateY(calc(-100% - 2rem));
+}
+
+.skipLink:focus {
+  transform: none;
+}
+
+/* Двухцветная рамка различима и на светлых, и на тёмных секциях. */
+.page :is(a, button, summary):focus-visible {
+  outline: 2px solid #f3b941;
+  outline-offset: 3px;
+  box-shadow: 0 0 0 5px #10211d;
+}
+
+.navigation a {
+  position: relative;
+  padding-block: 0.5rem;
+}
+
+.navigation a::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 2px;
+  border-radius: 2px;
+  background: #f3b941;
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+.navigation a:focus-visible::after {
+  transform: scaleX(1);
+}
+
+/* Двигается только линия: H1 и главное фото видны с первого кадра. */
+.heroAccent {
+  position: relative;
+  display: inline-block;
+}
+
+.heroAccent::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: -0.08em;
+  left: 0;
+  height: 3px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #f3b941, #f3b94133);
+  transform-origin: left;
+}
+
+/* Высоту панели резервирует .page, включая область жестов телефона. */
+.mobileBar {
+  padding-bottom: calc(0.5rem + env(safe-area-inset-bottom, 0px));
+}
+
+@media (min-width: 768px) {
+  .page {
+    padding-bottom: 0;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .heroAccent::after {
+    animation: drawAccent 700ms var(--motion-ease) both;
+  }
+
+  /* Одно короткое появление небольшого бейджа, без бесконечного покачивания. */
+  .heroBadge {
+    animation: badgeArrival 600ms var(--motion-ease) both;
+  }
+
+  .page [data-donetsk-goal],
+  .navigation a::after {
+    transition: transform 220ms var(--motion-ease), translate 220ms var(--motion-ease), scale 180ms ease,
+      background-color 180ms ease, border-color 180ms ease;
+  }
+
+  .page [data-donetsk-goal]:active {
+    scale: 0.98;
+  }
+
+  /* Нативный details работает без JS; высоту ответа не анимируем. */
+  .faqItem[open] > p {
+    animation: answerArrival 200ms ease-out;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .navigation a:hover::after {
+      transform: scaleX(1);
+    }
+
+    .primaryAction:hover {
+      transform: translateY(-2px);
+    }
+  }
+
+  /* Progressive enhancement: без поддержки view() остаётся обычный контент.
+     opacity не меняем даже во время движения — карточки всегда читаемы.
+     Класс ставим снаружи overflow-hidden, иначе view() следит не за страницей. */
+  @supports (animation-timeline: view()) and (animation-range: entry 0% entry 40%) {
+    .reveal {
+      animation: cardArrival 1ms linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 40%;
+    }
+  }
+}
+
+@keyframes drawAccent {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+@keyframes badgeArrival {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes cardArrival {
+  from { transform: translateY(14px); }
+  to { transform: translateY(0); }
+}
+
+@keyframes answerArrival {
+  from { opacity: 0.8; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Отменяем также прежние Tailwind transitions внутри этой страницы. */
+  .page *,
+  .page *::before,
+  .page *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  /* Tailwind v4 использует translate отдельно от transform. */
+  .page [data-donetsk-goal] {
+    transform: none !important;
+    translate: none !important;
+    scale: none !important;
+  }
+
+  :global(html):has(.page) {
+    scroll-behavior: auto;
+  }
+}
+
+@media print {
+  .page { padding-bottom: 0; }
+  .mobileBar, .skipLink { display: none; }
+  .reveal, .heroBadge, .heroAccent::after {
+    animation: none !important;
+    transform: none;
+    opacity: 1;
+  }
+}

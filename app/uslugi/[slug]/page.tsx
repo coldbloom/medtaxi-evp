@@ -6,6 +6,7 @@ import { Header } from "@/app/components/sections/Header";
 import { Footer } from "@/app/components/sections/Footer";
 import { Reviews } from "@/app/components/sections/Reviews";
 import { CallToActionSection } from "@/app/components/sections/main/CallToActionSection";
+import { TrackedPhoneLink } from "@/app/components/tracking/TrackedPhoneLink";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -126,13 +127,14 @@ export default async function ServiceOfferPage({ params }: PageProps) {
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-3">
-                  <a
-                    href="tel:+79789380221"
+                  <TrackedPhoneLink
+                    phone="+79789380221"
+                    trackingId="hero"
                     className="inline-flex items-center justify-center bg-white text-blue-800 px-7 py-4 rounded-xl font-bold text-lg hover:bg-blue-50 transition-colors shadow-lg"
                     aria-label="Позвонить +79789380221"
                   >
                     Позвонить: +7 (978) 938-02-21
-                  </a>
+                  </TrackedPhoneLink>
                   <a
                     href={`https://t.me/ritevp?text=${encodeURIComponent(`Здравствуйте! Нужна услуга: ${offer.shortName}`)}`}
                     target="_blank"
@@ -203,13 +205,14 @@ export default async function ServiceOfferPage({ params }: PageProps) {
                   <p className="text-blue-200 text-xs font-semibold uppercase tracking-wider mb-1">Стоимость</p>
                   <p className="text-2xl font-black mb-1">{offer.priceNote}</p>
                   <p className="text-blue-100 text-xs">Точную цену называем до выезда</p>
-                  <a
-                    href="tel:+79789380221"
+                  <TrackedPhoneLink
+                    phone="+79789380221"
+                    trackingId="price_block"
                     className="mt-4 flex items-center justify-center bg-white text-blue-700 rounded-xl py-3 font-bold text-sm hover:bg-blue-50 transition-colors"
                     aria-label="Позвонить"
                   >
                     Узнать точную цену
-                  </a>
+                  </TrackedPhoneLink>
                 </div>
               </aside>
             </div>

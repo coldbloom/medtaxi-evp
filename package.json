@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "test:tracking": "node --test tests/callTracking.test.mjs",
     "optimize:donetsk-images": "node scripts/optimize-donetsk-images.mjs",
     "dev": "next dev",
     "build": "next build",

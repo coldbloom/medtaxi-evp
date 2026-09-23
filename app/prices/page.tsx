@@ -4,6 +4,7 @@ import { Header } from "@/app/components/sections/Header";
 import { Footer } from "@/app/components/sections/Footer";
 import { Reviews } from "@/app/components/sections/Reviews";
 import { CallToActionSection } from "@/app/components/sections/main/CallToActionSection";
+import { TrackedPhoneLink } from "@/app/components/tracking/TrackedPhoneLink";
 
 const SITE_URL = "https://medtaxi-evp.ru";
 const PAGE_URL = `${SITE_URL}/prices`;
@@ -341,13 +342,14 @@ export default function PricesPage() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 mb-10">
-              <a
-                href="tel:+79789380221"
+              <TrackedPhoneLink
+                phone="+79789380221"
+                trackingId="hero"
                 className="inline-flex items-center justify-center bg-white text-teal-800 px-8 py-4 rounded-xl font-bold text-lg hover:bg-teal-50 transition-colors shadow-lg"
                 aria-label="Позвонить +79789380221"
               >
                 Узнать цену: +7 (978) 938-02-21
-              </a>
+              </TrackedPhoneLink>
               <a
                 href={`https://t.me/ritevp?text=${encodeURIComponent("Здравствуйте! Хочу узнать стоимость перевозки")}`}
                 target="_blank"
@@ -614,13 +616,14 @@ export default function PricesPage() {
               ))}
             </div>
             <div className="text-center">
-              <a
-                href="tel:+79789380221"
+              <TrackedPhoneLink
+                phone="+79789380221"
+                trackingId="discount"
                 className="inline-flex items-center justify-center bg-white text-teal-800 px-8 py-4 rounded-xl font-bold text-lg hover:bg-teal-50 transition-colors shadow-lg"
                 aria-label="Позвонить для уточнения скидок"
               >
                 Позвонить и уточнить скидку
-              </a>
+              </TrackedPhoneLink>
             </div>
           </div>
         </section>
@@ -663,13 +666,14 @@ export default function PricesPage() {
               <h3 className="text-2xl font-bold mb-3">Рассчитать стоимость прямо сейчас</h3>
               <p className="text-teal-200 mb-6">Назовите маршрут — ответим за 2 минуты.</p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <a
-                  href="tel:+79789380221"
+                <TrackedPhoneLink
+                  phone="+79789380221"
+                  trackingId="price_block"
                   className="inline-flex items-center justify-center bg-white text-teal-700 px-8 py-4 rounded-xl font-bold text-lg hover:bg-teal-50 transition-colors shadow-lg"
                   aria-label="Позвонить для расчёта стоимости"
                 >
                   +7 (978) 938-02-21
-                </a>
+                </TrackedPhoneLink>
                 <a
                   href={`https://t.me/ritevp?text=${encodeURIComponent("Здравствуйте! Хочу узнать стоимость перевозки")}`}
                   target="_blank"

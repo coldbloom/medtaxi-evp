@@ -33,8 +33,6 @@ export const Menu = ({ onCloseAction }: WithOnCloseProps) => {
   const pathname = usePathname();
 
   const handleLinkClick = (href: string) => {
-    console.log('pathname = ', pathname)
-    console.log('href = ', href)
     if (pathname === href) {
       onCloseAction();
     }

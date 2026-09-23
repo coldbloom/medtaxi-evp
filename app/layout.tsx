@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
-// import { ScrollToTop } from "@/app/components/ScrollToTop";
+import { PhoneClickTracking } from "@/app/components/tracking/PhoneClickTracking";
 import "./globals.css";
 
 const YANDEX_METRIKA_ID = 108491610;
@@ -108,6 +108,8 @@ export default function RootLayout({
 
         {/*<ScrollToTop />*/}
         {children}
+        {/* Маленький client leaf: layout и SEO-контент страниц остаются серверными. */}
+        <PhoneClickTracking />
 
         <Script
           id="yandex-metrika"

@@ -37,7 +37,6 @@ for (const [name, source] of Object.entries(sources)) {
       const filename = `${name}-${size}-${hash}.${format}`;
       await writeFile(path.join(output, filename), buffer);
       variants.push({ src: `/donetsk/images/${filename}`, width: size });
-      console.log(`${filename}: ${buffer.length} bytes`);
     }
     formats[format] = variants;
   }

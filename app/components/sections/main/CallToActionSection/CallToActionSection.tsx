@@ -1,5 +1,6 @@
 import React from 'react';
 import Image from "next/image";
+import { TrackedPhoneLink } from "@/app/components/tracking/TrackedPhoneLink";
 
 export const CallToActionSection = () => {
   return (
@@ -23,13 +24,14 @@ export const CallToActionSection = () => {
           перевозку в кратчайшие сроки.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 items-center justify-center flex-wrap">
-          <a
-            href="tel:+79789380221"
+          <TrackedPhoneLink
+            phone="+79789380221"
+            trackingId="final"
             className="inline-block bg-white text-blue-600 px-10 py-4 rounded-lg font-bold text-xl hover:bg-gray-100 transition-colors shadow-lg"
             aria-label="Позвонить по телефону +79789380221"
           >
             +7 (978) 938-02-21
-          </a>
+          </TrackedPhoneLink>
           <a
             href={`https://t.me/ritevp?text=${encodeURIComponent("Здравствуйте")}`}
             target="_blank"

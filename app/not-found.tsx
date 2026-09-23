@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-html-link-for-pages -- The root error fallback is serialized on every route; keep it free of client dependencies. */
 import type { Metadata } from "next";
+import { TrackedPhoneLink } from "@/app/components/tracking/TrackedPhoneLink";
 
 export const metadata: Metadata = {
   title: "Страница не найдена | Медтакси Евпатория",
@@ -50,13 +51,14 @@ export default function NotFound() {
               >
                 ← На главную
               </a>
-              <a
-                href="tel:+79789380221"
+              <TrackedPhoneLink
+                phone="+79789380221"
+                trackingId="hero"
                 className="inline-flex items-center justify-center bg-blue-600 border-2 border-blue-300 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-blue-500 transition-colors"
                 aria-label="Позвонить +79789380221"
               >
                 Позвонить нам
-              </a>
+              </TrackedPhoneLink>
             </div>
 
             {/* Quick links */}
@@ -85,7 +87,7 @@ export default function NotFound() {
 
       <footer className="bg-gray-900 px-4 py-8 text-center text-gray-300">
         <p>Медтакси Евпатория · Работаем круглосуточно</p>
-        <a href="tel:+79789380221" className="mt-2 inline-block font-semibold text-blue-300">+7 (978) 938-02-21</a>
+        <TrackedPhoneLink phone="+79789380221" trackingId="footer" className="mt-2 inline-block font-semibold text-blue-300">+7 (978) 938-02-21</TrackedPhoneLink>
       </footer>
     </>
   );

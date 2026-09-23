@@ -1,5 +1,7 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+Трекинг телефонных ссылок: [как работает MVP и как отладить запрос](docs/call-clicks.md).
+
 ## Getting Started
 
 First, run the development server:
@@ -38,3 +40,11 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 # medtaxi-evp
 # medtaxi-evp
 # medtaxi-evp
+
+
+TODO на будущее (что сделать)
+
+. Улучшить изображение для соцсетей и Google Discover
+Сейчас og:image имеет ширину 767 px и почти квадратные пропорции в [page.tsx (line 64)](/Users/konstantin.kolesnik/Documents/code/perevozki/medtaxi-evp/app/donetsk/page.tsx:64).
+Рекомендую создать отдельное изображение:
+1200 × 630 или 1280 × 720

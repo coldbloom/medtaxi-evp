@@ -6,6 +6,7 @@ import { Advantages } from "@/app/components/sections/main/Advantages";
 import { Reviews } from "@/app/components/sections/Reviews";
 import { CallToActionSection } from "@/app/components/sections/main/CallToActionSection";
 import { Discounts } from "@/app/components/sections/Discounts";
+import { TrackedPhoneLink } from "@/app/components/tracking/TrackedPhoneLink";
 
 const SITE_URL = "https://medtaxi-evp.ru";
 const PAGE_URL = `${SITE_URL}/uslugi/perevozka-iz-bolnitsy-domoj`;
@@ -201,13 +202,14 @@ export default function Page() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 mb-10">
-              <a
-                href="tel:+79789380221"
+              <TrackedPhoneLink
+                phone="+79789380221"
+                trackingId="hero"
                 className="inline-flex items-center justify-center bg-white text-blue-800 px-8 py-4 rounded-xl font-bold text-lg hover:bg-blue-50 transition-colors shadow-lg"
                 aria-label="Позвонить +79789380221"
               >
                 Позвонить: +7 (978) 938-02-21
-              </a>
+              </TrackedPhoneLink>
               <a
                 href={`https://t.me/ritevp?text=${encodeURIComponent("Здравствуйте! Нужна перевозка лежачего из больницы домой")}`}
                 target="_blank"
@@ -306,13 +308,14 @@ export default function Page() {
               <p className="text-blue-200 mb-2">По Евпатории — <strong className="text-white">от 2 500 руб.</strong></p>
               <p className="text-blue-200 mb-2">По Крыму — <strong className="text-white">от 5 000 руб.</strong></p>
               <p className="text-blue-200 mb-6 text-sm">Подъём на этаж без лифта — по договорённости</p>
-              <a
-                href="tel:+79789380221"
+              <TrackedPhoneLink
+                phone="+79789380221"
+                trackingId="price_block"
                 className="inline-flex items-center justify-center bg-white text-blue-800 px-8 py-4 rounded-xl font-bold text-lg hover:bg-blue-50 transition-colors shadow-lg"
                 aria-label="Позвонить для расчёта цены"
               >
                 Рассчитать стоимость
-              </a>
+              </TrackedPhoneLink>
             </div>
           </div>
         </section>
