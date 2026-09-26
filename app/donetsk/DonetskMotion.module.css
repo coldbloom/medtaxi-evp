@@ -3,7 +3,7 @@
   --motion-ease: cubic-bezier(0.22, 1, 0.36, 1);
   /* В отличие от hidden, clip не создаёт ложный scroll container для view(). */
   overflow-x: clip;
-  padding-bottom: calc(65px + env(safe-area-inset-bottom, 0px));
+  padding-bottom: 65px;
 }
 
 /* Закреплена только тонкая полоса; большой отступ под шапку не нужен. */
@@ -73,11 +73,6 @@
   border-radius: 3px;
   background: linear-gradient(90deg, #f3b941, #f3b94133);
   transform-origin: left;
-}
-
-/* Высоту панели резервирует .page, включая область жестов телефона. */
-.mobileBar {
-  padding-bottom: calc(0.5rem + env(safe-area-inset-bottom, 0px));
 }
 
 @media (min-width: 768px) {

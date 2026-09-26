@@ -57,6 +57,15 @@ export const Footer = () => {
             © {new Date().getFullYear()} Медтакси Евпатория. Все права
             защищены.
           </p>
+          <p className="mt-2 text-sm">Услуга по перевозке не является скорой медицинской помощью.</p>
+          <div className="mt-3 flex flex-wrap justify-center gap-x-5 gap-y-2 text-sm">
+            <Link href="/privacy" className="underline underline-offset-4 transition-colors hover:text-white">
+              Политика обработки персональных данных
+            </Link>
+            <Link href="/personal-data-consent" className="underline underline-offset-4 transition-colors hover:text-white">
+              Согласие на обработку персональных данных
+            </Link>
+          </div>
         </div>
         <div className="w-full pt-16 pb-4 flex items-center justify-center">
           <CodeCake />

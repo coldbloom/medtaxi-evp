@@ -120,7 +120,7 @@ const contacts = [
 
 const workHours = [
   { day: "Пн – Вс", time: "Круглосуточно", accent: true },
-  { day: "Экстренный вызов", time: "24 / 7", accent: true },
+  { day: "Срочная заявка", time: "24 / 7", accent: true },
   { day: "Плановые заявки", time: "Принимаем заранее", accent: false },
   { day: "Праздничные дни", time: "Работаем", accent: false },
 ];

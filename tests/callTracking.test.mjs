@@ -145,12 +145,13 @@ test("listener не отменяет клик и снимается при по�
   }
   const { PhoneClickTracking } = loadModule("app/components/tracking/PhoneClickTracking.tsx", {
     Element,
-    require: (name) => name === "react"
-      ? { useEffect: (effect) => { runEffect = effect; } }
-      : {
+    require: (name) => {
+      if (name === "react") return { useEffect: (effect) => { runEffect = effect; } };
+      return {
         initializeCallTracking() {},
         trackPhoneClick: (...args) => clicks.push(args),
-      },
+      };
+    },
     document: {
       addEventListener: (name, listener, capture) => {
         assert.equal(name, "click");

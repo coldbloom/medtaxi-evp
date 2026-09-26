@@ -6,8 +6,6 @@ import { initializeCallTracking, trackPhoneClick } from "@/app/lib/callTracking"
 /** Один listener для всех ссылок, включая появляющиеся позже в модальном окне. */
 export function PhoneClickTracking() {
   useEffect(() => {
-    initializeCallTracking();
-
     const handleClick = (event: MouseEvent) => {
       if (!(event.target instanceof Element)) return;
       // closest находит ссылку даже при клике по вложенной иконке или span.
@@ -25,9 +23,11 @@ export function PhoneClickTracking() {
       // preventDefault и ожидания ответа здесь нет: браузер сам открывает телефон.
     };
 
-    // Capture ловит также клики в компонентах, которые останавливают bubbling.
+    initializeCallTracking();
     document.addEventListener("click", handleClick, true);
-    return () => document.removeEventListener("click", handleClick, true);
+    return () => {
+      document.removeEventListener("click", handleClick, true);
+    };
   }, []); // Cleanup гарантирует один listener при повторном effect в Strict Mode.
 
   return null;

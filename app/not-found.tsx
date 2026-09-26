@@ -88,6 +88,9 @@ export default function NotFound() {
       <footer className="bg-gray-900 px-4 py-8 text-center text-gray-300">
         <p>Медтакси Евпатория · Работаем круглосуточно</p>
         <TrackedPhoneLink phone="+79789380221" trackingId="footer" className="mt-2 inline-block font-semibold text-blue-300">+7 (978) 938-02-21</TrackedPhoneLink>
+        <p className="mt-3 text-sm">
+          <a href="/privacy" className="underline underline-offset-4">Политика обработки персональных данных</a>
+        </p>
       </footer>
     </>
   );

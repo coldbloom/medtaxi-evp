@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import toast from "react-hot-toast";
 import { TrackedPhoneLink } from "@/app/components/tracking/TrackedPhoneLink";
 
@@ -47,6 +48,7 @@ export function ContactModal({
     phone: "",
     message: "",
   });
+  const [hasConsent, setHasConsent] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
   const previouslyFocusedElementRef = useRef<HTMLElement | null>(null);
@@ -154,6 +156,15 @@ export function ContactModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!hasConsent) {
+      toast.error("Подтвердите согласие на обработку персональных данных", {
+        duration: 3000,
+        position: "bottom-center",
+      });
+      return;
+    }
+
     setIsSubmitting(true);
 
     const digits = formData.phone.replace(/\D/g, "");
@@ -180,6 +191,9 @@ export function ContactModal({
           name: formData.name.trim(),
           phone: formData.phone.trim(),
           message: formData.message.trim(),
+          personalDataConsent: true,
+          consentVersion: "2026-09-26",
+          consentedAt: new Date().toISOString(),
         }),
         mode: 'cors',
         credentials: 'omit',
@@ -191,6 +205,7 @@ export function ContactModal({
       }
 
       setFormData({ name: "", phone: "", message: "" });
+      setHasConsent(false);
       onSubmitSuccess?.();
       notify();
       onClose();
@@ -284,7 +299,7 @@ export function ContactModal({
           className="p-4 sm:p-6 space-y-4 sm:space-y-6 overflow-y-auto flex-1 min-h-0"
         >
           <p id="modal-description" className="text-sm leading-relaxed text-gray-600">
-            Оставьте телефон — диспетчер уточнит маршрут, состояние пациента и рассчитает стоимость до выезда.
+            Оставьте телефон — диспетчер свяжется с вами и уточнит детали заявки.
           </p>
 
           {/* Имя */}
@@ -303,7 +318,7 @@ export function ContactModal({
               onChange={handleChange}
               required
               autoComplete="name"
-              className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:border-transparent outline-none transition-all ${isDonetskVariant ? "focus:ring-[#2f6757]" : "focus:ring-blue-500"}`}
+              className={`ym-disable-keys w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:border-transparent outline-none transition-all ${isDonetskVariant ? "focus:ring-[#2f6757]" : "focus:ring-blue-500"}`}
               placeholder="Введите ваше имя"
             />
           </div>
@@ -346,18 +361,17 @@ export function ContactModal({
               required
               autoComplete="tel"
               inputMode="tel"
-              className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:border-transparent outline-none transition-all ${isDonetskVariant ? "focus:ring-[#2f6757]" : "focus:ring-blue-500"}`}
+              className={`ym-disable-keys w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:border-transparent outline-none transition-all ${isDonetskVariant ? "focus:ring-[#2f6757]" : "focus:ring-blue-500"}`}
               placeholder="+7 (___) ___-__-__"
             />
           </div>
 
-          {/* Сообщение */}
           <div>
             <label
               htmlFor="message"
               className="block text-sm font-medium text-gray-700 mb-2"
             >
-              Сообщение (необязательно)
+              Комментарий (необязательно)
             </label>
             <textarea
               id="message"
@@ -365,16 +379,51 @@ export function ContactModal({
               value={formData.message}
               onChange={handleChange}
               rows={3}
-              className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:border-transparent outline-none transition-all resize-none ${isDonetskVariant ? "focus:ring-[#2f6757]" : "focus:ring-blue-500"}`}
-              placeholder="Опишите вашу ситуацию или задайте вопрос"
+              maxLength={500}
+              className={`ym-disable-keys w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:border-transparent outline-none transition-all resize-none ${isDonetskVariant ? "focus:ring-[#2f6757]" : "focus:ring-blue-500"}`}
+              placeholder="Например: откуда и куда нужна перевозка"
+              aria-describedby="message-hint"
             />
+            <p id="message-hint" className="mt-2 text-xs leading-relaxed text-gray-500">
+              Не указывайте диагнозы, сведения о здоровье, документах или оплате.
+            </p>
+          </div>
+
+          <div className="flex items-start gap-3">
+            <input
+              id="personal-data-consent"
+              name="personalDataConsent"
+              type="checkbox"
+              checked={hasConsent}
+              onChange={(event) => setHasConsent(event.target.checked)}
+              required
+              className={`mt-1 size-5 shrink-0 ${isDonetskVariant ? "accent-[#2f6757]" : "accent-blue-600"}`}
+            />
+            <label htmlFor="personal-data-consent" className="text-sm leading-relaxed text-gray-700">
+              Я даю{" "}
+              <Link
+                href="/personal-data-consent"
+                target="_blank"
+                className="font-semibold text-blue-700 underline underline-offset-2"
+              >
+                согласие на обработку персональных данных
+              </Link>{" "}
+              и ознакомлен(а) с{" "}
+              <Link
+                href="/privacy"
+                target="_blank"
+                className="font-semibold text-blue-700 underline underline-offset-2"
+              >
+                политикой
+              </Link>.
+            </label>
           </div>
 
           {/* Кнопки - фиксированные внизу */}
           <div className="flex flex-col sm:flex-row gap-3 flex-shrink-0">
             <button
               type="submit"
-              disabled={isSubmitting}
+              disabled={isSubmitting || !hasConsent}
               className={`flex-1 px-4 sm:px-6 py-3 rounded-xl font-semibold text-sm sm:text-base transition-colors shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 ${isDonetskVariant ? "bg-[#f3b941] text-[#14221e] hover:bg-[#ffd06d]" : "bg-blue-600 text-white hover:bg-blue-700"}`}
             >
               {isSubmitting ? (

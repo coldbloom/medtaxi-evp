@@ -17,6 +17,8 @@ const PAGE_PATH = "/donetsk";
 const PAGE_URL = `${SITE_URL}${PAGE_PATH}`;
 const PHONE_HREF = "+79895052785";
 const PHONE_LABEL = "+7 (989) 505-27-85";
+const TELEGRAM_URL = "https://t.me/konstankk";
+const MAX_URL = "https://max.ru/u/f9LHodD0cOI7hGFwnp4y8CBCeTVIs3kkyT-JqLq2wJc3ES2VjFOgy02xevs";
 const MIN_PRICE = 3500;
 const MIN_PRICE_LABEL = "3 500 ₽";
 
@@ -303,13 +305,15 @@ export default function DonetskPage() {
             <Image
               src="/logo-donetsk.svg"
               alt="Медтакси Донецк — логотип"
-              width={64}
-              height={64}
+              width={40}
+              height={40}
               priority
             />
             <span>
               <span className="block text-base font-black leading-tight tracking-tight">Медтакси</span>
-              <span className="block text-xs font-semibold uppercase tracking-[0.2em] text-[#bdd0c8]">Донецк · ДНР</span>
+              <span className="block whitespace-nowrap text-xs font-semibold uppercase tracking-[0.2em] text-[#bdd0c8]">
+                Донецк<span className="hidden min-[360px]:inline"> · ДНР</span>
+              </span>
             </span>
           </a>
 
@@ -320,12 +324,42 @@ export default function DonetskPage() {
             <a href="#faq" className="transition hover:text-[#f3b941]">Вопросы</a>
           </nav>
 
-          <div className="flex items-center gap-2 sm:gap-3">
-            <DonetskPhoneLink href={`tel:${PHONE_HREF}`} ctaPosition="header" className="rounded-full border border-white/15 bg-white/8 px-3 py-2 text-sm font-extrabold transition hover:bg-white/14 sm:px-5" aria-label={`Позвонить ${PHONE_LABEL}`}>
-              <span className="sm:hidden">Позвонить</span>
+          <nav className="flex items-center gap-1.5 sm:gap-2" aria-label="Быстрая связь">
+            <DonetskSocialLink
+              href={TELEGRAM_URL}
+              network="telegram"
+              ctaPosition="header"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="grid size-9 shrink-0 place-items-center rounded-full bg-[#2aabee] transition hover:bg-[#1598dc] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:size-10"
+              aria-label="Написать в Telegram"
+              title="Написать в Telegram"
+            >
+              <StaticImage src="/tg-icon.svg" alt="" width={21} height={18} loading="eager" aria-hidden="true" />
+            </DonetskSocialLink>
+            <DonetskSocialLink
+              href={MAX_URL}
+              network="max"
+              ctaPosition="header"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="grid size-9 shrink-0 place-items-center rounded-full bg-[linear-gradient(45deg,#3dc0fc,#3d4beb,#8242e3)] transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:size-10"
+              aria-label="Написать в Max"
+              title="Написать в Max"
+            >
+              <StaticImage src="/max-icon.svg" alt="" width={24} height={24} loading="eager" aria-hidden="true" />
+            </DonetskSocialLink>
+            <DonetskPhoneLink
+              href={`tel:${PHONE_HREF}`}
+              ctaPosition="header"
+              className="grid size-9 shrink-0 place-items-center rounded-full border border-white/15 bg-white/8 text-sm font-extrabold transition hover:bg-white/14 sm:block sm:size-auto sm:px-5 sm:py-2"
+              aria-label={`Позвонить ${PHONE_LABEL}`}
+              title={`Позвонить ${PHONE_LABEL}`}
+            >
+              <StaticImage className="sm:hidden" src="/phone-icon.svg" alt="" width={18} height={18} loading="eager" aria-hidden="true" />
               <span className="hidden sm:inline">{PHONE_LABEL}</span>
             </DonetskPhoneLink>
-          </div>
+          </nav>
         </div>
       </header>
 
@@ -767,7 +801,7 @@ export default function DonetskPage() {
           <div className="sm:text-right">
             <div className="flex items-center gap-3 sm:justify-end" aria-label="Связаться с Медтакси Донецк">
               <DonetskSocialLink
-                href="https://max.ru/u/f9LHodD0cOI7hGFwnp4y8CBCeTVIs3kkyT-JqLq2wJc3ES2VjFOgy02xevs"
+                href={MAX_URL}
                 network="max"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -777,7 +811,7 @@ export default function DonetskPage() {
                 <StaticImage src="/max-icon.svg" alt="" width={24} height={24} aria-hidden="true" />
               </DonetskSocialLink>
               <DonetskSocialLink
-                href="https://t.me/konstankk"
+                href={TELEGRAM_URL}
                 network="telegram"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -800,7 +834,13 @@ export default function DonetskPage() {
           </div>
         </div>
         <div className="mx-auto mt-8 flex max-w-7xl flex-col gap-7 border-t border-white/10 pt-6 text-xs text-[#7f938b] sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} Медтакси Донецк. Информация на странице не является медицинской консультацией.</p>
+          <div className="space-y-2">
+            <p>© {new Date().getFullYear()} Медтакси Донецк. Информация на странице не является медицинской консультацией.</p>
+            <div className="flex flex-wrap gap-x-4 gap-y-2">
+              <a href="/privacy" className="underline underline-offset-4 hover:text-white">Политика обработки персональных данных</a>
+              <a href="/personal-data-consent" className="underline underline-offset-4 hover:text-white">Согласие на обработку данных</a>
+            </div>
+          </div>
           <div className="shrink-0 opacity-70 transition hover:opacity-100 flex justify-center">
             <a href="https://t.me/konstankk" target="_blank" rel="noopener noreferrer" aria-label="Ссылка на контакт разработчика (откроется в новой вкладке)">
               <StaticImage src="/codecake.svg" alt="Разработано в CODECAKE" width={235} height={37} />
