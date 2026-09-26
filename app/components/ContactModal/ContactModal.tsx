@@ -6,6 +6,7 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import toast from "react-hot-toast";
 import { TrackedPhoneLink } from "@/app/components/tracking/TrackedPhoneLink";
+import styles from "./ContactModal.module.css";
 
 const ClientToaster = dynamic(
   () => import("react-hot-toast").then((mod) => mod.Toaster),
@@ -50,7 +51,9 @@ export function ContactModal({
   });
   const [hasConsent, setHasConsent] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const viewportRef = useRef<HTMLDivElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
   const previouslyFocusedElementRef = useRef<HTMLElement | null>(null);
   const onCloseRef = useRef(onClose);
   const isDonetskVariant = variant === "donetsk";
@@ -90,13 +93,50 @@ export function ContactModal({
 
   // Блокировка скролла при открытии
   useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
+    if (!isOpen) return;
+
+    const { scrollX, scrollY } = window;
+    const { style } = document.body;
+    const previous = {
+      overflow: style.overflow,
+      position: style.position,
+      top: style.top,
+      left: style.left,
+      width: style.width,
+    };
+
+    // Fixed positioning also locks the background on iOS while the form scrolls.
+    Object.assign(style, {
+      overflow: "hidden",
+      position: "fixed",
+      top: `-${scrollY}px`,
+      left: `-${scrollX}px`,
+      width: "100%",
+    });
+
     return () => {
-      document.body.style.overflow = "";
+      Object.assign(style, previous);
+      window.scrollTo({ left: scrollX, top: scrollY, behavior: "instant" });
+    };
+  }, [isOpen]);
+
+  useEffect(() => {
+    const viewport = window.visualViewport;
+    const container = viewportRef.current;
+    if (!isOpen || !viewport || !container) return;
+
+    // The keyboard can shrink/pan the visual viewport without changing CSS dvh.
+    const updateViewport = () => {
+      container.style.setProperty("--modal-viewport-height", `${viewport.height}px`);
+      container.style.setProperty("--modal-viewport-top", `${viewport.offsetTop}px`);
+    };
+
+    updateViewport();
+    viewport.addEventListener("resize", updateViewport);
+    viewport.addEventListener("scroll", updateViewport);
+    return () => {
+      viewport.removeEventListener("resize", updateViewport);
+      viewport.removeEventListener("scroll", updateViewport);
     };
   }, [isOpen]);
 
@@ -105,6 +145,7 @@ export function ContactModal({
     if (!isOpen) return;
 
     previouslyFocusedElementRef.current = document.activeElement as HTMLElement | null;
+    closeButtonRef.current?.focus({ preventScroll: true });
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
@@ -140,18 +181,8 @@ export function ContactModal({
     document.addEventListener("keydown", handleKeyDown);
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
-      previouslyFocusedElementRef.current?.focus();
+      previouslyFocusedElementRef.current?.focus({ preventScroll: true });
     };
-  }, [isOpen]);
-
-  // Фокус на первом поле при открытии
-  useEffect(() => {
-    if (isOpen && modalRef.current) {
-      const firstInput = modalRef.current.querySelector("input");
-      if (firstInput) {
-        setTimeout(() => firstInput.focus(), 100);
-      }
-    }
   }, [isOpen]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -245,7 +276,8 @@ export function ContactModal({
 
             {/* Контейнер модального окна - по центру экрана */}
             <div
-              className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none"
+              ref={viewportRef}
+              className={`${styles.viewport} z-50 flex items-center justify-center pointer-events-none`}
               onClick={(e) => {
                 // Закрытие при клике вне модального окна
                 if (e.target === e.currentTarget) {
@@ -256,7 +288,7 @@ export function ContactModal({
               {/* Модальное окно с анимацией - всегда по центру, помещается в экран */}
               <div
                 ref={modalRef}
-                className="w-full max-w-lg max-h-[90vh] bg-white rounded-3xl shadow-2xl transform transition-all duration-300 flex flex-col pointer-events-auto scale-100 opacity-100 translate-y-0"
+                className="w-full max-w-lg max-h-full min-h-0 overflow-hidden bg-white rounded-3xl shadow-2xl flex flex-col pointer-events-auto"
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="modal-title"
@@ -264,14 +296,15 @@ export function ContactModal({
                 onClick={(e) => e.stopPropagation()}
               >
         {/* Заголовок - фиксированный */}
-        <div className="flex items-center justify-between p-4 sm:p-6 border-b border-gray-200 flex-shrink-0">
+        <div className="flex items-center justify-between gap-2 p-4 sm:p-6 border-b border-gray-200 flex-shrink-0">
           <h2
             id="modal-title"
-            className="text-xl sm:text-2xl font-bold text-gray-900"
+            className="min-w-0 text-xl sm:text-2xl font-bold text-gray-900"
           >
             Заказать обратный звонок
           </h2>
           <button
+            ref={closeButtonRef}
             type="button"
             onClick={onClose}
             className="p-2 text-gray-400 hover:text-gray-600 transition-colors rounded-lg hover:bg-gray-100 flex-shrink-0"
@@ -296,7 +329,7 @@ export function ContactModal({
         {/* Форма - с прокруткой если нужно */}
         <form 
           onSubmit={handleSubmit} 
-          className="p-4 sm:p-6 space-y-4 sm:space-y-6 overflow-y-auto flex-1 min-h-0"
+          className={`${styles.form} p-4 sm:p-6 space-y-4 sm:space-y-6 overflow-y-auto flex-1 min-h-0`}
         >
           <p id="modal-description" className="text-sm leading-relaxed text-gray-600">
             Оставьте телефон — диспетчер свяжется с вами и уточнит детали заявки.

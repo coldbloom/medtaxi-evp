@@ -1,0 +1,22 @@
+.viewport {
+  position: fixed;
+  inset-inline: 0;
+  top: var(--modal-viewport-top, 0px);
+  height: var(--modal-viewport-height, 100vh);
+  padding: calc(16px + env(safe-area-inset-top, 0px))
+    calc(16px + env(safe-area-inset-right, 0px))
+    calc(16px + env(safe-area-inset-bottom, 0px))
+    calc(16px + env(safe-area-inset-left, 0px));
+}
+
+@supports (height: 100dvh) {
+  .viewport {
+    height: var(--modal-viewport-height, 100dvh);
+  }
+}
+
+.form {
+  overscroll-behavior-y: contain;
+  scroll-padding-block: 16px;
+  -webkit-overflow-scrolling: touch;
+}
