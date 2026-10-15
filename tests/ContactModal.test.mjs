@@ -1,146 +1,82 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { createRequire } from "node:module";
 import { test } from "node:test";
-import vm from "node:vm";
+import { createElement } from "react";
 import postcss from "postcss";
-import ts from "typescript";
+import { browserFixture, hookRenderer, moduleLoader } from "./helpers/componentHarness.mjs";
 
-const require = createRequire(import.meta.url);
-const code = ts.transpileModule(readFileSync("app/components/ContactModal/ContactModal.tsx", "utf8"), {
-  compilerOptions: { module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX },
-}).outputText;
-
-function eventTarget() {
-  const listeners = new Map();
-  return {
-    listeners,
-    addEventListener(name, callback) {
-      if (!listeners.has(name)) listeners.set(name, new Set());
-      listeners.get(name).add(callback);
+function renderDialog({ isOpen = true, visualViewport = true } = {}) {
+  const browser = browserFixture({ visualViewport });
+  const renderer = hookRenderer(browser);
+  const loader = moduleLoader({
+    mocks: {
+      react: renderer.react,
+      "react-dom": { createPortal: (children) => children },
     },
-    removeEventListener(name, callback) {
-      listeners.get(name)?.delete(callback);
-      if (listeners.get(name)?.size === 0) listeners.delete(name);
-    },
-    dispatch(name, event = {}) {
-      for (const callback of listeners.get(name) || []) callback(event);
-    },
-  };
-}
-
-function renderModal({ isOpen = true, visualViewport = true } = {}) {
-  const effects = [];
-  const scrollCalls = [];
-  const focusCalls = [];
-  const properties = new Map();
-  const originalStyle = {
-    overflow: "auto",
-    position: "relative",
-    top: "2px",
-    left: "3px",
-    width: "95%",
-    background: "white",
-  };
-  const document = {
-    ...eventTarget(),
-    body: { style: { ...originalStyle } },
-    activeElement: null,
-  };
-  function focusable(name) {
-    return {
-      offsetParent: {},
-      focus(options) {
-        focusCalls.push({ name, options: options && { ...options } });
-        document.activeElement = this;
-      },
-    };
-  }
-  const trigger = focusable("trigger");
-  const closeButton = focusable("close");
-  const phoneLink = focusable("phone-link");
-  document.activeElement = trigger;
-  const container = { style: { setProperty: (name, value) => properties.set(name, value) } };
-  const dialog = { querySelectorAll: () => [closeButton, phoneLink] };
-  const viewport = { ...eventTarget(), height: 740, offsetTop: 0 };
-  const window = {
-    scrollX: 4,
-    scrollY: 1234,
-    visualViewport: visualViewport ? viewport : undefined,
-    scrollTo: (options) => scrollCalls.push({ ...options }),
-  };
-  const noopComponent = () => null;
-  const exports = {};
-  vm.runInNewContext(code, {
-    exports,
-    document,
-    window,
-    require(name) {
-      switch (name) {
-        case "react": return {
-          useState: (value) => [value, () => {}],
-          useRef: (current) => ({ current }),
-          useEffect: (effect) => effects.push(effect),
-        };
-        case "react-dom": return { createPortal: (children) => children };
-        case "next/dynamic": return { default: () => noopComponent };
-        case "next/link": return { default: noopComponent };
-        case "react-hot-toast": return { default: {}, Toaster: noopComponent };
-        case "@/app/components/tracking/TrackedPhoneLink": return { TrackedPhoneLink: noopComponent };
-        case "./ContactModal.module.css": return { default: { viewport: "viewport", form: "form" } };
-        default: return require(name);
-      }
-    },
+    globals: { document: browser.document, window: browser.window },
   });
+  const { ContactDialog } = loader.load("app/components/ContactModal/ContactDialog.tsx");
   let closed = 0;
-  const tree = exports.ContactModal({ isOpen, onClose: () => closed++ });
-  function attachRefs(node) {
-    if (Array.isArray(node)) return node.forEach(attachRefs);
-    if (!node || typeof node !== "object" || !node.props) return;
-    const { props, type } = node;
-    if (props.ref) {
-      props.ref.current = props.role === "dialog" ? dialog : type === "button" ? closeButton : container;
-    }
-    attachRefs(props.children);
-  }
-  attachRefs(tree);
-  const cleanups = effects.map((effect) => effect()).filter((cleanup) => typeof cleanup === "function");
+  let props = {
+    isOpen,
+    onClose: () => closed++,
+    title: "Обратный звонок",
+    descriptionId: "callback-description",
+    isSubmitting: false,
+    stepKey: "form",
+    children: createElement("button", { type: "button" }, "Последняя кнопка"),
+  };
+  function update(next) { props = { ...props, ...next }; renderer.render(ContactDialog, props); }
+  update({});
   return {
-    document, originalStyle, scrollCalls, focusCalls, properties, viewport, trigger, closeButton, phoneLink,
+    ...browser,
+    update,
+    cleanup: () => renderer.unmount(),
     closed: () => closed,
-    cleanup: () => cleanups.forEach((cleanup) => cleanup()),
+    closeButton: () => browser.element((node) => node.type === "button" && !!node.props["aria-label"]),
+    lastButton: () => browser.element((node) => node.type === "button" && node.props.children === "Последняя кнопка"),
   };
 }
 
-test("a closed modal does not lock the page, focus elements or subscribe to events", () => {
-  const page = renderModal({ isOpen: false });
+test("a closed dialog does not lock the page, focus elements or subscribe to events", (t) => {
+  const page = renderDialog({ isOpen: false });
+  t.after(page.cleanup);
   assert.deepEqual(page.document.body.style, page.originalStyle);
   assert.equal(page.document.listeners.size, 0);
   assert.equal(page.viewport.listeners.size, 0);
   assert.equal(page.properties.size, 0);
   assert.deepEqual(page.focusCalls, []);
-  page.cleanup();
   assert.deepEqual(page.scrollCalls, []);
-  assert.deepEqual(page.document.body.style, page.originalStyle);
 });
 
-test("an open modal locks the body and restores inline styles and the exact scroll position instantly", () => {
-  const page = renderModal();
+test("an open dialog restores inline styles and exact scroll position when closed", (t) => {
+  const page = renderDialog();
+  t.after(page.cleanup);
   assert.deepEqual(page.document.body.style, {
     ...page.originalStyle,
-    overflow: "hidden",
-    position: "fixed",
-    top: "-1234px",
-    left: "-4px",
-    width: "100%",
+    overflow: "hidden", position: "fixed", top: "-1234px", left: "-4px", width: "100%",
   });
-  page.cleanup();
+  page.update({ isOpen: false });
   assert.deepEqual(page.document.body.style, page.originalStyle);
   assert.deepEqual(page.scrollCalls, [{ left: 4, top: 1234, behavior: "instant" }]);
+  assert.equal(page.document.listeners.size, 0);
+  assert.equal(page.viewport.listeners.size, 0);
 });
 
-test("visual viewport height and offset update on resize and pan, then unsubscribe on close", () => {
-  const page = renderModal();
+test("route changes do not restore an unrelated page's scroll position or detached trigger", (t) => {
+  const page = renderDialog();
+  t.after(page.cleanup);
+  page.window.location.pathname = "/prices";
+  page.trigger.isConnected = false;
+  page.update({ isOpen: false });
+  assert.deepEqual(page.document.body.style, page.originalStyle);
+  assert.deepEqual(page.scrollCalls, []);
+  assert.equal(page.focusCalls.some(({ name }) => name === "trigger"), false);
+});
+
+test("visual viewport height and offset track keyboard resize/pan and unsubscribe on close", (t) => {
+  const page = renderDialog();
+  t.after(page.cleanup);
   assert.equal(page.properties.get("--modal-viewport-height"), "740px");
   assert.equal(page.properties.get("--modal-viewport-top"), "0px");
   assert.deepEqual([...page.viewport.listeners.keys()].sort(), ["resize", "scroll"]);
@@ -152,15 +88,16 @@ test("visual viewport height and offset update on resize and pan, then unsubscri
   page.viewport.offsetTop = 80;
   page.viewport.dispatch("scroll");
   assert.equal(page.properties.get("--modal-viewport-top"), "80px");
-  page.cleanup();
+  page.update({ isOpen: false });
   assert.equal(page.viewport.listeners.size, 0);
   page.viewport.height = 740;
   page.viewport.dispatch("resize");
   assert.equal(page.properties.get("--modal-viewport-height"), "430px");
 });
 
-test("browsers without VisualViewport retain the dynamic CSS viewport fallback", () => {
-  const page = renderModal({ visualViewport: false });
+test("browsers without VisualViewport retain the dynamic CSS viewport fallback", (t) => {
+  const page = renderDialog({ visualViewport: false });
+  t.after(page.cleanup);
   assert.equal(page.properties.size, 0);
   assert.equal(page.viewport.listeners.size, 0);
   const css = postcss.parse(readFileSync("app/components/ContactModal/ContactModal.module.css", "utf8"));
@@ -168,32 +105,51 @@ test("browsers without VisualViewport retain the dynamic CSS viewport fallback",
   css.walkRules(".viewport", (rule) => {
     rule.walkDecls("height", (declaration) => heightValues.push(declaration.value.replace(/\s+/g, "")));
   });
-  assert.deepEqual(heightValues, [
-    "var(--modal-viewport-height,100vh)",
-    "var(--modal-viewport-height,100dvh)",
-  ]);
-  page.cleanup();
+  assert.deepEqual(heightValues, ["var(--modal-viewport-height,100vh)", "var(--modal-viewport-height,100dvh)"]);
 });
 
-test("initial focus avoids the keyboard and restores the trigger without scrolling", () => {
-  const page = renderModal();
-  assert.equal(page.document.activeElement, page.closeButton);
-  assert.deepEqual(page.focusCalls, [{ name: "close", options: { preventScroll: true } }]);
-  page.document.dispatch("keydown", { key: "Escape" });
+test("initial focus avoids the keyboard and restores the trigger without scrolling", (t) => {
+  const page = renderDialog();
+  t.after(page.cleanup);
+  assert.equal(page.document.activeElement, page.closeButton());
+  assert.ok(page.focusCalls.length > 0);
+  assert.ok(page.focusCalls.every(({ options }) => options.preventScroll === true));
+  page.document.dispatch("keydown", { key: "Escape", preventDefault() {} });
   assert.equal(page.closed(), 1);
-  page.cleanup();
+  page.update({ isOpen: false });
   assert.equal(page.document.activeElement, page.trigger);
   assert.deepEqual(page.focusCalls.at(-1), { name: "trigger", options: { preventScroll: true } });
   assert.equal(page.document.listeners.size, 0);
 });
 
-test("keyboard navigation remains trapped between the first and last dialog controls", () => {
-  const page = renderModal();
+test("changing dialog steps focuses the close control without reinstalling scroll locks", (t) => {
+  const page = renderDialog();
+  t.after(page.cleanup);
+  page.lastButton().focus();
+  page.update({ stepKey: "sent" });
+  assert.equal(page.document.activeElement, page.closeButton());
+  assert.deepEqual(page.scrollCalls, []);
+  assert.equal(page.document.body.style.top, "-1234px");
+});
+
+test("keyboard navigation remains trapped between first and last dialog controls", (t) => {
+  const page = renderDialog();
+  t.after(page.cleanup);
   let prevented = 0;
   page.document.dispatch("keydown", { key: "Tab", shiftKey: true, preventDefault: () => prevented++ });
-  assert.equal(page.document.activeElement, page.phoneLink);
+  assert.equal(page.document.activeElement, page.lastButton());
   page.document.dispatch("keydown", { key: "Tab", shiftKey: false, preventDefault: () => prevented++ });
-  assert.equal(page.document.activeElement, page.closeButton);
+  assert.equal(page.document.activeElement, page.closeButton());
   assert.equal(prevented, 2);
-  page.cleanup();
+});
+
+test("Tab recovers focus when the active control was disabled during submission", (t) => {
+  const page = renderDialog();
+  t.after(page.cleanup);
+  assert.equal(page.document.activeElement, page.closeButton());
+  page.update({ isSubmitting: true });
+  let prevented = 0;
+  page.document.dispatch("keydown", { key: "Tab", shiftKey: false, preventDefault: () => prevented++ });
+  assert.equal(page.document.activeElement, page.lastButton());
+  assert.equal(prevented, 1);
 });

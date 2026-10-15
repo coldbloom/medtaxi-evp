@@ -2,17 +2,17 @@
 
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
+import { useContactModalController } from "@/app/components/ContactModal/useContactModalController";
 import { trackDonetskGoal } from "./analytics";
 
 const ContactModal = dynamic(
-  () => import("@/app/components/ContactModal").then((module) => module.ContactModal),
+  () => import("@/app/components/ContactModal/ContactModal").then((module) => module.ContactModal),
   { ssr: false },
 );
 
 // One delegated listener keeps every CTA and phone/social link server-rendered.
 export function DonetskInteractions() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [hasOpened, setHasOpened] = useState(false);
+  const { isOpen, hasOpened, open, close } = useContactModalController();
   const [ctaPosition, setCtaPosition] = useState("unknown");
 
   useEffect(() => {
@@ -30,20 +30,19 @@ export function DonetskInteractions() {
 
       if (goal === "donetsk_callback_open") {
         setCtaPosition(position);
-        setHasOpened(true);
-        setIsOpen(true);
+        open();
       }
     };
 
     document.addEventListener("click", handleClick);
     return () => document.removeEventListener("click", handleClick);
-  }, []);
+  }, [open]);
 
-  // Load only after the first request; keep mounted so success notifications survive closing.
+  // Preserve the form draft when closed, and load its code only on first demand.
   return hasOpened ? (
     <ContactModal
       isOpen={isOpen}
-      onClose={() => setIsOpen(false)}
+      onClose={close}
       contactPhoneHref="+79895052785"
       contactPhoneLabel="+7 (989) 505-27-85"
       variant="donetsk"

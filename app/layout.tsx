@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { PhoneClickTracking } from "@/app/components/tracking/PhoneClickTracking";
+import { CallFeedback } from "@/app/components/tracking/CallFeedback";
 import { SiteAnalytics } from "@/app/components/SiteAnalytics";
 import "./globals.css";
 
@@ -97,6 +98,7 @@ export default function RootLayout({
         {children}
         {/* Маленький client leaf: layout и SEO-контент страниц остаются серверными. */}
         <PhoneClickTracking />
+        <CallFeedback />
         <SiteAnalytics />
       </body>
     </html>
