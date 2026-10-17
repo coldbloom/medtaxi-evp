@@ -1,0 +1,75 @@
+.gallery {
+  min-width: 0;
+  background: #10211d;
+  color: #fff;
+}
+
+.carousel > div {
+  padding-bottom: 0;
+}
+
+.carousel > button {
+  top: calc((100% - 44px) / 2);
+  width: 44px;
+  height: 44px;
+  border-color: rgb(255 255 255 / 24%);
+  background: #f3b941;
+  box-shadow: 0 4px 16px rgb(0 0 0 / 18%);
+}
+
+.carousel > button:hover {
+  background: #ffd276;
+}
+
+.carousel > button:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+  box-shadow: none;
+}
+
+.carousel > button > span {
+  border-color: #10211d;
+}
+
+.slide {
+  min-width: 0;
+  margin: 0;
+}
+
+.imageFrame {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: 20px;
+  background: #0b1915;
+}
+
+.image {
+  object-fit: contain;
+}
+
+.caption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 44px;
+  padding: 10px 2px 0;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.counter {
+  flex-shrink: 0;
+  color: #f3b941;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.06em;
+}
+
+@media (max-width: 389px) {
+  .caption {
+    gap: 8px;
+    font-size: 12px;
+  }
+}

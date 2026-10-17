@@ -28,7 +28,7 @@ function eventTarget() {
 }
 
 // Execute the real controller components/hooks; only React scheduling and the lazy module are simulated.
-function setup(kind = "default", { ordinaryCount = 1 } = {}) {
+function setup(kind = "default", { ordinaryCount = 1, pagePath, contactPhoneHref, contactPhoneLabel } = {}) {
   let active;
   let busy = false;
   let nextTimer = 0;
@@ -41,7 +41,7 @@ function setup(kind = "default", { ordinaryCount = 1 } = {}) {
   let renderedModals = [];
   const modalModule = new Promise((resolve) => { resolveModule = resolve; });
   const document = { ...eventTarget(), visibilityState: "visible", hasFocus: () => true, querySelector: () => busy ? {} : null };
-  const window = { ...eventTarget(), location: { pathname: kind === "donetsk" ? "/donetsk" : "/contacts" } };
+  const window = { ...eventTarget(), location: { pathname: pagePath ?? (kind === "donetsk" ? "/donetsk" : "/contacts") } };
   class Element {
     constructor({ phone, goal, position = "hero" } = {}) { Object.assign(this, { phone, goal, position }); }
     closest(selector) {
@@ -117,7 +117,7 @@ function setup(kind = "default", { ordinaryCount = 1 } = {}) {
   const Ordinary = kind === "donetsk"
     ? load("app/donetsk/DonetskInteractions.tsx").DonetskInteractions
     : load("app/components/ContactModal/ContactModalTrigger/ContactModalTrigger.tsx").ContactModalTrigger;
-  for (const Component of [...Array(ordinaryCount).fill(Ordinary), CallFeedback]) roots.push({ Component, hooks: [], pending: [], index: 0, tree: null });
+  for (const Component of [...Array(ordinaryCount).fill(Ordinary), CallFeedback]) roots.push({ Component, props: Component === Ordinary ? { pagePath, contactPhoneHref, contactPhoneLabel } : {}, hooks: [], pending: [], index: 0, tree: null });
 
   function walk(node, visit) {
     if (Array.isArray(node)) return node.forEach((child) => walk(child, visit));
@@ -130,7 +130,7 @@ function setup(kind = "default", { ordinaryCount = 1 } = {}) {
     for (const root of roots) {
       active = root;
       root.index = 0;
-      root.tree = root.Component();
+      root.tree = root.Component(root.props);
       active = undefined;
       for (const index of root.pending.splice(0)) {
         root.hooks[index].cleanup?.();
@@ -169,6 +169,36 @@ function setup(kind = "default", { ordinaryCount = 1 } = {}) {
       for (const root of roots) for (const hook of root.hooks) if (hook.setupEffect) hook.cleanup?.();
     },
   };
+}
+
+for (const pagePath of [undefined, "/donetsk/moskva"]) {
+  test(`Donetsk goals preserve the event contract and page attribution for ${pagePath ?? "the default page"}`, async () => {
+    const contact = pagePath ? { contactPhoneHref: "+79490676701", contactPhoneLabel: "+7 (949) 067-67-01" } : {};
+    const page = setup("donetsk", { pagePath, ...contact });
+    page.restartEffects();
+    // One bubbling landing listener and one capture listener for call followups.
+    assert.equal(page.document.listeners.get("click").size, 2);
+    page.openCallback();
+    page.render();
+    await page.resolve();
+    const [modal] = page.render();
+    assert.equal(modal.isOpen, true);
+    assert.equal(modal.variant, "donetsk");
+    assert.equal(modal.contactPhoneHref, contact.contactPhoneHref ?? "+79895052785");
+    assert.equal(modal.contactPhoneLabel, contact.contactPhoneLabel ?? "+7 (989) 505-27-85");
+    modal.onSubmitSuccess();
+    modal.onSubmitError();
+    page.clickPhone();
+    assert.deepEqual(page.trackedGoals.map(([goal, params]) => [goal, params.page, params.cta_position]), [
+      ["donetsk_callback_open", pagePath ?? "/donetsk", "final"],
+      ["donetsk_callback_success", pagePath ?? "/donetsk", "final"],
+      ["donetsk_callback_error", pagePath ?? "/donetsk", "final"],
+      ["donetsk_phone_click", pagePath ?? "/donetsk", "hero"],
+    ]);
+    page.cleanup();
+    assert.equal(page.document.listeners.size, 0);
+    assert.equal(page.window.listeners.size, 0);
+  });
 }
 
 for (const kind of ["default", "donetsk"]) {

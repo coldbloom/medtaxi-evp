@@ -9,6 +9,12 @@ const staticPages = [
     priority: 0.95,
   },
   {
+    url: `${SITE_URL}/donetsk/moskva`,
+    lastModified: new Date("2026-10-17T00:00:00+03:00"),
+    changeFrequency: "monthly" as const,
+    priority: 0.9,
+  },
+  {
     url: `${SITE_URL}/prices`,
     changeFrequency: "monthly" as const,
     priority: 0.8,

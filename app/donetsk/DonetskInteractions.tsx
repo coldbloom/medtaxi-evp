@@ -11,7 +11,11 @@ const ContactModal = dynamic(
 );
 
 // One delegated listener keeps every CTA and phone/social link server-rendered.
-export function DonetskInteractions() {
+export function DonetskInteractions({
+  pagePath = "/donetsk",
+  contactPhoneHref = "+79895052785",
+  contactPhoneLabel = "+7 (989) 505-27-85",
+}: { pagePath?: string; contactPhoneHref?: string; contactPhoneLabel?: string } = {}) {
   const { isOpen, hasOpened, open, close } = useContactModalController();
   const [ctaPosition, setCtaPosition] = useState("unknown");
 
@@ -24,6 +28,7 @@ export function DonetskInteractions() {
 
       const position = target.dataset.ctaPosition ?? "unknown";
       trackDonetskGoal(goal, {
+        page: pagePath,
         cta_position: position,
         ...(target.dataset.messenger ? { messenger: target.dataset.messenger } : {}),
       });
@@ -36,18 +41,18 @@ export function DonetskInteractions() {
 
     document.addEventListener("click", handleClick);
     return () => document.removeEventListener("click", handleClick);
-  }, [open]);
+  }, [open, pagePath]);
 
   // Preserve the form draft when closed, and load its code only on first demand.
   return hasOpened ? (
     <ContactModal
       isOpen={isOpen}
       onClose={close}
-      contactPhoneHref="+79895052785"
-      contactPhoneLabel="+7 (989) 505-27-85"
+      contactPhoneHref={contactPhoneHref}
+      contactPhoneLabel={contactPhoneLabel}
       variant="donetsk"
-      onSubmitSuccess={() => trackDonetskGoal("donetsk_callback_success", { cta_position: ctaPosition })}
-      onSubmitError={() => trackDonetskGoal("donetsk_callback_error", { cta_position: ctaPosition })}
+      onSubmitSuccess={() => trackDonetskGoal("donetsk_callback_success", { page: pagePath, cta_position: ctaPosition })}
+      onSubmitError={() => trackDonetskGoal("donetsk_callback_error", { page: pagePath, cta_position: ctaPosition })}
     />
   ) : null;
 }

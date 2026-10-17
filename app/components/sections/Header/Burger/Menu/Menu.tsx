@@ -13,6 +13,7 @@ const pages = [
   { title: 'Главная', href: '/' },
   { title: 'Цены', href: '/prices' },
   { title: 'Перевозка больных в Донецке', href: '/donetsk' },
+  { title: 'Перевозка из Донецка в Москву', href: '/donetsk/moskva' },
   { title: 'Контакты', href: '/contacts' }
 ];
 
@@ -47,7 +48,7 @@ export const Menu = ({ onCloseAction }: WithOnCloseProps) => {
           <h3 className={s.menuTitle}>Меню сайта</h3>
         </div>
 
-        {pages.slice(0, 3).map((page) => (
+        {pages.slice(0, 4).map((page) => (
           <Link key={page.href} href={page.href} className={s.tabLink} onClick={() => handleLinkClick(page.href)}>
             {page.title}
           </Link>
@@ -80,7 +81,7 @@ export const Menu = ({ onCloseAction }: WithOnCloseProps) => {
           </div>
         )}
 
-        {pages.slice(3).map((page) => (
+        {pages.slice(4).map((page) => (
           <Link key={page.href} href={page.href} className={s.tabLink} onClick={() => handleLinkClick(page.href)}>
             {page.title}
           </Link>
