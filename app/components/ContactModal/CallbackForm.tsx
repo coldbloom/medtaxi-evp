@@ -2,7 +2,7 @@
 
 import { useId } from "react";
 import Link from "next/link";
-import { TrackedPhoneLink } from "@/app/components/tracking/TrackedPhoneLink";
+import { ContactSocialLinks } from "./ContactSocialLinks";
 import type { useCallbackRequest } from "./useCallbackRequest";
 import type { ContactModalVariant } from "./types";
 import styles from "./ContactModal.module.css";
@@ -17,7 +17,7 @@ type CallbackFormProps = {
   contactPhoneLabel: string;
 };
 
-export function CallbackForm({ request, descriptionId, onCancel, isCallFollowup, variant, contactPhoneHref, contactPhoneLabel }: CallbackFormProps) {
+export function CallbackForm({ request, descriptionId, onCancel, isCallFollowup, variant }: CallbackFormProps) {
   const id = useId();
   const { formData, hasConsent, isSubmitting, submitError, handleSubmit, handleChange, setHasConsent, setPhone } = request;
   const isDonetsk = variant === "donetsk";
@@ -133,26 +133,15 @@ export function CallbackForm({ request, descriptionId, onCancel, isCallFollowup,
         </button>
       </div>
 
-      {!isCallFollowup && (
-        <div className="pt-4 border-t border-gray-200 flex-shrink-0">
-          <p className="text-xs sm:text-sm text-gray-600 text-center mb-3">Или свяжитесь с нами напрямую:</p>
-          <div className="flex items-center justify-center gap-4">
-            <TrackedPhoneLink
-              phone={contactPhoneHref}
-              trackingId="contact_modal"
-              tabIndex={isSubmitting ? -1 : undefined}
-              aria-disabled={isSubmitting || undefined}
-              onClick={(event) => { if (request.isBusy()) event.preventDefault(); }}
-              className={`flex items-center gap-2 font-medium text-sm sm:text-base transition-colors ${isSubmitting ? "pointer-events-none opacity-50" : ""} ${isDonetsk ? "text-[#245445] hover:text-[#173d32]" : "text-blue-600 hover:text-blue-700"}`}
-            >
-              <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-              </svg>
-              {contactPhoneLabel}
-            </TrackedPhoneLink>
-          </div>
-        </div>
-      )}
+      <div className="pt-4 border-t border-gray-200 flex-shrink-0">
+        <p className="text-xs sm:text-sm text-gray-600 text-center mb-3">Или свяжитесь с нами напрямую:</p>
+        <ContactSocialLinks
+          variant={variant}
+          ctaPosition={isCallFollowup ? "call_followup_footer" : "contact_modal_footer"}
+          disabled={isSubmitting}
+          isBusy={request.isBusy}
+        />
+      </div>
     </form>
   );
 }

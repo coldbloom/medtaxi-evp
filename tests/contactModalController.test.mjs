@@ -148,6 +148,9 @@ function setup(kind = "default", { ordinaryCount = 1, pagePath, contactPhoneHref
       if (kind === "donetsk") document.dispatchEvent({ type: "click", button: 0, target: new Element({ goal: "donetsk_callback_open", position: "final" }) });
       else walk(roots[index].tree, (node) => { if (node.type === "button") node.props.onClick(); });
     },
+    openContactChoice(position = "hero") {
+      document.dispatchEvent({ type: "click", button: 0, target: new Element({ goal: "donetsk_contact_open", position }) });
+    },
     clickPhone() {
       document.dispatchEvent({ type: "click", button: 0, target: new Element({ phone: "+79895052785", goal: "donetsk_phone_click" }), preventDefault: () => assert.fail("Phone navigation cancelled") });
     },
@@ -172,6 +175,37 @@ function setup(kind = "default", { ordinaryCount = 1, pagePath, contactPhoneHref
 }
 
 for (const pagePath of [undefined, "/donetsk/moskva"]) {
+  test(`messenger entry cancels a delayed call survey and keeps callback attribution for ${pagePath ?? "/donetsk"}`, async (t) => {
+    const page = setup("donetsk", { pagePath });
+    t.after(page.cleanup);
+    page.clickPhone();
+    assert.equal(page.timers.size, 1);
+    page.openContactChoice();
+    page.render();
+    assert.equal(page.timers.size, 0);
+    await page.resolve();
+    const modals = page.render();
+    assert.equal(modals.length, 1);
+    assert.equal(modals[0].purpose, "contact-choice");
+    assert.equal(modals[0].isOpen, true);
+    modals[0].onContactFormOpen();
+    modals[0].onSubmitSuccess();
+    assert.deepEqual(page.trackedGoals.map(([goal, params]) => [goal, params.page, params.cta_position]), [
+      ["donetsk_phone_click", pagePath ?? "/donetsk", "hero"],
+      ["donetsk_contact_open", pagePath ?? "/donetsk", "hero"],
+      ["donetsk_callback_open", pagePath ?? "/donetsk", "hero"],
+      ["donetsk_callback_success", pagePath ?? "/donetsk", "hero"],
+    ]);
+    page.openCallback();
+    assert.equal(page.render()[0].purpose, "callback");
+    page.openContactChoice("sticky");
+    const [reopened] = page.render();
+    assert.equal(reopened.purpose, "contact-choice");
+    assert.equal(reopened.isOpen, true);
+    assert.equal(page.loads.length, 1, "choice and callback share one lazy modal module");
+    assert.equal(page.trackedGoals.at(-1)[1].cta_position, "sticky");
+  });
+
   test(`Donetsk goals preserve the event contract and page attribution for ${pagePath ?? "the default page"}`, async () => {
     const contact = pagePath ? { contactPhoneHref: "+79490676701", contactPhoneLabel: "+7 (949) 067-67-01" } : {};
     const page = setup("donetsk", { pagePath, ...contact });
@@ -200,6 +234,40 @@ for (const pagePath of [undefined, "/donetsk/moskva"]) {
     assert.equal(page.window.listeners.size, 0);
   });
 }
+
+test("a phone call supersedes a loading messenger choice without reopening it when its module arrives", async (t) => {
+  const page = setup("donetsk");
+  t.after(page.cleanup);
+  page.openContactChoice();
+  assert.deepEqual(page.render(), []);
+  page.clickPhone();
+  page.render();
+  page.ready();
+  assert.deepEqual(page.render(), []);
+  await page.resolve();
+  const modals = page.render();
+  assert.equal(modals.length, 2);
+  assert.equal(modals.filter((modal) => modal.isOpen).length, 1);
+  assert.equal(modals[0].purpose, "contact-choice");
+  assert.equal(modals[0].isOpen, false);
+  assert.equal(modals[1].purpose, "call-followup");
+  assert.equal(modals[1].isOpen, true);
+});
+
+test("messenger entry cannot replace a callback whose submission is still pending", async (t) => {
+  const page = setup("donetsk");
+  t.after(page.cleanup);
+  page.openCallback();
+  page.render();
+  await page.resolve();
+  assert.equal(page.render()[0].purpose, "callback");
+  page.busy(true);
+  page.openContactChoice();
+  const [modal] = page.render();
+  assert.equal(modal.isOpen, true);
+  assert.equal(modal.purpose, "callback");
+  assert.equal(page.timers.size, 0);
+});
 
 for (const kind of ["default", "donetsk"]) {
   test(`${kind}: CTA → phone → followup ready → delayed module resolves with only one open modal`, async () => {

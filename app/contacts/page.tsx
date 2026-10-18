@@ -1,4 +1,6 @@
+import { serializeJsonLd } from "@/app/lib/serializeJsonLd";
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { Header } from "@/app/components/sections/Header";
 import { Footer } from "@/app/components/sections/Footer";
@@ -19,7 +21,7 @@ export const metadata: Metadata = {
       "Позвоните или напишите нам в любое время. Перевозка лежачих больных по Евпатории и всему Крыму 24/7.",
     type: "website",
     url: `${SITE_URL}/contacts`,
-    images: [{ url: `${SITE_URL}/peugeot.jpg`, width: 1200, height: 630, alt: "Медтакси Евпатория" }],
+    images: [{ url: `${SITE_URL}/peugeot.jpg`, width: 1280, height: 960, alt: "Медтакси Евпатория" }],
   },
 };
 
@@ -77,7 +79,7 @@ const contacts = [
     iconColor: "text-blue-600 bg-blue-100",
   },
   {
-    icon: <img src="/icon-tg.svg" alt="Telegram" className="w-7 h-7" />,
+    icon: <Image src="/icon-tg.svg" alt="Telegram" width={28} height={28} />,
     label: "Telegram",
     value: "@konstankk",
     href: `https://t.me/konstankk?text=${encodeURIComponent("Здравствуйте! Нужна помощь с перевозкой")}`,
@@ -87,7 +89,7 @@ const contacts = [
     external: true,
   },
   {
-    icon: <img src="/icon-whatsapp.svg" alt="WhatsApp" className="w-7 h-7" />,
+    icon: <Image src="/icon-whatsapp.svg" alt="WhatsApp" width={28} height={28} />,
     label: "WhatsApp",
     value: "+7 (978) 938-02-21",
     href: "https://wa.me/79789380221?text=Здравствуйте",
@@ -97,7 +99,7 @@ const contacts = [
     external: true,
   },
   {
-    icon: <img src="/icon-vk.svg" alt="VK" className="w-7 h-7" />,
+    icon: <Image src="/icon-vk.svg" alt="VK" width={28} height={28} />,
     label: "ВКонтакте",
     value: "Медтакси Евпатория",
     href: "https://vk.com/club235608829",
@@ -107,7 +109,7 @@ const contacts = [
     external: true,
   },
   {
-    icon: <img src="/max-icon.svg" alt="Max" className="w-7 h-7" />,
+    icon: <Image src="/max-icon.svg" alt="Max" width={28} height={28} />,
     label: "Max",
     value: "Написать в Max",
     href: "https://max.ru/u/f9LHodD0cOI7hGFwnp4y8CBCeTVIs3kkyT-JqLq2wJc3ES2VjFOgy02xevs",
@@ -141,7 +143,7 @@ export default function ContactsPage() {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(structuredData) }}
       />
 
       <Header />

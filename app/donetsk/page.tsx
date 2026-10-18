@@ -1,10 +1,12 @@
 /* eslint-disable @next/next/no-html-link-for-pages -- Native navigation keeps the standalone landing free of Link hydration and route prefetching. */
+import { serializeJsonLd } from "@/app/lib/serializeJsonLd";
 import type { Metadata, Viewport } from "next";
 import { buttonPrimary, buttonSecondary } from "./components/buttonStyles";
 import { DonetskHeader, DonetskFooter, DonetskMobileActions, DonetskFaq } from "./components/DonetskLanding";
 import { DonetskContactTrigger } from "./DonetskContactTrigger";
 import { DonetskImage } from "./DonetskImage";
 import { DonetskInteractions } from "./DonetskInteractions";
+import { DonetskContactActions } from "./components/DonetskContactActions";
 import { DonetskPhoneLink } from "./DonetskPhoneLink";
 import { ScrollProgressBar } from "@/app/components/ScrollProgressBar";
 import styles from "./DonetskMotion.module.css";
@@ -286,10 +288,10 @@ export default function DonetskPage() {
   return (
     <div className={`${styles.page} min-h-screen bg-[#f4f1e9] text-[#17231f] selection:bg-[#f3b941] selection:text-[#14221e]`}>
       <a href="#main-content" className={styles.skipLink}>Перейти к содержимому</a>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageSchema) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(serviceSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(breadcrumbSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(webPageSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(faqSchema) }} />
 
       <DonetskHeader phone={PHONE_HREF} phoneLabel={PHONE_LABEL} />
 
@@ -326,12 +328,7 @@ export default function DonetskPage() {
                 Бережно перевозим лежачих и маломобильных людей по Донецку, ДНР и между городами — на специализированном транспорте, от кровати до кровати.
               </p>
 
-              <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-                <DonetskPhoneLink href={`tel:${PHONE_HREF}`} ctaPosition="hero" className={buttonPrimary} aria-label={`Позвонить ${PHONE_LABEL}`}>
-                  Позвонить&nbsp;<span className="whitespace-nowrap">{PHONE_LABEL}</span>
-                </DonetskPhoneLink>
-                <DonetskContactTrigger className={buttonSecondary} ctaPosition="hero" />
-              </div>
+              <DonetskContactActions phone={PHONE_HREF} phoneLabel={PHONE_LABEL} ctaPosition="hero" />
 
               <ul className="mt-9 grid max-w-2xl gap-3 text-sm font-semibold text-[#d8e5df] sm:grid-cols-3" role="list">
                 {["Заявки 24/7", "От кровати до кровати", `Цена до выезда`].map((item) => (
@@ -718,7 +715,7 @@ export default function DonetskPage() {
       <DonetskFooter phone={PHONE_HREF} phoneLabel={PHONE_LABEL} />
       <DonetskMobileActions phone={PHONE_HREF} phoneLabel={PHONE_LABEL} />
 
-      <DonetskInteractions />
+      <DonetskInteractions contactPhoneHref={PHONE_HREF} contactPhoneLabel={PHONE_LABEL} />
     </div>
   );
 }

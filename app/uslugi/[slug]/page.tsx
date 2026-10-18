@@ -1,3 +1,4 @@
+import { serializeJsonLd } from "@/app/lib/serializeJsonLd";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -11,6 +12,9 @@ import { TrackedPhoneLink } from "@/app/components/tracking/TrackedPhoneLink";
 type PageProps = {
   params: Promise<{ slug: string }>;
 };
+
+// Only the routes returned below exist in the static export.
+export const dynamicParams = false;
 
 export async function generateStaticParams() {
   return serviceOffers.map((offer) => ({ slug: offer.slug }));
@@ -35,7 +39,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       description: offer.seoDescription,
       type: "website",
       url: pageUrl,
-      images: [{ url: `${SITE_URL}/mercedas-optimized.jpg`, width: 1200, height: 630, alt: "Медтакси Евпатория" }],
+      images: [{ url: `${SITE_URL}/mercedas-optimized.jpg`, width: 767, height: 656, alt: "Медтакси Евпатория" }],
     },
     twitter: {
       card: "summary_large_image",
@@ -81,15 +85,15 @@ export default async function ServiceOfferPage({ params }: PageProps) {
     "@type": "BreadcrumbList",
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Главная", item: SITE_URL },
-      { "@type": "ListItem", position: 2, name: "Услуги", item: `${SITE_URL}/uslugi` },
+      { "@type": "ListItem", position: 2, name: "Услуги", item: `${SITE_URL}/#services` },
       { "@type": "ListItem", position: 3, name: offer.shortName, item: `${SITE_URL}${offer.route}` },
     ],
   };
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbData) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(structuredData) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(breadcrumbData) }} />
 
       <Header />
 

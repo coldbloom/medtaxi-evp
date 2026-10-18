@@ -5,6 +5,7 @@ import { DonetskContactTrigger } from "../DonetskContactTrigger";
 import { DonetskPhoneLink } from "../DonetskPhoneLink";
 import { DonetskFaq } from "../components/DonetskLanding";
 import { DonetskRouteChips } from "../components/RouteChip";
+import { DonetskContactActions } from "../components/DonetskContactActions";
 import { buttonPrimary, buttonSecondary } from "../components/buttonStyles";
 import { MercedesImage } from "./MercedesImage";
 import { MercedesGallery } from "./MercedesGallery";
@@ -71,10 +72,7 @@ export function RouteHero({ contact }: RouteContactProps) {
             <p className="mt-6 max-w-2xl text-base leading-relaxed text-[#cfddd7] sm:text-lg">
               Перевозим лежачих и маломобильных пациентов из Донецка и ДНР в Москву на Mercedes. Помогаем с переносом и доставляем от кровати до кровати. Стоимость согласуем до выезда.
             </p>
-            <div className="mt-8 flex flex-col gap-3 xl:flex-row">
-              <DonetskContactTrigger className={buttonPrimary} label="Рассчитать стоимость перевозки" ctaPosition="donetsk_moskva_hero" />
-              <CallButton contact={contact} position="hero" className={buttonSecondary} />
-            </div>
+            <DonetskContactActions phone={contact.phone} phoneLabel={contact.phoneLabel} ctaPosition="donetsk_moskva_hero" />
           </div>
           <div className="min-w-0">
             <MercedesGallery priority />

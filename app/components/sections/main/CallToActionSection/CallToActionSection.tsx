@@ -50,7 +50,7 @@ export const CallToActionSection = () => {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <img
+            <Image
               src="/max-icon.svg"
               alt="Max"
               width={24}
@@ -65,7 +65,7 @@ export const CallToActionSection = () => {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <img
+            <Image
               src="/icon-tg.svg"
               alt="Telegram"
               width={24}
@@ -80,7 +80,7 @@ export const CallToActionSection = () => {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <img
+            <Image
               src="/icon-whatsapp.svg"
               alt="Whats App"
               width={24}
@@ -95,7 +95,7 @@ export const CallToActionSection = () => {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <img
+            <Image
               src="/icon-vk.svg"
               alt="VK"
               width={24}

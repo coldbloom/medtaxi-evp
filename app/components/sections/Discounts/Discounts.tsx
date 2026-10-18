@@ -46,7 +46,7 @@ export const Discounts = () => {
       aria-labelledby="discounts-heading"
     >
       <div className="container mx-auto max-w-6xl">
-        <HeadingSection tag="h2" id="equipment-heading">Наши скидки</HeadingSection>
+        <HeadingSection tag="h2" id="discounts-heading">Наши скидки</HeadingSection>
 
         <ul className="flex flex-col gap-6 mb-10 lg:flex-row lg:justify-between">
           {discounts.map(discount =>

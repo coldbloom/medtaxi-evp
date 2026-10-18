@@ -18,6 +18,7 @@ export function DonetskInteractions({
 }: { pagePath?: string; contactPhoneHref?: string; contactPhoneLabel?: string } = {}) {
   const { isOpen, hasOpened, open, close } = useContactModalController();
   const [ctaPosition, setCtaPosition] = useState("unknown");
+  const [purpose, setPurpose] = useState<"callback" | "contact-choice">("callback");
 
   useEffect(() => {
     const handleClick = (event: MouseEvent) => {
@@ -26,6 +27,9 @@ export function DonetskInteractions({
       const goal = target?.dataset.donetskGoal;
       if (!target || !goal) return;
 
+      const opensContact = goal === "donetsk_callback_open" || goal === "donetsk_contact_open";
+      if (opensContact && document.querySelector('[role="dialog"][aria-modal="true"][aria-busy="true"]')) return;
+
       const position = target.dataset.ctaPosition ?? "unknown";
       trackDonetskGoal(goal, {
         page: pagePath,
@@ -33,8 +37,9 @@ export function DonetskInteractions({
         ...(target.dataset.messenger ? { messenger: target.dataset.messenger } : {}),
       });
 
-      if (goal === "donetsk_callback_open") {
+      if (opensContact) {
         setCtaPosition(position);
+        setPurpose(goal === "donetsk_contact_open" ? "contact-choice" : "callback");
         open();
       }
     };
@@ -51,6 +56,9 @@ export function DonetskInteractions({
       contactPhoneHref={contactPhoneHref}
       contactPhoneLabel={contactPhoneLabel}
       variant="donetsk"
+      purpose={purpose}
+      contactCtaPosition={ctaPosition}
+      onContactFormOpen={() => trackDonetskGoal("donetsk_callback_open", { page: pagePath, cta_position: ctaPosition })}
       onSubmitSuccess={() => trackDonetskGoal("donetsk_callback_success", { page: pagePath, cta_position: ctaPosition })}
       onSubmitError={() => trackDonetskGoal("donetsk_callback_error", { page: pagePath, cta_position: ctaPosition })}
     />

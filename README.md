@@ -1,50 +1,50 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Медтакси Евпатория
 
-Трекинг телефонных ссылок: [как работает MVP и как отладить запрос](docs/call-clicks.md).
+Сайт услуг на Next.js App Router. Production-сборка создаёт статический сайт в
+`out/`: его можно загрузить на VPS через rsync и раздавать Nginx без процесса Next.js.
+Формы и учёт телефонных кликов обращаются к отдельному существующему backend.
 
-## Getting Started
-
-First, run the development server:
+## Разработка
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+yarn install --immutable
+yarn dev --port 3079
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Открыть [localhost:3079](http://localhost:3079). Главная страница находится в
+`app/(home)/page.tsx`, региональная — в `app/donetsk/page.tsx`, маршрутная —
+в `app/donetsk/moskva/page.tsx`. Для зависимостей используется `yarn.lock`.
 
-You can start editing the home page by modifying `app/(home)/page.tsx`. The page auto-updates as you edit the file.
+## Сборка и локальная проверка экспорта
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+До сборки задать рабочий `NEXT_PUBLIC_API_URL` в `.env.production.local`.
+Значение попадёт в клиентский код; при смене адреса API сайт нужно пересобрать.
+Пример переменной — в `.env.example`. Production-сборка отклоняет отсутствующий,
+локальный или некорректный адрес API. Настройки `.env*.local` исключены из Git.
 
-## Learn More
+```bash
+yarn build:export
+yarn start --port 3081
+```
 
-To learn more about Next.js, take a look at the following resources:
+`yarn start` раздаёт готовый `out/` для локальной проверки; это не `next start`.
+`yarn build:export` последовательно выполняет ESLint, тесты, сборку с проверкой
+TypeScript и проверку HTML, метаданных, ресурсов и файлов навигации App Router.
+Подробности настройки API, Nginx и загрузки на VPS:
+[статический экспорт и деплой](docs/static-export.md).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Проверки и документация
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+yarn lint
+yarn typecheck
+yarn test
+```
 
-## Deploy on Vercel
+- [Учёт телефонных кликов и обратный звонок](docs/call-clicks.md).
+- [Изображения и производительность Донецка](docs/donetsk-performance.md).
+- [Пример конфигурации Nginx](deploy/nginx-static.conf.example).
+- [Статический экспорт в документации Next.js](https://nextjs.org/docs/app/guides/static-exports).
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-# medtaxi-evp
-# medtaxi-evp
-# medtaxi-evp
-# medtaxi-evp
-
-
-TODO на будущее (что сделать)
-
-. Улучшить изображение для соцсетей и Google Discover
-Сейчас og:image имеет ширину 767 px и почти квадратные пропорции в [page.tsx (line 64)](/Users/konstantin.kolesnik/Documents/code/perevozki/medtaxi-evp/app/donetsk/page.tsx:64).
-Рекомендую создать отдельное изображение:
-1200 × 630 или 1280 × 720
+Возможное дальнейшее улучшение: отдельное изображение Open Graph размером
+1200 × 630 для `/donetsk` вместо существующего почти квадратного изображения.

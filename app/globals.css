@@ -38,41 +38,40 @@ html {
   }
 }
 
-/* Анимации при скролле - CSS-first подход */
-/* Начальное состояние - скрыто для анимации */
+/* Статический HTML виден даже без JavaScript или при задержке гидратации. */
 .animate-on-scroll {
+  opacity: 1;
+  transform: none;
   transition: opacity 0.7s ease-out, transform 0.7s ease-out;
 }
 
-/* Направления анимации - начальное состояние */
-.animate-on-scroll.animate-fade {
+/* Только клиентский observer включает начальное состояние ниже экрана. */
+.animate-on-scroll.animate-pending {
+  transition: none;
+}
+
+.animate-on-scroll.animate-pending.animate-fade {
   opacity: 0;
 }
 
-.animate-on-scroll.animate-up {
+.animate-on-scroll.animate-pending.animate-up {
   opacity: 0;
   transform: translateY(2rem);
 }
 
-.animate-on-scroll.animate-down {
+.animate-on-scroll.animate-pending.animate-down {
   opacity: 0;
   transform: translateY(-2rem);
 }
 
-.animate-on-scroll.animate-left {
+.animate-on-scroll.animate-pending.animate-left {
   opacity: 0;
   transform: translateX(2rem);
 }
 
-.animate-on-scroll.animate-right {
+.animate-on-scroll.animate-pending.animate-right {
   opacity: 0;
   transform: translateX(-2rem);
-}
-
-/* Видимое состояние - добавляется через JS */
-.animate-on-scroll.visible {
-  opacity: 1 !important;
-  transform: translate(0, 0) !important;
 }
 
 /* Задержки для последовательных анимаций */
@@ -98,11 +97,6 @@ html {
     opacity: 1 !important;
     transform: none !important;
     transition: none !important;
-  }
-  
-  .animate-on-scroll.visible {
-    opacity: 1 !important;
-    transform: none !important;
   }
 }
 

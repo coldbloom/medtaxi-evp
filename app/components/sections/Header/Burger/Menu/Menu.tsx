@@ -1,5 +1,6 @@
 'use client';
 
+import Image from "next/image";
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -63,7 +64,7 @@ export const Menu = ({ onCloseAction }: WithOnCloseProps) => {
         >
           <span>Услуги</span>
           <span className={isServicesOpen ? s.chevronOpen : s.chevron} aria-hidden="true">
-            <img src="/chevron.svg" alt="" className={s.chevronIcon} />
+            <Image src="/chevron.svg" alt="" width={20} height={20} className={s.chevronIcon} />
           </span>
         </button>
 

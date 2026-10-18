@@ -34,31 +34,6 @@ export const metadata: Metadata = {
     telephone: false,
   },
   metadataBase: new URL("https://medtaxi-evp.ru"),
-  alternates: {
-    canonical: "/",
-  },
-  openGraph: {
-    title: "Перевозка лежачих больных и инвалидов в Евпатории | Медтакси Евпатория",
-    description: "Специализированная перевозка лежачих больных и инвалидов в Евпатории, Крыму и по всей России. Профессиональная бригада, медицинское оборудование, работа 24/7.",
-    url: "https://medtaxi-evp.ru",
-    siteName: "Медтакси Евпатория",
-    locale: "ru_RU",
-    type: "website",
-    images: [
-      {
-        url: "https://medtaxi-evp.ru/peugeot.jpg",
-        width: 1200,
-        height: 630,
-        alt: "Специализированный транспорт для перевозки лежачих больных — Медтакси Евпатория",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Перевозка лежачих больных и инвалидов в Евпатории | Медтакси Евпатория",
-    description: "Специализированная перевозка лежачих больных и инвалидов в Евпатории, Крыму и по всей России. Работа 24/7.",
-    images: ["/peugeot.jpg"],
-  },
   robots: {
     index: true,
     follow: true,

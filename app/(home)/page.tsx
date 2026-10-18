@@ -1,3 +1,4 @@
+import { serializeJsonLd } from "@/app/lib/serializeJsonLd";
 import type { Metadata } from "next";
 import { Discounts } from "@/app/components/sections/Discounts";
 import { Faq } from "@/app/components/sections/main/Faq";
@@ -21,6 +22,31 @@ export const metadata: Metadata = {
   title: "Перевозка лежачих больных и инвалидов в Евпатории | Медтакси Евпатория",
   description:
     "Специализированная перевозка лежачих больных и инвалидов в Евпатории, Крыму и по всей России. Профессиональная бригада, медицинское оборудование, работа 24/7.",
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    title: "Перевозка лежачих больных и инвалидов в Евпатории | Медтакси Евпатория",
+    description: "Специализированная перевозка лежачих больных и инвалидов в Евпатории, Крыму и по всей России. Профессиональная бригада, медицинское оборудование, работа 24/7.",
+    url: "https://medtaxi-evp.ru",
+    siteName: "Медтакси Евпатория",
+    locale: "ru_RU",
+    type: "website",
+    images: [
+      {
+        url: "https://medtaxi-evp.ru/peugeot.jpg",
+        width: 1280,
+        height: 960,
+        alt: "Специализированный транспорт для перевозки лежачих больных — Медтакси Евпатория",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Перевозка лежачих больных и инвалидов в Евпатории | Медтакси Евпатория",
+    description: "Специализированная перевозка лежачих больных и инвалидов в Евпатории, Крыму и по всей России. Работа 24/7.",
+    images: ["/peugeot.jpg"],
+  },
 };
 
 // ☎
@@ -203,19 +229,19 @@ export default function Home() {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(structuredData) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbStructuredData) }}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(breadcrumbStructuredData) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageStructuredData) }}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(webPageStructuredData) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqStructuredData) }}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(faqStructuredData) }}
       />
 
       <Header />
@@ -257,7 +283,7 @@ export default function Home() {
         {/* Additional SEO Content */}
         <CrimeaPatientTransport />
 
-        <section className="py-12 px-4 bg-gray-50" aria-labelledby="services-pages-heading">
+        <section id="services" className="py-12 px-4 bg-gray-50" aria-labelledby="services-pages-heading">
           <div className="container mx-auto max-w-4xl">
             <h2 id="services-pages-heading" className="text-2xl md:text-3xl font-bold text-gray-900 mb-6 text-center">
               Страницы услуг и популярных направлений

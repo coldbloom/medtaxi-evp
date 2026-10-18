@@ -3,7 +3,7 @@
   --motion-ease: cubic-bezier(0.22, 1, 0.36, 1);
   /* В отличие от hidden, clip не создаёт ложный scroll container для view(). */
   overflow-x: clip;
-  padding-bottom: 65px;
+  padding-bottom: calc(65px + env(safe-area-inset-bottom, 0px));
 }
 
 /* Закреплена только тонкая полоса; большой отступ под шапку не нужен. */

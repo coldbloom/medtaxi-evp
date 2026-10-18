@@ -36,7 +36,7 @@ export const Hero = () => {
                 aria-label="Задать вопрос в Telegram"
               >
                 Задать вопрос в Telegram
-                <img
+                <Image
                   src="/icon-tg.svg"
                   alt="Telegram"
                   width={24}

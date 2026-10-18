@@ -179,3 +179,42 @@ test("listener не отменяет клик и снимается при по�
   cleanupAgain();
   assert.equal(listeners.size, 0);
 });
+
+test("заблокированная телефонная ссылка не отправляет событие, после разблокировки tracking работает", () => {
+  const { api, requests } = browser();
+  let runEffect;
+  let listener;
+  let disabled = "true";
+  const link = {
+    dataset: { callTrackingId: "contact_modal_phone" },
+    getAttribute: (name) => name === "aria-disabled" ? disabled : name === "href" ? "tel:+79490676701" : null,
+  };
+  class Element {
+    closest() { return link; }
+  }
+  const { PhoneClickTracking } = loadModule("app/components/tracking/PhoneClickTracking.tsx", {
+    Element,
+    require: (name) => name === "react" ? { useEffect: (effect) => { runEffect = effect; } } : api,
+    document: {
+      addEventListener: (_name, callback) => { listener = callback; },
+      removeEventListener() {},
+    },
+  });
+  PhoneClickTracking();
+  const cleanup = runEffect();
+  const event = { target: new Element(), preventDefault: () => assert.fail("Клик отменён") };
+
+  listener(event);
+  assert.equal(requests.length, 0);
+
+  for (const value of ["false", null]) {
+    disabled = value;
+    listener(event);
+  }
+  assert.equal(requests.length, 2);
+  for (const request of requests) {
+    assert.equal(request.payload.phone, "+79490676701");
+    assert.equal(request.payload.trackingId, "contact_modal_phone");
+  }
+  cleanup();
+});

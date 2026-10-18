@@ -1,3 +1,4 @@
+import { serializeJsonLd } from "@/app/lib/serializeJsonLd";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Header } from "@/app/components/sections/Header";
@@ -22,7 +23,7 @@ export const metadata: Metadata = {
       "Специализированный медицинский транспорт, носилки, погрузка с санитарами. Перевезём лежачего из больницы домой или на реабилитацию по Евпатории и Крыму.",
     type: "website",
     url: PAGE_URL,
-    images: [{ url: `${SITE_URL}/peugeot.jpg`, width: 1200, height: 630, alt: "Медтакси Евпатория" }],
+    images: [{ url: `${SITE_URL}/peugeot.jpg`, width: 1280, height: 960, alt: "Медтакси Евпатория" }],
   },
 };
 
@@ -102,7 +103,7 @@ const breadcrumbData = {
   "@type": "BreadcrumbList",
   itemListElement: [
     { "@type": "ListItem", position: 1, name: "Главная", item: SITE_URL },
-    { "@type": "ListItem", position: 2, name: "Услуги", item: `${SITE_URL}/uslugi` },
+    { "@type": "ListItem", position: 2, name: "Услуги", item: `${SITE_URL}/#services` },
     { "@type": "ListItem", position: 3, name: "Перевозка лежачих из больницы домой", item: PAGE_URL },
   ],
 };
@@ -175,9 +176,9 @@ const hospitals = [
 export default function Page() {
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqStructuredData) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbData) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(structuredData) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(faqStructuredData) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(breadcrumbData) }} />
 
       <Header />
 

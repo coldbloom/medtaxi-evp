@@ -5,9 +5,9 @@ import { DonetskPhoneLink } from "../DonetskPhoneLink";
 import { DonetskSocialLink } from "../DonetskSocialLink";
 import { StaticImage } from "../StaticImage";
 import styles from "../DonetskMotion.module.css";
+import { ContactActionIcon } from "./ContactActionIcon";
+import { MAX_URL, TELEGRAM_URL } from "@/app/lib/contactChannels";
 
-const TELEGRAM_URL = "https://t.me/konstankk";
-const MAX_URL = "https://max.ru/u/f9LHodD0cOI7hGFwnp4y8CBCeTVIs3kkyT-JqLq2wJc3ES2VjFOgy02xevs";
 
 type ContactProps = { phone: string; phoneLabel: string; ctaPrefix?: string };
 const position = (prefix: string, name: string) => prefix ? `${prefix}_${name}` : name;
@@ -151,23 +151,24 @@ export function DonetskFooter({ phone, phoneLabel, ctaPrefix = "" }: ContactProp
 
 export function DonetskMobileActions({ phone, phoneLabel, ctaPrefix = "" }: ContactProps) {
   return (
-      <div className={`${styles.mobileBar} fixed inset-x-0 bottom-0 z-40 border-t border-[#d7d1c5] bg-[#fbfaf6] px-3 py-2 shadow-[0_-12px_35px_rgba(20,43,36,.16)] md:hidden`}>
-        <div className="mx-auto grid max-w-lg grid-cols-[1.15fr_.85fr] gap-2">
-          <DonetskPhoneLink
-            href={`tel:${phone}`}
-            ctaPosition={position(ctaPrefix, "mobile_sticky")}
-            className="inline-flex min-h-12 items-center justify-center rounded-full bg-[#f3b941] px-4 text-center text-sm font-black text-[#14221e]"
-            aria-label={`Позвонить ${phoneLabel}`}
-          >
-            Позвонить сейчас
-          </DonetskPhoneLink>
-          <DonetskContactTrigger
-            className="inline-flex min-h-12 items-center justify-center rounded-full bg-[#173d32] px-4 text-center text-sm font-bold text-white"
-            label="Заказать звонок"
-            ctaPosition={position(ctaPrefix, "mobile_sticky")}
-          />
-        </div>
+    <div className={`${styles.mobileBar} fixed inset-x-0 bottom-0 z-40 border-t border-white/15 bg-[#173d32] px-3 pt-2 pb-[calc(.5rem+env(safe-area-inset-bottom,0px))] shadow-[0_-12px_35px_rgba(20,43,36,.16)] md:hidden`}>
+      <div className="mx-auto grid max-w-lg grid-cols-2 gap-2">
+        <DonetskPhoneLink
+          href={`tel:${phone}`}
+          ctaPosition={position(ctaPrefix, "mobile_sticky")}
+          className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-[#f3b941] px-2 text-center text-sm font-black text-[#14221e]"
+          aria-label={`Позвонить ${phoneLabel}`}
+        >
+          <ContactActionIcon kind="phone" />
+          Позвонить
+        </DonetskPhoneLink>
+        <DonetskContactTrigger
+          mode="messenger"
+          className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-[#708d7e] px-2 text-center text-sm font-bold text-white transition-colors hover:bg-white/10"
+          ctaPosition={position(ctaPrefix, "mobile_sticky")}
+        />
       </div>
+    </div>
   );
 }
 

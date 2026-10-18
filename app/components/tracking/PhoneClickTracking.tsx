@@ -13,6 +13,8 @@ export function PhoneClickTracking() {
       //*** 'a[href^="tel:"]' — CSS-селектор: То есть селектор ищет ссылки вида <a href="tel:+79991234567"> ***//
       const link = event.target.closest<HTMLAnchorElement>('a[href^="tel:"]');
       if (!link) return;
+      // Capture срабатывает раньше onClick формы: заблокированный звонок не считаем конверсией.
+      if (link.getAttribute("aria-disabled") === "true") return;
 
       //*** getAttribute — это метод DOM, который возвращает значение указанного HTML-атрибута у элемента в виде строки (или null, если атрибута нет). ***//
       //*** link.getAttribute("href") — берёт значение атрибута href у ссылки. Для <a href="tel:+79991234567"> вернёт строку "tel:+79991234567" ***//

@@ -30,14 +30,14 @@ export const Header = () => {
             </Link>
             <DesktopNav />
             <div className={s.iconsWrapper}>
-              <a href="https://max.ru/u/f9LHodD0cOI7hGFwnp4y8CBCeTVIs3kkyT-JqLq2wJc3ES2VjFOgy02xevs" className={cn(s.link, s.maxColor)}>
-                <img src="/max-icon.svg" alt="" className={s.icon} />
+              <a href="https://max.ru/u/f9LHodD0cOI7hGFwnp4y8CBCeTVIs3kkyT-JqLq2wJc3ES2VjFOgy02xevs" className={cn(s.link, s.maxColor)} aria-label="Написать в MAX">
+                <Image src="/max-icon.svg" alt="" width={24} height={24} className={s.icon} />
               </a>
-              <a href="https://t.me/konstankk" className={cn(s.link, s.tgColor)}>
-                <img src="/tg-icon.svg" alt="" className={s.icon} />
+              <a href="https://t.me/konstankk" className={cn(s.link, s.tgColor)} aria-label="Написать в Telegram">
+                <Image src="/tg-icon.svg" alt="" width={24} height={24} className={s.icon} />
               </a>
-              <TrackedPhoneLink phone="+79895052785" trackingId="header_mobile" className={cn(s.link, s.phoneColor, s.phoneIconMobile)}>
-                <img src="/phone-icon.svg" alt="" className={s.icon} />
+              <TrackedPhoneLink phone="+79895052785" trackingId="header_mobile" className={cn(s.link, s.phoneColor, s.phoneIconMobile)} aria-label="Позвонить +7 (989) 505-27-85">
+                <Image src="/phone-icon.svg" alt="" width={24} height={24} className={s.icon} />
               </TrackedPhoneLink>
               <TrackedPhoneLink
                 phone="+79895052785"

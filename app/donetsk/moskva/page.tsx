@@ -1,3 +1,4 @@
+import { serializeJsonLd } from "@/app/lib/serializeJsonLd";
 import type { Viewport } from "next";
 import { ScrollProgressBar } from "@/app/components/ScrollProgressBar";
 import { DonetskInteractions } from "../DonetskInteractions";
@@ -22,7 +23,7 @@ export default function DonetskMoscowPage() {
   return (
     <div className={`${styles.page} min-h-screen bg-[#f4f1e9] text-[#17231f] selection:bg-[#f3b941] selection:text-[#14221e]`}>
       <a href="#main-content" className={styles.skipLink}>Перейти к содержимому</a>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(routeSchema).replace(/</g, "\\u003c") }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(routeSchema) }} />
       <DonetskHeader {...contact} navigation={[
         { href: "#route", label: "Маршрут" },
         { href: "#price", label: "Стоимость" },

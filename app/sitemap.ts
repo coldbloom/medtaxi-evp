@@ -1,6 +1,8 @@
 import { MetadataRoute } from "next";
 import { serviceOffers, SITE_URL } from "@/app/lib/serviceOffers";
 
+export const dynamic = "force-static";
+
 const staticPages = [
   {
     url: `${SITE_URL}/donetsk`,

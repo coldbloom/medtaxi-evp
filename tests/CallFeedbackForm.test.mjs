@@ -8,13 +8,14 @@ const linkAdapter = (props) => React.createElement("a", props, props.children);
 
 // Render the coordinator, form, request hook and shell from their real modules.
 // Only framework/DOM adapters are mocked; browser effects have real lifecycles.
-function renderForm({ purpose = "call-followup", fetchResponse, apiUrl = "https://api.example.test/" } = {}) {
+function renderForm({ purpose = "call-followup", variant = "default", fetchResponse, apiUrl = "https://api.example.test/" } = {}) {
   const browser = browserFixture();
   const renderer = hookRenderer(browser);
   let tree;
   let closed = 0;
   let successes = 0;
   let errors = 0;
+  let contactFormOpens = 0;
   let timerId = 0;
   const timers = new Map();
   const requests = [];
@@ -48,10 +49,12 @@ function renderForm({ purpose = "call-followup", fetchResponse, apiUrl = "https:
   let props = {
     isOpen: true,
     purpose,
+    variant,
     callContext: { phone: "+79789380221", page: "/donetsk" },
     onClose: () => { closed++; props.isOpen = false; },
     onSubmitSuccess: () => successes++,
     onSubmitError: () => errors++,
+    onContactFormOpen: () => contactFormOpens++,
   };
 
   function render() {
@@ -100,8 +103,74 @@ function renderForm({ purpose = "call-followup", fetchResponse, apiUrl = "https:
     closed: () => closed,
     successes: () => successes,
     errors: () => errors,
+    contactFormOpens: () => contactFormOpens,
   };
 }
+
+test("messenger entry offers safe external links and opens the existing callback form only on request", (t) => {
+  const page = renderForm({ purpose: "contact-choice", variant: "donetsk" });
+  t.after(page.cleanup);
+  assert.match(page.text(), /Как вам удобно связаться/);
+  assert.equal(page.find((node) => node.type === "form"), undefined);
+  for (const [label, href] of [
+    ["Telegram", "https://t.me/konstankk"],
+    ["MAX", "https://max.ru/u/f9LHodD0cOI7hGFwnp4y8CBCeTVIs3kkyT-JqLq2wJc3ES2VjFOgy02xevs"],
+  ]) {
+    const link = page.find((node) => node.type === "a" && textContent(node).includes(`Написать в ${label}`));
+    assert.ok(link, `Missing messenger link: ${label}`);
+    assert.equal(link.props.href, href);
+    assert.equal(link.props.target, "_blank");
+    assert.match(link.props.rel, /noopener/);
+    assert.match(link.props.rel, /noreferrer/);
+  }
+  assert.equal(page.requests.length, 0);
+  assert.equal(page.contactFormOpens(), 0);
+  const openForm = page.button("Оставить заявку на сайте").props.onClick;
+  openForm();
+  openForm(); // A second click can arrive before React commits the new step.
+  page.render();
+  assert.match(page.text(), /Заказать обратный звонок/);
+  assert.equal(page.contactFormOpens(), 1);
+  assert.equal(page.field("name").props.required, true);
+  assert.ok(page.field("message"));
+  assert.equal(page.requests.length, 0);
+});
+
+test("reopening messenger choice preserves an unfinished form draft and resets only the entry screen", (t) => {
+  const page = renderForm({ purpose: "contact-choice", variant: "donetsk" });
+  t.after(page.cleanup);
+  page.click("Оставить заявку на сайте");
+  page.fillValid();
+  page.change("message", "Из Донецка в Москву");
+  page.click("Отмена");
+  page.reopen();
+  assert.match(page.text(), /Как вам удобно связаться/);
+  assert.equal(page.find((node) => node.type === "form"), undefined);
+  page.click("Оставить заявку на сайте");
+  assert.equal(page.field("name").props.value, "  Анна  ");
+  assert.equal(page.field("phone").props.value, "+7 (978) 111-22-33");
+  assert.equal(page.field("message").props.value, "Из Донецка в Москву");
+  assert.equal(page.field("personalDataConsent").props.checked, true);
+  assert.equal(page.contactFormOpens(), 2);
+  assert.equal(page.requests.length, 0);
+});
+
+test("switching between direct callback and messenger entry preserves the draft without showing a stale step", (t) => {
+  const page = renderForm({ purpose: "callback", variant: "donetsk" });
+  t.after(page.cleanup);
+  page.change("name", "Анна");
+  page.update({ isOpen: false }); // The shared controller can close the dialog for a phone call.
+  page.update({ isOpen: true, purpose: "contact-choice" });
+  assert.match(page.text(), /Как вам удобно связаться/);
+  assert.equal(page.find((node) => node.type === "form"), undefined);
+  page.click("Оставить заявку на сайте");
+  assert.equal(page.field("name").props.value, "Анна");
+  page.update({ isOpen: false });
+  page.update({ isOpen: true, purpose: "callback" });
+  assert.match(page.text(), /Заказать обратный звонок/);
+  assert.equal(page.field("name").props.value, "Анна");
+  assert.equal(page.contactFormOpens(), 1);
+});
 
 test("the call follow-up asks about the call, and Yes thanks the user without sending a callback", () => {
   const page = renderForm();
@@ -315,10 +384,10 @@ test("unmounting during submission aborts the request, clears its timeout and su
   assert.equal(page.document.listeners.size, 0);
 });
 
-test("closed ordinary and follow-up dialogs render safely on the server without browser globals or global notifications", () => {
+test("closed ordinary, messenger and follow-up dialogs render safely on the server without browser globals or global notifications", () => {
   const loader = moduleLoader({ mocks: { "next/link": linkAdapter } });
   const { ContactModal } = loader.load("app/components/ContactModal/ContactModal.tsx");
-  for (const purpose of ["callback", "call-followup"]) {
+  for (const purpose of ["callback", "contact-choice", "call-followup"]) {
     assert.equal(renderToString(React.createElement(ContactModal, { isOpen: false, purpose, onClose() {} })), "");
   }
 });
