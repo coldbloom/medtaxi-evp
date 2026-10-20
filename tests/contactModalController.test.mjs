@@ -101,7 +101,9 @@ function setup(kind = "default", { ordinaryCount = 1, pagePath, contactPhoneHref
       clearTimeout: (id) => timers.delete(id),
       require(name) {
         if (name === "react") return react;
-        if (name === "next/dynamic") return { default: lazy };
+        if (name.endsWith("/LazyContactModal")) {
+          return { LazyContactModal: lazy(() => modalModule.then((module) => module.ContactModal)) };
+        }
         if (name === "next/image") return { default: () => null };
         if (name === "@/app/components/ContactModal/ContactModal") return modalModule;
         if (name === "@/app/components/ContactModal") assert.fail("Controller must not lazy-load the barrel");

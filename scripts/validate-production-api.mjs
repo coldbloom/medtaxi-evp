@@ -1,22 +1,22 @@
 /**
- * NEXT_PUBLIC_* is frozen in the browser bundle at build time. A static host
- * cannot repair a missing API URL or handle the form's /feedback fallback.
+ * NEXT_PUBLIC_* is frozen in the browser bundle at build time. Restarting
+ * next start cannot repair a missing API URL in the already built form code.
  * Never include the configured value in errors: it may contain credentials.
  * @param {string | undefined} value
  */
-export function validateExportApiUrl(value) {
+export function validateProductionApiUrl(value) {
   const fail = (/** @type {string} */ reason) => {
-    throw new Error(`NEXT_PUBLIC_API_URL: ${reason} Set a public HTTPS API base URL or a same-origin path such as /api before building out/.`);
+    throw new Error(`NEXT_PUBLIC_API_URL: ${reason} Set a public HTTPS API base URL or a same-origin path such as /api before next build.`);
   };
 
-  if (!value) fail("is required for the static production export.");
+  if (!value) fail("is required for the production build.");
   if (/\s|\\/.test(value)) fail("must not contain whitespace or backslashes.");
   const sameOrigin = value.startsWith("/") && !value.startsWith("//");
   if (!sameOrigin && !/^https:\/\//i.test(value)) fail("must use HTTPS or an explicit same-origin path.");
 
   let url;
   try {
-    url = new URL(value, "https://static-export.invalid");
+    url = new URL(value, "https://production-build.invalid");
   } catch {
     fail("is not a valid URL.");
   }

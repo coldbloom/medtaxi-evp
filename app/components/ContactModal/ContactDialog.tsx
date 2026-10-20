@@ -1,5 +1,7 @@
 import { useEffect, useId, useRef, type ReactNode } from "react";
 import { createPortal } from "react-dom";
+import { useBodyScrollLock } from "@/src/components/ui/useBodyScrollLock";
+import { useDialogFocus } from "@/src/components/ui/useDialogFocus";
 import styles from "./ContactModal.module.css";
 
 interface ContactDialogProps {
@@ -19,32 +21,11 @@ export function ContactDialog({ isOpen, onClose, title, descriptionId, isSubmitt
   const viewportRef = useRef<HTMLDivElement>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
-  const onCloseRef = useRef(onClose);
   const previousStepRef = useRef(stepKey);
   const isDonetsk = theme === "donetsk";
 
-  useEffect(() => {
-    onCloseRef.current = () => {
-      if (!isSubmitting) onClose();
-    };
-  }, [onClose, isSubmitting]);
-
-  useEffect(() => {
-    if (!isOpen) return;
-    const { scrollX, scrollY } = window;
-    const pathname = window.location.pathname;
-    const { style } = document.body;
-    const previous = { overflow: style.overflow, position: style.position, top: style.top, left: style.left, width: style.width };
-
-    // Fixed positioning also locks the background on iOS while the form scrolls.
-    Object.assign(style, { overflow: "hidden", position: "fixed", top: `-${scrollY}px`, left: `-${scrollX}px`, width: "100%" });
-    return () => {
-      Object.assign(style, previous);
-      if (window.location.pathname === pathname) {
-        window.scrollTo({ left: scrollX, top: scrollY, behavior: "instant" });
-      }
-    };
-  }, [isOpen]);
+  useBodyScrollLock(isOpen);
+  useDialogFocus({ isOpen, dialogRef, initialFocusRef: closeButtonRef, onClose, disableClose: isSubmitting });
 
   useEffect(() => {
     const viewport = window.visualViewport;
@@ -60,46 +41,6 @@ export function ContactDialog({ isOpen, onClose, title, descriptionId, isSubmitt
     return () => {
       viewport.removeEventListener("resize", updateViewport);
       viewport.removeEventListener("scroll", updateViewport);
-    };
-  }, [isOpen]);
-
-  useEffect(() => {
-    if (!isOpen) return;
-    const previousFocus = document.activeElement as HTMLElement | null;
-    closeButtonRef.current?.focus({ preventScroll: true });
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        event.preventDefault();
-        onCloseRef.current();
-        return;
-      }
-      const dialog = dialogRef.current;
-      if (event.key !== "Tab" || !dialog) return;
-      const controls = Array.from(dialog.querySelectorAll<HTMLElement>(
-        'button:not([disabled]), input:not([disabled]), textarea:not([disabled]), a[href]:not([tabindex="-1"]):not([aria-disabled="true"])',
-      )).filter((element) => element.offsetParent !== null);
-      const first = controls[0];
-      const last = controls[controls.length - 1];
-      if (!first) {
-        event.preventDefault();
-        return;
-      }
-      if (!controls.includes(document.activeElement as HTMLElement)) {
-        event.preventDefault();
-        (event.shiftKey ? last : first).focus();
-      } else if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault();
-        last.focus();
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault();
-        first.focus();
-      }
-    };
-    document.addEventListener("keydown", handleKeyDown);
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-      if (previousFocus?.isConnected) previousFocus.focus({ preventScroll: true });
     };
   }, [isOpen]);
 
@@ -121,6 +62,7 @@ export function ContactDialog({ isOpen, onClose, title, descriptionId, isSubmitt
           ref={dialogRef}
           className={`w-full max-w-lg max-h-full min-h-0 overflow-hidden rounded-3xl shadow-2xl flex flex-col pointer-events-auto ${isDonetsk ? "bg-[#183d2f]" : "bg-white"}`}
           role="dialog"
+          tabIndex={-1}
           aria-modal="true"
           aria-busy={isSubmitting}
           aria-labelledby={titleId}

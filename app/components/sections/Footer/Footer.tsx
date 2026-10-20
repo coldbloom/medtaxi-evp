@@ -2,6 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { CodeCake } from "@/app/components/CodeCake";
 import { TrackedPhoneLink } from "@/app/components/tracking/TrackedPhoneLink";
+import { DonetskRouteLink } from "@/app/donetsk/components/DonetskRouteLink";
 
 export const Footer = () => {
   return (
@@ -45,9 +46,9 @@ export const Footer = () => {
               <li>• Междугородние перевозки</li>
               <li>
                 •{' '}
-                <Link href="/donetsk" className="transition-colors hover:text-white">
+                <DonetskRouteLink href="/donetsk" prefetch className="transition-colors hover:text-white">
                   Перевозка больных в Донецке
-                </Link>
+                </DonetskRouteLink>
               </li>
             </ul>
           </div>

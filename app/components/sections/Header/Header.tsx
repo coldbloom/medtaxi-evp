@@ -6,6 +6,12 @@ import { Burger } from "@/app/components/sections/Header/Burger";
 import Link from "next/link";
 import { DesktopNav } from "@/app/components/sections/Header/DesktopNav/DesktopNav";
 import { TrackedPhoneLink } from "@/app/components/tracking/TrackedPhoneLink";
+import { serviceOffers } from "@/app/lib/serviceOffers";
+
+const serviceLinks = serviceOffers.map(({ shortName, route }) => ({
+  title: shortName,
+  href: route,
+}));
 
 export const Header = () => {
   return (
@@ -13,22 +19,19 @@ export const Header = () => {
       <header className="bg-white shadow-sm">
         <div className="container mx-auto px-4 max-w-7xl">
           <div className={cn('flex items-center justify-between', s.wrapper)}>
-            <Link href="/">
-              <div className="flex items-center gap-2 md:gap-4 w-[40px] md:w-[60px]">
+            <Link href="/" className={s.brand}>
                 <Image
                   src="/logo.svg"
                   alt="Медтакси Евпатория - Логотип"
-                  width={10}
-                  height={10}
-                  priority
-                  className="w-auto h-auto"
+                  width={160}
+                  height={93}
+                  className={s.logoImage}
                 />
                 <h2 className={cn('font-bold text-blue-600', s.logoText)}>
                   Медтакси Евпатория
                 </h2>
-              </div>
             </Link>
-            <DesktopNav />
+            <DesktopNav services={serviceLinks} />
             <div className={s.iconsWrapper}>
               <a href="https://max.ru/u/f9LHodD0cOI7hGFwnp4y8CBCeTVIs3kkyT-JqLq2wJc3ES2VjFOgy02xevs" className={cn(s.link, s.maxColor)} aria-label="Написать в MAX">
                 <Image src="/max-icon.svg" alt="" width={24} height={24} className={s.icon} />

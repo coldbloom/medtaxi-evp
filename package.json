@@ -8,12 +8,13 @@
     "test:tracking": "node --test tests/callTracking.test.mjs",
     "test:call-feedback": "node --test tests/callFeedback.test.mjs tests/contactModalController.test.mjs tests/ContactModal.test.mjs tests/CallFeedbackForm.test.mjs",
     "optimize:donetsk-images": "node scripts/optimize-donetsk-images.mjs",
+    "optimize:donetsk-video": "node scripts/optimize-donetsk-video.mjs",
     "dev": "next dev",
     "build": "next build",
-    "build:export": "yarn lint && yarn test && yarn build && yarn check:export",
+    "build:production": "yarn lint && yarn test && yarn build && yarn check:build",
     "typecheck": "next typegen && tsc --noEmit",
-    "check:export": "node scripts/check-export.mjs",
-    "start": "node scripts/serve-export.mjs",
+    "check:build": "node scripts/check-build.mjs",
+    "start": "next start",
     "lint": "eslint"
   },
   "dependencies": {

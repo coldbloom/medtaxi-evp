@@ -12,7 +12,6 @@ export const CallToActionSection = () => {
             alt="Круглосуточная работа 24/7 — Медтакси Евпатория"
             width={10}
             height={10}
-            priority
             className="w-auto h-auto"
           />
         </div>

@@ -1,3 +1,6 @@
+import { ServiceFaq } from "@/src/features/transport/ServiceFaq";
+import { TransportSteps } from "@/src/features/transport/TransportSteps";
+import { ServiceFeatures } from "@/src/features/transport/ServiceFeatures";
 import { serializeJsonLd } from "@/app/lib/serializeJsonLd";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -211,47 +214,10 @@ export default function Page() {
         </section>
 
         {/* Features grid */}
-        <section className="py-16 px-4 bg-white" aria-labelledby="features-heading">
-          <div className="container mx-auto max-w-6xl">
-            <h2 id="features-heading" className="text-2xl md:text-4xl font-bold text-gray-900 mb-4 text-center">
-              Как мы обеспечиваем комфорт и безопасность
-            </h2>
-            <p className="text-center text-gray-500 mb-12 max-w-2xl mx-auto">
-              Каждая деталь продумана так, чтобы поездка была максимально удобной — и для пациента, и для родственников.
-            </p>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {features.map((f) => (
-                <article key={f.title} className="bg-blue-50 rounded-2xl p-6 border border-blue-100 hover:shadow-md transition-shadow">
-                  <div className="text-4xl mb-4">{f.icon}</div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-2">{f.title}</h3>
-                  <p className="text-gray-600 text-sm leading-relaxed">{f.text}</p>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
+        <ServiceFeatures title="Как мы обеспечиваем комфорт и безопасность" items={features} description="Каждая деталь продумана так, чтобы поездка была максимально удобной — и для пациента, и для родственников." tone="blue" />
 
         {/* How it works */}
-        <section className="py-16 px-4 bg-gray-50" aria-labelledby="how-heading">
-          <div className="container mx-auto max-w-4xl">
-            <h2 id="how-heading" className="text-2xl md:text-4xl font-bold text-gray-900 mb-12 text-center">
-              Как проходит перевозка
-            </h2>
-            <div className="grid sm:grid-cols-2 gap-6">
-              {steps.map((s) => (
-                <div key={s.num} className="flex gap-5 bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-                  <div className="flex-shrink-0 w-12 h-12 bg-blue-600 text-white rounded-xl flex items-center justify-center font-bold text-xl">
-                    {s.num}
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-gray-900 mb-1">{s.title}</h3>
-                    <p className="text-gray-600 text-sm leading-relaxed">{s.text}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
+        <TransportSteps title="Как проходит перевозка" items={steps} />
 
         {/* Routes */}
         <section className="py-16 px-4 bg-white" aria-labelledby="routes-heading">
@@ -295,24 +261,7 @@ export default function Page() {
         <Advantages />
 
         {/* FAQ */}
-        <section className="py-16 px-4 bg-white" aria-labelledby="faq-heading">
-          <div className="container mx-auto max-w-3xl">
-            <h2 id="faq-heading" className="text-2xl md:text-4xl font-bold text-gray-900 mb-10 text-center">
-              Частые вопросы
-            </h2>
-            <div className="space-y-4">
-              {faqStructuredData.mainEntity.map((item) => (
-                <details key={item.name} className="group bg-gray-50 rounded-2xl border border-gray-200 px-6 py-5 cursor-pointer">
-                  <summary className="font-semibold text-gray-900 list-none flex justify-between items-center gap-4">
-                    {item.name}
-                    <span className="text-blue-600 text-2xl font-light group-open:rotate-45 transition-transform duration-200 select-none flex-shrink-0">+</span>
-                  </summary>
-                  <p className="mt-4 text-gray-600 leading-relaxed text-sm">{item.acceptedAnswer.text}</p>
-                </details>
-              ))}
-            </div>
-          </div>
-        </section>
+        <ServiceFaq title="Частые вопросы" items={faqStructuredData.mainEntity} />
 
         {/* Reviews — reused server component */}
         <Reviews />

@@ -1,3 +1,4 @@
+import { homeFaqStructuredData } from "@/src/features/home/content/faq";
 import { serializeJsonLd } from "@/app/lib/serializeJsonLd";
 import type { Metadata } from "next";
 import { Discounts } from "@/app/components/sections/Discounts";
@@ -141,66 +142,11 @@ const webPageStructuredData = {
   primaryImageOfPage: {
     "@type": "ImageObject",
     url: "https://medtaxi-evp.ru/peugeot.jpg",
-    width: 1200,
-    height: 630,
+    width: 1280,
+    height: 960,
   },
   breadcrumb: { "@id": "https://medtaxi-evp.ru/#breadcrumb" },
   mainEntity: { "@id": "https://medtaxi-evp.ru/#organization" },
-};
-
-const faqStructuredData = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: [
-    {
-      "@type": "Question",
-      name: "Как осуществляется перевозка лежачих больных в Евпатории?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "Перевозка лежачих больных осуществляется на специализированном транспорте с медицинским оборудованием, подъёмниками и фиксаторами. Профессиональная бригада обеспечивает безопасную транспортировку на носилках или в инвалидном кресле.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "Работаете ли вы по всему Крыму и России?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "Да, мы предоставляем услуги перевозки лежачих больных и инвалидов не только в Евпатории, но и по всему Крыму, а также осуществляем междугородние перевозки по всей России.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "Какое оборудование используется для перевозки?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "Наш транспорт оборудован подъёмниками, фиксаторами, местами для сопровождающих. Возможна транспортировка на носилках или в инвалидном кресле. Салон оснащён климат-контролем и поддерживается в стерильном состоянии.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "Сколько стоит перевозка лежачего больного в Евпатории?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "Стоимость перевозки лежачих больных и инвалидов в Евпатории и по Крыму зависит от маршрута, сложности и необходимости сопровождения. Точную цену можно узнать по телефону +7 (978) 938-02-21. Мы работаем без скрытых платежей.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "Можно ли перевезти больного из больницы домой в Евпатории?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "Да, мы организуем перевозку лежачих больных из больницы домой в Евпатории и по Крыму. Транспорт подъезжает к месту выписки, обеспечиваем бережную погрузку и доставку до двери.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "Делаете ли перевозку на процедуры и в реабилитационный центр?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "Да, мы осуществляем перевозку лежачих больных и инвалидов на процедуры, обследования, в реабилитационные центры и санатории. Работаем по Евпатории, Крыму и между городами России.",
-      },
-    },
-  ],
 };
 
 export default function Home() {
@@ -214,7 +160,7 @@ export default function Home() {
     {
       id: "crimea",
       title: "Популярные направления по Крыму",
-      description: "Отдельные страницы под спрос: Евпатория - Симферополь и другие маршруты.",
+      description: "Перевозка из Евпатории в Симферополь и другие города Крыма.",
       items: serviceOffers.filter((offer) => offer.category === "crimea"),
     },
     {
@@ -241,7 +187,7 @@ export default function Home() {
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: serializeJsonLd(faqStructuredData) }}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(homeFaqStructuredData) }}
       />
 
       <Header />

@@ -10,7 +10,7 @@ import { ContactResult } from "./ContactResult";
 import type { ContactModalVariant } from "./types";
 import { useCallbackRequest } from "./useCallbackRequest";
 
-interface ContactModalProps {
+export interface ContactModalProps {
   isOpen: boolean;
   onClose: () => void;
   contactPhoneHref?: string;

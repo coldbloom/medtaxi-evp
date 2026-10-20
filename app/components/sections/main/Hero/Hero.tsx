@@ -56,8 +56,8 @@ export const Hero = () => {
                   alt="Специализированный медицинский транспорт для перевозки лежачих больных в Евпатории"
                   fill
                   className="object-cover object-center lg:object-[center_30%]"
-                  priority
-                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 500px"
+                  preload
+                  sizes="(min-width: 1280px) 576px, (min-width: 1024px) calc(50vw - 64px), calc(100vw - 48px)"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-blue-600/10 to-transparent pointer-events-none" />
               </div>

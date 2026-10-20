@@ -1,48 +1,21 @@
-"use client";
-
-import { useRef, useEffect } from "react";
-
 export interface FaqItem {
   question: string;
   answer: string;
 }
 
 interface FaqAccordionProps {
-  items: FaqItem[];
+  items: readonly FaqItem[];
+  groupName: string;
 }
 
-/**
- * Аккордеон на нативных <details>/<summary>.
- * Контент всегда в DOM при SSR — индексируется поисковиками.
- * JS только добавляет поведение «только один пункт открыт».
- */
-export function FaqAccordion({ items }: FaqAccordionProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    const detailsList = container.querySelectorAll<HTMLDetailsElement>("details");
-
-    const handleToggle = (e: Event) => {
-      const target = e.target as HTMLDetailsElement;
-      if (!target.open) return;
-      detailsList.forEach((el) => {
-        if (el !== target) el.open = false;
-      });
-    };
-
-    detailsList.forEach((el) => el.addEventListener("toggle", handleToggle));
-    return () =>
-      detailsList.forEach((el) => el.removeEventListener("toggle", handleToggle));
-  }, [items.length]);
-
+/** Native grouping keeps one answer open without downloading client JavaScript. */
+export function FaqAccordion({ items, groupName }: FaqAccordionProps) {
   return (
-    <div ref={containerRef} className="space-y-2" role="list">
+    <div className="space-y-2" role="list">
       {items.map((item, index) => (
         <details
-          key={index}
+          key={item.question}
+          name={groupName}
           className="group border border-gray-200 rounded-lg bg-gray-50/50 overflow-hidden"
           role="listitem"
         >

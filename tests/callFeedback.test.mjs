@@ -315,7 +315,7 @@ test("a new attempt unmounts the previous form and derives styling from the clic
         },
         useEffect(callback) { effect = callback; },
       };
-      if (name === "next/dynamic") return { default: () => () => null };
+      if (name === "@/app/components/ContactModal/LazyContactModal") return { LazyContactModal: () => null };
       if (name === "@/app/lib/callFeedback") return {
         listenForCallFeedback(open, start) { onOpen = open; onStart = start; return () => {}; },
       };

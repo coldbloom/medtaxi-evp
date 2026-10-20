@@ -1,3 +1,7 @@
+import { IntercityRoutePricing } from "@/src/features/transport/IntercityRoutePricing";
+import { ServiceFaq } from "@/src/features/transport/ServiceFaq";
+import { TransportSteps } from "@/src/features/transport/TransportSteps";
+import { ServiceFeatures } from "@/src/features/transport/ServiceFeatures";
 import { serializeJsonLd } from "@/app/lib/serializeJsonLd";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -245,108 +249,13 @@ export default function Page() {
         </section>
 
         {/* Routes table */}
-        <section className="py-16 px-4 bg-white" aria-labelledby="routes-heading">
-          <div className="container mx-auto max-w-4xl">
-            <h2 id="routes-heading" className="text-2xl md:text-4xl font-bold text-gray-900 mb-4 text-center">
-              Популярные направления и цены
-            </h2>
-            <p className="text-center text-gray-500 mb-10">
-              Ориентировочные тарифы. Точная стоимость зависит от маршрута и дополнительных услуг.
-            </p>
-            <div className="overflow-x-auto rounded-2xl border border-gray-200 shadow-sm mb-8">
-              <table className="w-full text-left">
-                <thead className="bg-indigo-600 text-white">
-                  <tr>
-                    <th className="px-5 py-4 font-semibold text-sm">Откуда</th>
-                    <th className="px-5 py-4 font-semibold text-sm">Куда</th>
-                    <th className="px-5 py-4 font-semibold text-sm">Расстояние</th>
-                    <th className="px-5 py-4 font-semibold text-sm">Стоимость</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {routes.map((r, i) => (
-                    <tr key={r.to} className={i % 2 === 0 ? "bg-white" : "bg-gray-50"}>
-                      <td className="px-5 py-4 text-gray-700 font-medium">{r.from}</td>
-                      <td className="px-5 py-4 text-gray-900 font-bold">{r.to}</td>
-                      <td className="px-5 py-4 text-gray-500 text-sm">{r.km}</td>
-                      <td className="px-5 py-4 text-indigo-700 font-bold whitespace-nowrap">{r.price}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            <p className="text-sm text-gray-400 text-center mb-8">
-              Не нашли свой маршрут? Звоните — рассчитаем стоимость для любого направления.
-            </p>
-
-            <div className="bg-gradient-to-r from-indigo-600 to-blue-700 rounded-2xl p-8 text-white text-center">
-              <h3 className="text-2xl font-bold mb-3">Рассчитать стоимость поездки</h3>
-              <p className="text-indigo-200 mb-6">Назовите маршрут и состояние пациента — ответим за 2 минуты.</p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <TrackedPhoneLink
-                  phone="+79789380221"
-                  trackingId="price_block"
-                  className="inline-flex items-center justify-center bg-white text-indigo-700 px-8 py-4 rounded-xl font-bold text-lg hover:bg-indigo-50 transition-colors shadow-lg"
-                  aria-label="Позвонить для расчёта"
-                >
-                  Позвонить
-                </TrackedPhoneLink>
-                <a
-                  href={`https://t.me/ritevp?text=${encodeURIComponent("Здравствуйте! Нужно рассчитать стоимость перевозки из Крыма")}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center bg-transparent border-2 border-white text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-indigo-700 transition-colors"
-                  aria-label="Написать в Telegram"
-                >
-                  Написать в Telegram
-                </a>
-              </div>
-            </div>
-          </div>
-        </section>
+        <IntercityRoutePricing routes={routes} />
 
         {/* Features */}
-        <section className="py-16 px-4 bg-gray-50" aria-labelledby="features-heading">
-          <div className="container mx-auto max-w-6xl">
-            <h2 id="features-heading" className="text-2xl md:text-4xl font-bold text-gray-900 mb-4 text-center">
-              Что обеспечивает комфорт в дальней дороге
-            </h2>
-            <p className="text-center text-gray-500 mb-12 max-w-2xl mx-auto">
-              Дальняя поездка требует особой подготовки. Мы продумываем каждый этап.
-            </p>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {features.map((f) => (
-                <article key={f.title} className="bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-md transition-shadow">
-                  <div className="text-4xl mb-4">{f.icon}</div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-2">{f.title}</h3>
-                  <p className="text-gray-600 text-sm leading-relaxed">{f.text}</p>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
+        <ServiceFeatures title="Что обеспечивает комфорт в дальней дороге" items={features} description="Дальняя поездка требует особой подготовки. Мы продумываем каждый этап." tone="indigo" />
 
         {/* How it works */}
-        <section className="py-16 px-4 bg-white" aria-labelledby="how-heading">
-          <div className="container mx-auto max-w-4xl">
-            <h2 id="how-heading" className="text-2xl md:text-4xl font-bold text-gray-900 mb-12 text-center">
-              Как проходит дальняя перевозка
-            </h2>
-            <div className="grid sm:grid-cols-2 gap-6">
-              {steps.map((s) => (
-                <div key={s.num} className="flex gap-5 bg-indigo-50 rounded-2xl p-6 border border-indigo-100">
-                  <div className="flex-shrink-0 w-12 h-12 bg-indigo-600 text-white rounded-xl flex items-center justify-center font-bold text-xl">
-                    {s.num}
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-gray-900 mb-1">{s.title}</h3>
-                    <p className="text-gray-600 text-sm leading-relaxed">{s.text}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
+        <TransportSteps title="Как проходит дальняя перевозка" items={steps} tone="indigo" />
 
         {/* Direction pages — internal linking */}
         <section className="py-14 px-4 bg-indigo-50 border-y border-indigo-100" aria-labelledby="directions-heading">
@@ -385,24 +294,7 @@ export default function Page() {
         <Advantages />
 
         {/* FAQ */}
-        <section className="py-16 px-4 bg-white" aria-labelledby="faq-heading">
-          <div className="container mx-auto max-w-3xl">
-            <h2 id="faq-heading" className="text-2xl md:text-4xl font-bold text-gray-900 mb-10 text-center">
-              Частые вопросы о дальних перевозках
-            </h2>
-            <div className="space-y-4">
-              {faqStructuredData.mainEntity.map((item) => (
-                <details key={item.name} className="group bg-gray-50 rounded-2xl border border-gray-200 px-6 py-5 cursor-pointer">
-                  <summary className="font-semibold text-gray-900 list-none flex justify-between items-center gap-4">
-                    {item.name}
-                    <span className="text-indigo-600 text-2xl font-light group-open:rotate-45 transition-transform duration-200 select-none flex-shrink-0">+</span>
-                  </summary>
-                  <p className="mt-4 text-gray-600 leading-relaxed text-sm">{item.acceptedAnswer.text}</p>
-                </details>
-              ))}
-            </div>
-          </div>
-        </section>
+        <ServiceFaq title="Частые вопросы о дальних перевозках" items={faqStructuredData.mainEntity} tone="indigo" />
 
         {/* Reviews — reused */}
         <Reviews />

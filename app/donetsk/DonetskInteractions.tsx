@@ -1,14 +1,9 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { useContactModalController } from "@/app/components/ContactModal/useContactModalController";
+import { LazyContactModal } from "@/app/components/ContactModal/LazyContactModal";
 import { trackDonetskGoal } from "./analytics";
-
-const ContactModal = dynamic(
-  () => import("@/app/components/ContactModal/ContactModal").then((module) => module.ContactModal),
-  { ssr: false },
-);
 
 // One delegated listener keeps every CTA and phone/social link server-rendered.
 export function DonetskInteractions({
@@ -50,7 +45,7 @@ export function DonetskInteractions({
 
   // Preserve the form draft when closed, and load its code only on first demand.
   return hasOpened ? (
-    <ContactModal
+    <LazyContactModal
       isOpen={isOpen}
       onClose={close}
       contactPhoneHref={contactPhoneHref}

@@ -1,0 +1,82 @@
+.link {
+  position: relative;
+}
+
+.indicator {
+  position: absolute;
+  inset-inline: 0;
+  bottom: -4px;
+  height: 3px;
+  overflow: hidden;
+  border-radius: 2px;
+  background: currentColor;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Delay only the decoration, never navigation or the live announcement. */
+.indicator[data-navigation-pending="true"] {
+  opacity: 0.65;
+  transition: opacity 0s 150ms;
+}
+
+.notice {
+  position: fixed;
+  top: calc(80px + env(safe-area-inset-top, 0px));
+  left: 50%;
+  z-index: 60;
+  display: block;
+  box-sizing: border-box;
+  width: calc(100% - 32px);
+  max-width: 360px;
+  padding: 14px 18px;
+  border: 1px solid #547164;
+  border-top: 3px solid #f3b941;
+  border-radius: 16px;
+  background: #173d32;
+  color: white;
+  box-shadow: 0 10px 30px rgb(0 0 0 / 18%);
+  text-align: left;
+  text-decoration: none;
+  line-height: 1.4;
+  letter-spacing: normal;
+  text-transform: none;
+  transform: translateX(-50%);
+  animation: revealNotice 150ms step-end both;
+  /* No overlay, focus trap or click interception: existing contacts stay usable. */
+  pointer-events: none;
+}
+
+.noticeTitle {
+  display: block;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.noticeRoute {
+  display: block;
+  margin-top: 3px;
+  color: #c6d8d1;
+  font-size: 13px;
+  font-weight: 400;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .indicator[data-navigation-pending="true"] {
+    animation: pending 1.2s ease-in-out 150ms infinite;
+  }
+}
+
+@keyframes pending {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 0.85; }
+}
+
+@keyframes revealNotice {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .notice { animation: none; }
+}

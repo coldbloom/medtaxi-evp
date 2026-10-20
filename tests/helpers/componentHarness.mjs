@@ -9,7 +9,7 @@ const require = createRequire(import.meta.url);
 /** Load the real local dependency graph; mock only browser/framework adapters. */
 export function moduleLoader({ mocks = {}, globals = {} } = {}) {
   const cache = new Map();
-  const context = vm.createContext({ console, AbortController, ...globals });
+  const context = vm.createContext({ console, AbortController, URL, URLSearchParams, ...globals });
   const loadedFiles = new Set();
 
   function resolveFile(name, parent = process.cwd()) {
@@ -204,11 +204,11 @@ export function browserFixture({ visualViewport = true } = {}) {
   const focusCalls = [];
   const properties = new Map();
   const originalStyle = { overflow: "auto", position: "relative", top: "2px", left: "3px", width: "95%", background: "white" };
-  const document = { ...eventTarget(), body: { style: { ...originalStyle } }, activeElement: null };
+  const document = { ...eventTarget(), body: { style: { ...originalStyle } }, activeElement: null, referrer: "" };
   const viewport = { ...eventTarget(), height: 740, offsetTop: 0 };
   const window = {
     scrollX: 4, scrollY: 1234,
-    location: { pathname: "/" },
+    location: new URL("https://medtaxi-evp.ru/"),
     visualViewport: visualViewport ? viewport : undefined,
     scrollTo: (options) => scrollCalls.push({ ...options }),
   };

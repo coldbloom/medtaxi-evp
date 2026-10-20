@@ -1,0 +1,21 @@
+# Install as /etc/systemd/system/medtaxi-next.service after adapting paths/user.
+# The project, node_modules and .next must be readable by this non-root user.
+[Unit]
+Description=Medtaxi Next.js frontend
+After=network.target
+
+[Service]
+Type=simple
+User=medtaxi
+Group=medtaxi
+WorkingDirectory=/srv/medtaxi/current
+Environment=NODE_ENV=production
+# Replace /usr/bin/node with the absolute path to the installed Node.js binary.
+ExecStart=/usr/bin/node /srv/medtaxi/current/node_modules/next/dist/bin/next start --hostname 127.0.0.1 --port 3000
+Restart=on-failure
+RestartSec=5
+KillSignal=SIGTERM
+TimeoutStopSec=30
+
+[Install]
+WantedBy=multi-user.target

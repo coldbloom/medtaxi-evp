@@ -1,5 +1,3 @@
-"use client";
-
 import Image from "next/image";
 import { Carousel } from "@/app/components/Carousel";
 import type { EmblaOptionsType } from "embla-carousel";
@@ -25,7 +23,7 @@ export function EquipmentSlider({ items }: EquipmentSliderProps) {
           src={item.image}
           alt={item.title}
           fill
-          sizes="(max-width: 768px) 100vw, 70vw, 400px"
+          sizes="(min-width: 1024px) 432px, (min-width: 768px) 70vw, (min-width: 640px) 85vw, calc(100vw - 48px)"
           className="object-cover"
         />
       </div>

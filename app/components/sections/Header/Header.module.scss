@@ -6,23 +6,61 @@
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
+  gap: 8px;
 
   @media (min-width: 768px) {
     height: 80px;
   }
 }
 
+.brand {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 8px;
+
+  @media (min-width: 768px) {
+    gap: 16px;
+  }
+
+  @media (max-width: 360px) {
+    gap: 4px;
+  }
+}
+
+.logoImage {
+  width: 40px;
+  height: auto;
+  flex-shrink: 0;
+
+  @media (min-width: 768px) {
+    width: 60px;
+  }
+
+  @media (max-width: 360px) {
+    width: 24px;
+  }
+}
+
 .logoText {
   font-size: 18px;
+  line-height: 1.25;
+  max-width: 7em;
 
   @media (max-width: 400px) {
     font-size: 16px;
+  }
+
+  @media (max-width: 360px) {
+    font-size: 13px;
   }
 }
 
 .iconsWrapper {
   display: flex;
   flex-direction: row;
+  align-items: center;
+  flex-shrink: 0;
   gap: 10px;
 
   @media (min-width: 1024px) {

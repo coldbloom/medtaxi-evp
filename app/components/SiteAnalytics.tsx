@@ -1,6 +1,7 @@
+import { Suspense } from "react";
 import Script from "next/script";
-
-const YANDEX_METRIKA_ID = 108491610;
+import { YANDEX_METRIKA_ID } from "@/app/lib/metrika";
+import { MetrikaPageViews } from "./tracking/MetrikaPageViews";
 
 export function SiteAnalytics() {
   return (
@@ -12,17 +13,7 @@ export function SiteAnalytics() {
             w.ym = w.ym || function () {
               (w.ym.a = w.ym.a || []).push(arguments);
             };
-            w.ym.l = Date.now();
-            w.ym(${YANDEX_METRIKA_ID}, "init", {
-              ssr: true,
-              webvisor: true,
-              clickmap: true,
-              ecommerce: "dataLayer",
-              referrer: d.referrer,
-              url: w.location.href,
-              accurateTrackBounce: true,
-              trackLinks: true
-            });
+            w.ym.l = w.ym.l || Date.now();
 
             function load() {
               if (d.getElementById("yandex-metrika-script")) return;
@@ -54,6 +45,10 @@ export function SiteAnalytics() {
           })(window, document);
         `}
       </Script>
+      {/* Only this empty observer uses search params; page HTML stays server-rendered. */}
+      <Suspense fallback={null}>
+        <MetrikaPageViews />
+      </Suspense>
       <noscript>
         <div>
           {/* eslint-disable-next-line @next/next/no-img-element -- Tracking pixel must request Yandex directly when JavaScript is disabled. */}

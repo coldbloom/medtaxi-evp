@@ -1,13 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import dynamic from "next/dynamic";
 import { listenForCallFeedback, type CallFeedbackContext } from "@/app/lib/callFeedback";
-
-const ContactModal = dynamic(
-  () => import("@/app/components/ContactModal/ContactModal").then((module) => module.ContactModal),
-  { ssr: false },
-);
+import { LazyContactModal } from "@/app/components/ContactModal/LazyContactModal";
 
 export function CallFeedback() {
   const [context, setContext] = useState<CallFeedbackContext | null>(null);
@@ -25,7 +20,7 @@ export function CallFeedback() {
   ), []);
 
   return context ? (
-    <ContactModal
+    <LazyContactModal
       isOpen={isOpen}
       onClose={() => setIsOpen(false)}
       purpose="call-followup"

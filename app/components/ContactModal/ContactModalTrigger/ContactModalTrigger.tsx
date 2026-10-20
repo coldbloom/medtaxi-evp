@@ -1,13 +1,8 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useContactModalController } from "../useContactModalController";
-
-const ContactModal = dynamic(
-  () => import("@/app/components/ContactModal/ContactModal").then((module) => module.ContactModal),
-  { ssr: false },
-);
+import { LazyContactModal } from "../LazyContactModal";
 
 // Компонент-триггер для открытия модалки
 export function ContactModalTrigger() {
@@ -29,7 +24,7 @@ export function ContactModalTrigger() {
           height={16}
         />
       </button>
-      {hasOpened && <ContactModal isOpen={isOpen} onClose={close} />}
+      {hasOpened && <LazyContactModal isOpen={isOpen} onClose={close} />}
     </>
   );
 }

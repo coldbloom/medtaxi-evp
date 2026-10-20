@@ -1,4 +1,4 @@
-/* eslint-disable @next/next/no-html-link-for-pages -- Match the native navigation of /donetsk. */
+/* eslint-disable @next/next/no-html-link-for-pages -- Keep the home link native; Donetsk route links use Next.js. */
 import type { ReactNode } from "react";
 import styles from "../DonetskMotion.module.css";
 import { DonetskContactTrigger } from "../DonetskContactTrigger";
@@ -6,6 +6,7 @@ import { DonetskPhoneLink } from "../DonetskPhoneLink";
 import { DonetskFaq } from "../components/DonetskLanding";
 import { DonetskRouteChips } from "../components/RouteChip";
 import { DonetskContactActions } from "../components/DonetskContactActions";
+import { DonetskRouteLink } from "../components/DonetskRouteLink";
 import { buttonPrimary, buttonSecondary } from "../components/buttonStyles";
 import { MercedesImage } from "./MercedesImage";
 import { MercedesGallery } from "./MercedesGallery";
@@ -58,7 +59,7 @@ export function RouteHero({ contact }: RouteContactProps) {
           <ol className="flex flex-wrap items-center gap-x-2 gap-y-1">
             <li><a href="/" className="hover:text-white">Главная</a></li>
             <li aria-hidden="true">→</li>
-            <li><a href="/donetsk" className="hover:text-white">Донецк</a></li>
+            <li><DonetskRouteLink href="/donetsk" className="hover:text-white">Донецк</DonetskRouteLink></li>
             <li aria-hidden="true">→</li>
             <li aria-current="page" className="text-white">Москва</li>
           </ol>
@@ -103,7 +104,7 @@ export function RouteJourney() {
               <li>Москва <span className="block text-sm font-normal text-[#c6d8d1]">До кровати или места передачи</span></li>
             </ol>
           </div>
-          <p className="mt-5 text-sm text-[#65716c]">Поездки по городу — <a href="/donetsk" className="font-bold text-[#173d32] underline underline-offset-4">медтакси в Донецке и ДНР</a>.</p>
+          <p className="mt-5 text-sm text-[#65716c]">Поездки по городу — <DonetskRouteLink href="/donetsk" className="font-bold text-[#173d32] underline underline-offset-4">медтакси в Донецке и ДНР</DonetskRouteLink>.</p>
         </div>
         <ol className="divide-y divide-[#d8d2c6]">
           {routeSteps.map((item, index) => (

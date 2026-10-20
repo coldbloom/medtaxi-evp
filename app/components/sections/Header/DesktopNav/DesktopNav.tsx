@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import cn from 'clsx';
 import s from './DesktopNav.module.scss';
-import { serviceOffers } from '@/app/lib/serviceOffers';
+import { DonetskRouteLink } from '@/app/donetsk/components/DonetskRouteLink';
 
 const pages = [
   { title: 'Главная', href: '/' },
@@ -26,12 +26,11 @@ const servicesPages = [
   { title: 'Междугородние перевозки', href: '/uslugi/mezhdugorodnye-perevozki' },
 ];
 
-const generatedServicesPages = serviceOffers.map((offer) => ({
-  title: offer.shortName,
-  href: offer.route,
-}));
+type DesktopNavProps = {
+  services: readonly { title: string; href: string }[];
+};
 
-export const DesktopNav = () => {
+export const DesktopNav = ({ services }: DesktopNavProps) => {
   const pathname = usePathname();
   const [isServicesOpen, setIsServicesOpen] = useState(false);
 
@@ -40,13 +39,24 @@ export const DesktopNav = () => {
       <ul className={s.mainList}>
         {pages.map((page) => (
           <li key={page.href}>
-            <Link
-              href={page.href}
-              className={cn(s.navLink, pathname === page.href && s.activeLink)}
-              aria-current={pathname === page.href ? 'page' : undefined}
-            >
-              {page.title}
-            </Link>
+            {page.href === '/donetsk' || page.href === '/donetsk/moskva' ? (
+              <DonetskRouteLink
+                href={page.href}
+                prefetch
+                className={cn(s.navLink, pathname === page.href && s.activeLink)}
+                aria-current={pathname === page.href ? 'page' : undefined}
+              >
+                {page.title}
+              </DonetskRouteLink>
+            ) : (
+              <Link
+                href={page.href}
+                className={cn(s.navLink, pathname === page.href && s.activeLink)}
+                aria-current={pathname === page.href ? 'page' : undefined}
+              >
+                {page.title}
+              </Link>
+            )}
           </li>
         ))}
 
@@ -72,7 +82,7 @@ export const DesktopNav = () => {
 
           {isServicesOpen && (
             <div className={s.dropdownMenu} role="menu">
-              {[...servicesPages, ...generatedServicesPages].map((service) => (
+              {[...servicesPages, ...services].map((service) => (
                 <Link
                   key={`${service.href}-${service.title}`}
                   href={service.href}

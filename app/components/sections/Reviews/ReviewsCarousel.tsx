@@ -1,5 +1,3 @@
-"use client";
-
 import { Carousel } from "@/app/components/Carousel";
 import type { EmblaOptionsType } from "embla-carousel";
 

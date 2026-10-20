@@ -1,4 +1,4 @@
-/* eslint-disable @next/next/no-html-link-for-pages -- Keep native navigation used by the Donetsk landing. */
+/* eslint-disable @next/next/no-html-link-for-pages -- Secondary links keep native navigation; Donetsk route links use Next.js. */
 import Image from "next/image";
 import { DonetskContactTrigger } from "../DonetskContactTrigger";
 import { DonetskPhoneLink } from "../DonetskPhoneLink";
@@ -6,6 +6,7 @@ import { DonetskSocialLink } from "../DonetskSocialLink";
 import { StaticImage } from "../StaticImage";
 import styles from "../DonetskMotion.module.css";
 import { ContactActionIcon } from "./ContactActionIcon";
+import { DonetskRouteLink } from "./DonetskRouteLink";
 import { MAX_URL, TELEGRAM_URL } from "@/app/lib/contactChannels";
 
 
@@ -22,7 +23,7 @@ export function DonetskHeader({ phone, phoneLabel, ctaPrefix = "", navigation = 
   return (
       <header className="z-30 border-b border-white/10 bg-[#10211d] text-white">
         <div className="mx-auto flex min-h-18 max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
-          <a href={"/donetsk"} className="group flex items-center gap-3" aria-label="Медтакси Донецк — главная страница">
+          <DonetskRouteLink href="/donetsk" className="group flex items-center gap-3" aria-label="Медтакси Донецк — главная страница">
             <Image
               src="/logo-donetsk.svg"
               alt="Медтакси Донецк — логотип"
@@ -36,7 +37,7 @@ export function DonetskHeader({ phone, phoneLabel, ctaPrefix = "", navigation = 
                 Донецк<span className="hidden min-[360px]:inline"> · ДНР</span>
               </span>
             </span>
-          </a>
+          </DonetskRouteLink>
 
           <nav className={`${styles.navigation} hidden items-center gap-7 text-sm font-semibold text-[#dce8e3] lg:flex`} aria-label="Навигация по странице">
             {navigation.map((item) => (

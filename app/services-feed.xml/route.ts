@@ -1,6 +1,6 @@
 import { serviceOffers, SITE_URL } from "@/app/lib/serviceOffers";
 
-// The XML is generated at build time and served as a file by Nginx.
+// The XML is generated at build time and served by Next.js.
 export const dynamic = "force-static";
 
 const xmlEscape = (value: string) =>

@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 import { ReviewsCarousel } from "./ReviewsCarousel";
 import {HeadingSection} from "@/app/components/sections/HeadingSection";
 
@@ -48,7 +49,7 @@ export const Reviews = () => {
             aria-label="Задать вопрос в Telegram"
           >
             Задать вопрос в Telegram
-            <img
+            <Image
               src="/icon-tg.svg"
               alt="Telegram"
               width={24}

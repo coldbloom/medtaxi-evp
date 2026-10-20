@@ -4,6 +4,19 @@
   color: #fff;
 }
 
+.light {
+  background: transparent;
+  color: #173d32;
+}
+
+.light .counter {
+  color: #996019;
+}
+
+.light .carousel > button:focus-visible {
+  outline-color: #173d32;
+}
+
 .carousel > div {
   padding-bottom: 0;
 }
@@ -44,7 +57,11 @@
   background: #0b1915;
 }
 
-.image {
+.imageFrame img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   object-fit: contain;
 }
 

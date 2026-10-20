@@ -1,27 +1,37 @@
 import type { NextConfig } from "next";
 import { PHASE_PRODUCTION_BUILD } from "next/constants";
 import path from "path";
-import { validateExportApiUrl } from "./scripts/validate-export-api.mjs";
+import { donetskHeroVideo } from "./app/donetsk/video.generated";
+import { validateProductionApiUrl } from "./scripts/validate-production-api.mjs";
+
+const videoAssets = [
+  donetskHeroVideo.poster,
+  donetskHeroVideo.mobile.webm,
+  donetskHeroVideo.mobile.mp4,
+  donetskHeroVideo.desktop.webm,
+  donetskHeroVideo.desktop.mp4,
+];
 
 const nextConfig: NextConfig = {
-  output: "export",
-  // Keep the existing canonical URLs; Nginx maps /route to /route.html.
+  // Use the standard .next build, served by next start behind Nginx.
   trailingSlash: false,
-  // HTTP caching is configured by the static host (deploy/nginx-static.conf.example).
   sassOptions: {
     includePaths: [path.join(process.cwd(), "app")],
     silenceDeprecations: ["legacy-js-api"],
   },
-  images: {
-    // No /_next/image server is available in out/. Donetsk and Mercedes photos
-    // already use responsive AVIF/WebP variants generated before deployment.
-    unoptimized: true,
+  async headers() {
+    // Only the generated, content-hashed media can be cached immutably.
+    // Source files and other public assets retain Next.js's default policy.
+    return videoAssets.map(({ src }) => ({
+      source: src,
+      headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
+    }));
   },
 };
 
 export default function config(phase: string): NextConfig {
   if (phase === PHASE_PRODUCTION_BUILD) {
-    validateExportApiUrl(process.env.NEXT_PUBLIC_API_URL);
+    validateProductionApiUrl(process.env.NEXT_PUBLIC_API_URL);
   }
   return nextConfig;
 }

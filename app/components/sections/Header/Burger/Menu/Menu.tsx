@@ -5,9 +5,11 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import s from './Menu.module.scss';
+import { DonetskRouteLink } from '@/app/donetsk/components/DonetskRouteLink';
 
 type WithOnCloseProps = {
   onCloseAction: () => void;
+  titleId: string;
 };
 
 const pages = [
@@ -30,7 +32,7 @@ const servicesPages = [
   { title: 'Междугородние перевозки', href: '/uslugi/mezhdugorodnye-perevozki' }
 ];
 
-export const Menu = ({ onCloseAction }: WithOnCloseProps) => {
+export const Menu = ({ onCloseAction, titleId }: WithOnCloseProps) => {
   const [isServicesOpen, setIsServicesOpen] = useState(false);
   const pathname = usePathname();
 
@@ -45,14 +47,27 @@ export const Menu = ({ onCloseAction }: WithOnCloseProps) => {
     <div className={s.modalWrapper}>
       <div className={s.tabsWrapper}>
         <div className={s.menuHeader}>
-          <p className={s.menuEyebrow}>Навигация</p>
-          <h3 className={s.menuTitle}>Меню сайта</h3>
+          <div>
+            <p className={s.menuEyebrow}>Навигация</p>
+            <h2 id={titleId} className={s.menuTitle}>Меню сайта</h2>
+          </div>
+          <button type="button" onClick={onCloseAction} className={s.closeButton} aria-label="Закрыть меню">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+              <path d="m6 6 12 12M18 6 6 18" />
+            </svg>
+          </button>
         </div>
 
         {pages.slice(0, 4).map((page) => (
-          <Link key={page.href} href={page.href} className={s.tabLink} onClick={() => handleLinkClick(page.href)}>
-            {page.title}
-          </Link>
+          page.href === '/donetsk' || page.href === '/donetsk/moskva' ? (
+            <DonetskRouteLink key={page.href} href={page.href} prefetch className={s.tabLink} onClick={() => handleLinkClick(page.href)}>
+              {page.title}
+            </DonetskRouteLink>
+          ) : (
+            <Link key={page.href} href={page.href} className={s.tabLink} onClick={() => handleLinkClick(page.href)}>
+              {page.title}
+            </Link>
+          )
         ))}
 
         <button

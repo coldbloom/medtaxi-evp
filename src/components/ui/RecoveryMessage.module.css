@@ -1,0 +1,82 @@
+.main {
+  box-sizing: border-box;
+  display: grid;
+  min-height: 100svh;
+  place-items: center;
+  padding: 24px 16px;
+  background: #f8fafc;
+  color: #172033;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.card {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 520px;
+  padding: clamp(24px, 5vw, 40px);
+  border: 1px solid #dce3ed;
+  border-radius: 24px;
+  background: #fff;
+}
+
+.eyebrow {
+  margin: 0 0 12px;
+  color: #2563eb;
+  font-weight: 700;
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(26px, 5vw, 34px);
+  line-height: 1.2;
+}
+
+.description {
+  margin: 20px 0 24px;
+  color: #475569;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.actions {
+  display: grid;
+  gap: 12px;
+}
+
+.primary,
+.secondary,
+.phone {
+  box-sizing: border-box;
+  display: grid;
+  min-height: 48px;
+  place-items: center;
+  padding: 12px;
+  border-radius: 12px;
+  font: inherit;
+  text-align: center;
+  text-decoration: none;
+}
+
+.primary {
+  border: 1px solid #2563eb;
+  background: #2563eb;
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.secondary {
+  border: 1px solid #cbd5e1;
+  color: inherit;
+}
+
+.phone {
+  color: #1d4ed8;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.actions :focus-visible {
+  outline: 3px solid #2563eb;
+  outline-offset: 3px;
+}

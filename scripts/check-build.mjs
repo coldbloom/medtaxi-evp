@@ -2,16 +2,18 @@ import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-// Inspect the actual deployment artifact, not Next.js's intermediate .next/ output.
+// Verify this site's prerendered pages inside the standard next build artifact.
 const projectDir = fileURLToPath(new URL("../", import.meta.url));
-const outDir = path.join(projectDir, "out");
+const buildDir = path.join(projectDir, ".next");
+const appDir = path.join(buildDir, "server/app");
+const publicDir = path.join(projectDir, "public");
 const siteUrl = "https://medtaxi-evp.ru";
 const moscowUrl = `${siteUrl}/donetsk/moskva`;
 const errors = new Set();
 const checkedAssets = new Set();
 const metadataOwners = { title: new Map(), description: new Map() };
 const anchorCache = new Map();
-const requiredFiles = ["index.html", "404.html", "robots.txt", "sitemap.xml", "services-feed.xml"];
+const requiredFiles = ["index.html", "_not-found.html", "robots.txt.body", "sitemap.xml.body", "services-feed.xml.body"];
 
 function check(condition, message) {
   if (!condition) errors.add(message);
@@ -52,7 +54,7 @@ function staticMarkup(html) {
 
 function htmlPath(url) {
   const pathname = decodeURIComponent(new URL(url, siteUrl).pathname).replace(/\/$/, "");
-  return path.join(outDir, pathname ? `${pathname}.html` : "index.html");
+  return path.join(appDir, pathname ? `${pathname}.html` : "index.html");
 }
 
 function listHtml(directory) {
@@ -72,7 +74,16 @@ function checkAsset(reference, pageUrl, source) {
     return;
   }
   if (url.origin !== siteUrl) return;
-  check(url.pathname !== "/_next/image", `${source}: image requires the Next.js /_next/image server`);
+  // The optimizer is a runtime endpoint, but its source must still exist.
+  if (url.pathname === "/_next/image") {
+    const original = url.searchParams.get("url");
+    if (!original || new URL(original, pageUrl).pathname === "/_next/image") {
+      errors.add(`${source}: invalid optimized image source ${reference}`);
+      return;
+    }
+    checkAsset(original, pageUrl, source);
+    return;
+  }
   let pathname;
   try {
     pathname = decodeURIComponent(url.pathname);
@@ -82,7 +93,11 @@ function checkAsset(reference, pageUrl, source) {
   }
   if (checkedAssets.has(pathname)) return;
   checkedAssets.add(pathname);
-  check(isFile(path.join(outDir, pathname)), `${source}: missing asset ${pathname}`);
+  const assetFile = pathname.startsWith("/_next/static/")
+    ? path.join(buildDir, pathname.slice("/_next/".length))
+    : path.join(publicDir, pathname);
+  // Metadata files such as app/icon.svg are prerendered Route Handler bodies.
+  check(isFile(assetFile) || isFile(path.join(appDir, `${pathname}.body`)), `${source}: missing asset ${pathname}`);
 }
 
 // This only checks explicit HTML hiding (including React's hidden Suspense containers).
@@ -219,14 +234,25 @@ function checkMoscowSeo(markup, nodes) {
   }), `${source}: expected BreadcrumbList Главная → Донецк → Москва`);
 }
 
-if (!existsSync(outDir)) {
-  console.error("Static export not found: run npm run build before npm run check:export.");
+if (!existsSync(appDir) || !isFile(path.join(buildDir, "BUILD_ID"))) {
+  console.error("Production build not found: run yarn build before yarn check:build.");
   process.exit(1);
 }
 
-for (const filename of requiredFiles) check(isFile(path.join(outDir, filename)), `Missing or empty out/${filename}`);
+const serverFilesManifest = path.join(buildDir, "required-server-files.json");
+try {
+  const { config, files } = JSON.parse(readFileSync(serverFilesManifest, "utf8"));
+  check(config && typeof config === "object" && !config.output, "Build must use standard next start output, not export or standalone");
+  check(Array.isArray(files) && files.length > 0, "required-server-files.json: server file list is missing");
+  for (const filename of Array.isArray(files) ? files : []) {
+    check(isFile(path.join(projectDir, filename)), `Missing required server file: ${filename}`);
+  }
+} catch {
+  errors.add("Missing or invalid .next/required-server-files.json");
+}
+for (const filename of requiredFiles) check(isFile(path.join(appDir, filename)), `Missing or empty .next/server/app/${filename}`);
 
-const sitemapFile = path.join(outDir, "sitemap.xml");
+const sitemapFile = path.join(appDir, "sitemap.xml.body");
 const sitemap = isFile(sitemapFile) ? readFileSync(sitemapFile, "utf8") : "";
 const sitemapUrls = [...sitemap.matchAll(/<loc>([\s\S]*?)<\/loc>/g)].map((match) => decodeEntities(match[1].trim()));
 check(sitemapUrls.length > 0, "sitemap.xml: no page URLs");
@@ -238,25 +264,24 @@ for (const url of sitemapUrls) {
     check(new URL(url).origin === siteUrl, `sitemap.xml: unexpected origin ${url}`);
     const filename = htmlPath(url);
     sitemapPages.add(filename);
-    check(isFile(filename), `sitemap.xml: no exported HTML for ${url}`);
-    // App Router also exports the RSC payload used by client-side navigation.
-    // Upload the complete out/ tree; copying only HTML breaks that navigation.
-    check(isFile(filename.replace(/\.html$/, ".txt")), `sitemap.xml: no exported RSC payload for ${url}`);
+    check(isFile(filename), `sitemap.xml: no prerendered HTML for ${url}`);
+    // next start serves the RSC payload for App Router client-side navigation.
+    check(isFile(filename.replace(/\.html$/, ".rsc")), `sitemap.xml: no prerendered RSC payload for ${url}`);
   } catch {
     errors.add(`sitemap.xml: invalid URL ${url}`);
   }
 }
 
-const robotsFile = path.join(outDir, "robots.txt");
+const robotsFile = path.join(appDir, "robots.txt.body");
 if (isFile(robotsFile)) {
   const robots = readFileSync(robotsFile, "utf8");
   check(!/^Disallow:\s*\/\s*$/im.test(robots), "robots.txt: the entire site is blocked");
   check(robots.includes(`${siteUrl}/sitemap.xml`), "robots.txt: sitemap reference is missing");
 }
 
-const htmlFiles = listHtml(outDir);
+const htmlFiles = listHtml(appDir);
 for (const filename of htmlFiles) {
-  const source = path.relative(outDir, filename);
+  const source = path.relative(appDir, filename);
   const pageUrl = new URL(source === "index.html" ? "/" : `/${source.replace(/\.html$/, "")}`, siteUrl);
   const html = readFileSync(filename, "utf8");
   const markup = staticMarkup(html);
@@ -270,6 +295,7 @@ for (const filename of htmlFiles) {
       check(!/\b(noindex|none)\b/i.test(attrs.content ?? ""), `${source}: indexable sitemap page contains noindex`);
     }
     if (attrs.src) checkAsset(attrs.src, pageUrl, source);
+    if (attrs.poster) checkAsset(attrs.poster, pageUrl, source);
     for (const set of [attrs.srcset, attrs.imagesrcset]) {
       if (!set || set.trim().startsWith("data:")) continue;
       for (const candidate of set.split(",")) checkAsset(candidate.trim().split(/\s+/)[0], pageUrl, source);
@@ -282,9 +308,9 @@ for (const filename of htmlFiles) {
 }
 
 if (errors.size) {
-  console.error(`Static export check failed (${errors.size}):`);
+  console.error(`Production build check failed (${errors.size}):`);
   for (const error of errors) console.error(`- ${error}`);
   process.exitCode = 1;
 } else {
-  console.log(`Static export OK: ${htmlFiles.length} HTML files, ${sitemapUrls.length} sitemap URLs, ${checkedAssets.size} local assets; page metadata, JSON-LD, breadcrumbs, RSC payloads and Moscow visible server HTML verified.`);
+  console.log(`Production build OK: ${htmlFiles.length} HTML files, ${sitemapUrls.length} sitemap URLs, ${checkedAssets.size} local assets; page metadata, JSON-LD, breadcrumbs, RSC payloads and visible server HTML verified.`);
 }
