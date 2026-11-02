@@ -55,5 +55,8 @@ yarn test
 - [Пример systemd-сервиса](deploy/medtaxi-next.service.example).
 - [Самостоятельное размещение Next.js](https://nextjs.org/docs/app/guides/self-hosting).
 
-Возможное дальнейшее улучшение: отдельное изображение Open Graph размером
-1200 × 630 для `/donetsk` вместо существующего почти квадратного изображения.
+Для `/donetsk` используется отдельная карточка Open Graph 1200 × 630:
+`public/donetsk/og-donetsk.jpg`. Пересоздание из фотографии текущего Sprinter:
+`yarn generate:donetsk-og`. Иллюстрация `white-sprinter.png` используется в
+завершающем блоке заявки через готовые AVIF/WebP (`yarn optimize:donetsk-images`).
+`check:build` проверяет также наличие локальных изображений из OG/Twitter и JSON-LD.

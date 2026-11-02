@@ -1,3 +1,6 @@
+import { DonetskCrimeaHero } from "@/src/features/transport/DonetskCrimeaHero";
+import { DonetskContactActions } from "@/app/donetsk/components/DonetskContactActions";
+import { DonetskInteractions } from "@/app/donetsk/DonetskInteractions";
 import { RelatedServices } from "@/src/features/transport/RelatedServices";
 import { ServiceOfferContent } from "@/src/features/transport/ServiceOfferContent";
 import { ServiceOfferHero } from "@/src/features/transport/ServiceOfferHero";
@@ -9,6 +12,12 @@ import { Header } from "@/app/components/sections/Header";
 import { Footer } from "@/app/components/sections/Footer";
 import { Reviews } from "@/app/components/sections/Reviews";
 import { CallToActionSection } from "@/app/components/sections/main/CallToActionSection";
+import {formatPhoneNumber} from "@/app/utils/functions";
+
+const DONETSK_PHONE_HREF = process.env.DONETSK_PHONE_HREF || "+79490676701";
+const DONETSK_PHONE_LABEL = formatPhoneNumber(DONETSK_PHONE_HREF);
+
+const DONETSK_PHONE = { phone: DONETSK_PHONE_HREF, phoneLabel: DONETSK_PHONE_LABEL };
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -57,6 +66,9 @@ export default async function ServiceOfferPage({ params }: PageProps) {
 
   if (!offer) notFound();
 
+  const isDonetskCrimea = slug === "perevozka-donetsk-krym";
+  const contact = isDonetskCrimea ? DONETSK_PHONE : undefined;
+
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "Service",
@@ -65,7 +77,7 @@ export default async function ServiceOfferPage({ params }: PageProps) {
     provider: {
       "@type": "MedicalBusiness",
       name: "Медтакси Евпатория",
-      telephone: "+79789380221",
+      telephone: contact?.phone ?? "+79789380221",
       url: SITE_URL,
     },
     areaServed: offer.coverage,
@@ -96,11 +108,11 @@ export default async function ServiceOfferPage({ params }: PageProps) {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(structuredData) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(breadcrumbData) }} />
 
-      <Header />
+      <Header {...contact} />
 
       <main id="main-content">
         {/* Hero */}
-        <ServiceOfferHero offer={offer} />
+        {contact ? <DonetskCrimeaHero offer={offer} contact={contact} /> : <ServiceOfferHero offer={offer} />}
 
         {/* Trust strip */}
         <section className="py-4 px-4 bg-blue-700 text-white">
@@ -117,16 +129,17 @@ export default async function ServiceOfferPage({ params }: PageProps) {
         </section>
 
         {/* Main content */}
-        <ServiceOfferContent offer={offer} />
+        <ServiceOfferContent offer={offer} phone={contact?.phone} />
 
         {/* Quick links to other services */}
         <RelatedServices offer={offer} />
 
         <Reviews />
-        <CallToActionSection />
+        <CallToActionSection actions={contact ? <DonetskContactActions {...contact} theme="blue" ctaPosition="donetsk_krym_final" /> : undefined} />
       </main>
 
-      <Footer />
+      <Footer {...contact} />
+      {contact && <DonetskInteractions pagePath={offer.route} contactPhoneHref={contact.phone} contactPhoneLabel={contact.phoneLabel} variant="default" />}
     </>
   );
 }

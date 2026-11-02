@@ -9,9 +9,8 @@ import {
   RouteHero, RouteJourney, RoutePrice, RouteTransport,
   RoutePreparation, RouteOrder, RouteFaq, RouteFinalCta,
 } from "./sections";
+import { PHONE_HREF, PHONE_LABEL } from "@/src/features/donetsk/content";
 
-const PHONE_HREF = "+79490676701";
-const PHONE_LABEL = "+7 (949) 067-67-01";
 const routeSchema = createRouteSchema(PHONE_HREF);
 
 export const dynamic = "force-static";

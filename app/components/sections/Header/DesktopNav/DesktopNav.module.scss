@@ -46,9 +46,14 @@
 
 .dropdownTrigger {
   border: 1px solid transparent;
+  list-style: none;
+
+  &::-webkit-details-marker {
+    display: none;
+  }
 }
 
-.dropdownTriggerOpen {
+.dropdown[open] > .dropdownTrigger {
   background: #eff6ff;
   border-color: #dbeafe;
   color: #1d4ed8;
@@ -107,7 +112,7 @@
   transition: transform 0.2s ease;
 }
 
-.chevronOpen {
+.dropdown[open] .chevron {
   transform: rotate(180deg);
 }
 

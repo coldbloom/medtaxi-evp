@@ -13,7 +13,7 @@ const serviceLinks = serviceOffers.map(({ shortName, route }) => ({
   href: route,
 }));
 
-export const Header = () => {
+export const Header = ({ phone = "+79895052785", phoneLabel = "+7 (989) 505-27-85" }: { phone?: string; phoneLabel?: string } = {}) => {
   return (
     <div className="sticky top-0 z-30">
       <header className="bg-white shadow-sm">
@@ -39,16 +39,16 @@ export const Header = () => {
               <a href="https://t.me/konstankk" className={cn(s.link, s.tgColor)} aria-label="Написать в Telegram">
                 <Image src="/tg-icon.svg" alt="" width={24} height={24} className={s.icon} />
               </a>
-              <TrackedPhoneLink phone="+79895052785" trackingId="header_mobile" className={cn(s.link, s.phoneColor, s.phoneIconMobile)} aria-label="Позвонить +7 (989) 505-27-85">
+              <TrackedPhoneLink phone={phone} trackingId="header_mobile" className={cn(s.link, s.phoneColor, s.phoneIconMobile)} aria-label={`Позвонить ${phoneLabel}`}>
                 <Image src="/phone-icon.svg" alt="" width={24} height={24} className={s.icon} />
               </TrackedPhoneLink>
               <TrackedPhoneLink
-                phone="+79895052785"
+                phone={phone}
                 trackingId="header"
                 className={s.phoneTextDesktop}
-                aria-label="Позвонить по телефону +79895052785"
+                aria-label={`Позвонить по телефону ${phoneLabel}`}
               >
-                +7 (989) 505-27-85
+                {phoneLabel}
               </TrackedPhoneLink>
               <Burger />
             </div>

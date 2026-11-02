@@ -1,6 +1,6 @@
 import type { ServiceOffer } from "@/app/lib/serviceOffers";
 import { TrackedPhoneLink } from "@/app/components/tracking/TrackedPhoneLink";
-export function ServiceOfferContent({ offer }: { offer: ServiceOffer }) {
+export function ServiceOfferContent({ offer, phone = "+79789380221" }: { offer: ServiceOffer; phone?: string }) {
   return (
     <section className="py-16 px-4 bg-white">
       <div className="container mx-auto max-w-5xl">
@@ -43,7 +43,7 @@ export function ServiceOfferContent({ offer }: { offer: ServiceOffer }) {
               <p className="text-2xl font-black mb-1">{offer.priceNote}</p>
               <p className="text-blue-100 text-xs">Точную цену называем до выезда</p>
               <TrackedPhoneLink
-                phone="+79789380221"
+                phone={phone}
                 trackingId="price_block"
                 className="mt-4 flex items-center justify-center bg-white text-blue-700 rounded-xl py-3 font-bold text-sm hover:bg-blue-50 transition-colors"
                 aria-label="Позвонить"

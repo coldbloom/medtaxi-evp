@@ -8,9 +8,10 @@ import { trackDonetskGoal } from "./analytics";
 // One delegated listener keeps every CTA and phone/social link server-rendered.
 export function DonetskInteractions({
   pagePath = "/donetsk",
+  variant = "donetsk",
   contactPhoneHref = "+79895052785",
   contactPhoneLabel = "+7 (989) 505-27-85",
-}: { pagePath?: string; contactPhoneHref?: string; contactPhoneLabel?: string } = {}) {
+}: { variant?: "default" | "donetsk"; pagePath?: string; contactPhoneHref?: string; contactPhoneLabel?: string } = {}) {
   const { isOpen, hasOpened, open, close } = useContactModalController();
   const [ctaPosition, setCtaPosition] = useState("unknown");
   const [purpose, setPurpose] = useState<"callback" | "contact-choice">("callback");
@@ -50,7 +51,8 @@ export function DonetskInteractions({
       onClose={close}
       contactPhoneHref={contactPhoneHref}
       contactPhoneLabel={contactPhoneLabel}
-      variant="donetsk"
+      variant={variant}
+      choiceTheme={variant}
       purpose={purpose}
       contactCtaPosition={ctaPosition}
       onContactFormOpen={() => trackDonetskGoal("donetsk_callback_open", { page: pagePath, cta_position: ctaPosition })}

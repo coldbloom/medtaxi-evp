@@ -7,7 +7,7 @@ import { StaticImage } from "../StaticImage";
 import styles from "../DonetskMotion.module.css";
 import { ContactActionIcon } from "./ContactActionIcon";
 import { DonetskRouteLink } from "./DonetskRouteLink";
-import { MAX_URL, TELEGRAM_URL } from "@/app/lib/contactChannels";
+import { DONETSK_VK_URL, MAX_URL, TELEGRAM_URL } from "@/app/lib/contactChannels";
 
 
 type ContactProps = { phone: string; phoneLabel: string; ctaPrefix?: string };
@@ -22,8 +22,8 @@ const defaultNavigation = [
 export function DonetskHeader({ phone, phoneLabel, ctaPrefix = "", navigation = defaultNavigation }: ContactProps & { navigation?: typeof defaultNavigation }) {
   return (
       <header className="z-30 border-b border-white/10 bg-[#10211d] text-white">
-        <div className="mx-auto flex min-h-18 max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
-          <DonetskRouteLink href="/donetsk" className="group flex items-center gap-3" aria-label="Медтакси Донецк — главная страница">
+        <div className="mx-auto flex min-h-18 max-w-7xl items-center justify-between gap-2 px-4 py-3 sm:gap-4 sm:px-6 lg:px-8">
+          <DonetskRouteLink href="/donetsk" className="group flex items-center gap-2 sm:gap-3" aria-label="Медтакси Донецк — главная страница">
             <Image
               src="/logo-donetsk.svg"
               alt="Медтакси Донецк — логотип"
@@ -45,14 +45,26 @@ export function DonetskHeader({ phone, phoneLabel, ctaPrefix = "", navigation = 
             ))}
           </nav>
 
-          <nav className="flex items-center gap-1.5 sm:gap-2" aria-label="Быстрая связь">
+          <nav className="flex items-center gap-1 min-[360px]:gap-1.5 sm:gap-2" aria-label="Быстрая связь">
+            <DonetskSocialLink
+              href={DONETSK_VK_URL}
+              network="vk"
+              ctaPosition={position(ctaPrefix, "header")}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="grid size-8 shrink-0 place-items-center rounded-full bg-[#0077ff] transition hover:bg-[#0069e0] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white min-[360px]:size-9 sm:size-10"
+              aria-label="Медтакси Донецк во ВКонтакте"
+              title="Медтакси Донецк во ВКонтакте"
+            >
+              <StaticImage src="/icon-vk.svg" alt="" width={22} height={14} loading="eager" aria-hidden="true" />
+            </DonetskSocialLink>
             <DonetskSocialLink
               href={TELEGRAM_URL}
               network="telegram"
               ctaPosition={position(ctaPrefix, "header")}
               target="_blank"
               rel="noopener noreferrer"
-              className="grid size-9 shrink-0 place-items-center rounded-full bg-[#2aabee] transition hover:bg-[#1598dc] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:size-10"
+              className="grid size-8 shrink-0 place-items-center rounded-full bg-[#2aabee] transition hover:bg-[#1598dc] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white min-[360px]:size-9 sm:size-10"
               aria-label="Написать в Telegram"
               title="Написать в Telegram"
             >
@@ -64,7 +76,7 @@ export function DonetskHeader({ phone, phoneLabel, ctaPrefix = "", navigation = 
               ctaPosition={position(ctaPrefix, "header")}
               target="_blank"
               rel="noopener noreferrer"
-              className="grid size-9 shrink-0 place-items-center rounded-full bg-[linear-gradient(45deg,#3dc0fc,#3d4beb,#8242e3)] transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:size-10"
+              className="grid size-8 shrink-0 place-items-center rounded-full bg-[linear-gradient(45deg,#3dc0fc,#3d4beb,#8242e3)] transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white min-[360px]:size-9 sm:size-10"
               aria-label="Написать в Max"
               title="Написать в Max"
             >
@@ -73,7 +85,7 @@ export function DonetskHeader({ phone, phoneLabel, ctaPrefix = "", navigation = 
             <DonetskPhoneLink
               href={`tel:${phone}`}
               ctaPosition={position(ctaPrefix, "header")}
-              className="grid size-9 shrink-0 place-items-center rounded-full border border-white/15 bg-white/8 text-sm font-extrabold transition hover:bg-white/14 sm:block sm:size-auto sm:px-5 sm:py-2"
+              className="grid size-8 shrink-0 place-items-center rounded-full border border-white/15 bg-white/8 text-sm font-extrabold transition hover:bg-white/14 min-[360px]:size-9 sm:block sm:size-auto sm:px-5 sm:py-2"
               aria-label={`Позвонить ${phoneLabel}`}
               title={`Позвонить ${phoneLabel}`}
             >
@@ -130,6 +142,17 @@ export function DonetskFooter({ phone, phoneLabel, ctaPrefix = "" }: ContactProp
             </div>
             <DonetskPhoneLink href={`tel:${phone}`} ctaPosition={position(ctaPrefix, "footer")} className="mt-4 inline-block text-lg font-black text-[#f3b941] hover:text-[#ffd06d]">{phoneLabel}</DonetskPhoneLink>
             <p className="mt-1 text-sm">Приём заявок круглосуточно</p>
+            <DonetskSocialLink
+              href={DONETSK_VK_URL}
+              network="vk"
+              ctaPosition={position(ctaPrefix, "footer")}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-3 inline-flex min-h-11 items-center gap-2 text-sm font-bold text-white underline underline-offset-4 transition hover:text-[#f3b941] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+            >
+              <StaticImage src="/icon-vk.svg" alt="" width={22} height={14} aria-hidden="true" />
+              Мы во ВКонтакте
+            </DonetskSocialLink>
           </div>
         </div>
         <div className="mx-auto mt-8 flex max-w-7xl flex-col gap-7 border-t border-white/10 pt-6 text-xs text-[#7f938b] sm:flex-row sm:items-center sm:justify-between">

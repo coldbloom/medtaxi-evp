@@ -6,9 +6,6 @@ import { StaticImage } from "@/app/donetsk/StaticImage";
 import type { ContactModalVariant } from "./types";
 import { MAX_URL, TELEGRAM_URL } from "@/app/lib/contactChannels";
 
-const PHONE_HREF = "+79490676701";
-const PHONE_LABEL = "+7 (949) 067-67-01";
-
 const messengers = [
   {
     network: "max",
@@ -28,12 +25,14 @@ const messengers = [
 
 type ContactSocialLinksProps = {
   variant: ContactModalVariant;
+  contactPhoneHref: string;
+  contactPhoneLabel: string;
   ctaPosition: string;
   disabled: boolean;
   isBusy: () => boolean;
 };
 
-export function ContactSocialLinks({ variant, ctaPosition, disabled, isBusy }: ContactSocialLinksProps) {
+export function ContactSocialLinks({ variant, contactPhoneHref, contactPhoneLabel, ctaPosition, disabled, isBusy }: ContactSocialLinksProps) {
   const preventWhileBusy = (event: MouseEvent<HTMLAnchorElement>) => {
     if (disabled || isBusy()) {
       event.preventDefault();
@@ -41,8 +40,8 @@ export function ContactSocialLinks({ variant, ctaPosition, disabled, isBusy }: C
     }
   };
   const phoneProps = {
-    "aria-label": `Позвонить ${PHONE_LABEL}`,
-    title: `Позвонить ${PHONE_LABEL}`,
+    "aria-label": `Позвонить ${contactPhoneLabel}`,
+    title: `Позвонить ${contactPhoneLabel}`,
     "aria-disabled": disabled || undefined,
     tabIndex: disabled ? -1 : undefined,
     className: `grid size-12 shrink-0 place-items-center rounded-full border border-[#40524c] bg-[#23352f] transition-colors hover:bg-[#304d42] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#2f6757] ${disabled ? "pointer-events-none opacity-50" : ""}`,
@@ -71,8 +70,8 @@ export function ContactSocialLinks({ variant, ctaPosition, disabled, isBusy }: C
           : <a key={network} {...props} />;
       })}
       {variant === "donetsk"
-        ? <DonetskPhoneLink href={`tel:${PHONE_HREF}`} ctaPosition={`${ctaPosition}_phone`} {...phoneProps} />
-        : <TrackedPhoneLink phone={PHONE_HREF} trackingId={`${ctaPosition}_phone`} {...phoneProps} />}
+        ? <DonetskPhoneLink href={`tel:${contactPhoneHref}`} ctaPosition={`${ctaPosition}_phone`} {...phoneProps} />
+        : <TrackedPhoneLink phone={contactPhoneHref} trackingId={`${ctaPosition}_phone`} {...phoneProps} />}
     </div>
   );
 }

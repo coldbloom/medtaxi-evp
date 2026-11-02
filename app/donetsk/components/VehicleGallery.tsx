@@ -11,7 +11,7 @@ type VehicleGalleryPhoto = {
 type VehicleGalleryProps = {
   photos: readonly VehicleGalleryPhoto[];
   ariaLabel: string;
-  theme?: "dark" | "light";
+  theme?: "dark" | "light" | "blue";
   imageAspectRatio?: "4 / 3" | "3 / 4";
 };
 
@@ -19,7 +19,7 @@ type VehicleGalleryProps = {
 export function VehicleGallery({ photos, ariaLabel, theme = "dark", imageAspectRatio }: VehicleGalleryProps) {
   return (
     <div
-      className={`${styles.gallery} ${theme === "light" ? styles.light : ""}`}
+      className={`${styles.gallery} ${theme === "dark" ? "" : styles[theme]}`}
       role="region"
       aria-roledescription="карусель"
       aria-label={ariaLabel}

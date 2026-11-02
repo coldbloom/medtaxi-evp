@@ -2,6 +2,7 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 import type { CallFeedbackContext } from "@/app/lib/callFeedback";
+import { formatPhoneNumber } from "@/app/utils/functions";
 import { CallbackForm } from "./CallbackForm";
 import { CallOutcomeQuestion } from "./CallOutcomeQuestion";
 import { ContactChoice } from "./ContactChoice";
@@ -18,6 +19,7 @@ export interface ContactModalProps {
   onSubmitSuccess?: () => void;
   onSubmitError?: () => void;
   variant?: ContactModalVariant;
+  choiceTheme?: ContactModalVariant;
   purpose?: "callback" | "call-followup" | "contact-choice";
   callContext?: CallFeedbackContext;
   contactCtaPosition?: string;
@@ -30,9 +32,10 @@ type Step = "choice" | "question" | "form" | "connected" | "sent";
 export function ContactModal({
   isOpen, onClose, contactPhoneHref = "+79789380221", contactPhoneLabel = "+7 (978) 938-02-21",
   onSubmitSuccess, onSubmitError, variant = "default", purpose = "callback", callContext,
-  contactCtaPosition = "contact_modal", onContactFormOpen,
+  contactCtaPosition = "contact_modal", onContactFormOpen, choiceTheme = "donetsk",
 }: ContactModalProps) {
   const isCallFollowup = purpose === "call-followup";
+  const followupPhone = isCallFollowup ? callContext?.phone : undefined;
   const initialStep = isCallFollowup ? "question" : purpose === "contact-choice" ? "choice" : "form";
   const [step, setStep] = useState<Step>(initialStep);
   const [entry, setEntry] = useState({ isOpen, purpose });
@@ -70,9 +73,9 @@ export function ContactModal({
     : isCallFollowup ? "Мы сами вам перезвоним" : "Заказать обратный звонок";
 
   return (
-    <ContactDialog isOpen={isOpen} onClose={close} title={title} descriptionId={descriptionId} isSubmitting={request.isSubmitting} stepKey={step} theme={step === "choice" ? "donetsk" : "default"}>
+    <ContactDialog isOpen={isOpen} onClose={close} title={title} descriptionId={descriptionId} isSubmitting={request.isSubmitting} stepKey={step} theme={step === "choice" ? choiceTheme : "default"}>
       {step === "choice" ? (
-        <ContactChoice descriptionId={descriptionId} ctaPosition={`${contactCtaPosition}_contact_choice`} onContactFormOpen={() => {
+        <ContactChoice theme={choiceTheme} descriptionId={descriptionId} ctaPosition={`${contactCtaPosition}_contact_choice`} onContactFormOpen={() => {
           if (choiceTransitionRef.current) return;
           choiceTransitionRef.current = true;
           setStep("form");
@@ -89,8 +92,8 @@ export function ContactModal({
           onCancel={close}
           isCallFollowup={isCallFollowup}
           variant={variant}
-          contactPhoneHref={contactPhoneHref}
-          contactPhoneLabel={contactPhoneLabel}
+          contactPhoneHref={followupPhone ?? contactPhoneHref}
+          contactPhoneLabel={followupPhone ? formatPhoneNumber(followupPhone) : contactPhoneLabel}
         />
       )}
     </ContactDialog>

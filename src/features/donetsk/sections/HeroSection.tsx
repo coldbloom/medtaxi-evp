@@ -36,6 +36,10 @@ export function DonetskHeroSection() {
             Бережно перевозим лежачих и маломобильных людей по Донецку, ДНР и между городами — на специализированном транспорте, от кровати до кровати.
           </p>
 
+          <p className="mt-4 max-w-2xl text-base font-bold leading-relaxed text-[#ffd476] sm:text-lg">
+            Наш специализированный транспорт находится в Донецке.
+          </p>
+
           <DonetskContactActions phone={PHONE_HREF} phoneLabel={PHONE_LABEL} ctaPosition="hero" />
 
           <ul className="mt-9 grid max-w-2xl gap-3 text-sm font-semibold text-[#d8e5df] sm:grid-cols-3" role="list">

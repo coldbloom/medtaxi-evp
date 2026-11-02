@@ -2,24 +2,26 @@ type RouteChipProps = {
   destination: string;
   origin?: string;
   region?: string;
+  theme?: "donetsk" | "blue";
 };
 
 /** Server-rendered route card shared by the intercity directions. */
-export function RouteChip({ destination, origin = "Донецк", region = "ДНР" }: RouteChipProps) {
+export function RouteChip({ destination, origin = "Донецк", region = "ДНР", theme = "donetsk" }: RouteChipProps) {
+  const muted = theme === "blue" ? "text-blue-200" : "text-[#a9c1b7]";
   return (
     <div
       className="grid min-h-24 min-w-0 grid-cols-[minmax(0,.85fr)_auto_minmax(0,1.15fr)] items-center gap-2 rounded-2xl border border-white/15 px-4 py-3"
       aria-label={`Маршрут: ${origin} ${region} → ${destination}`}
     >
       <div className="min-w-0">
-        <p className="text-[11px] text-[#a9c1b7]">Отправление</p>
+        <p className={`text-[11px] ${muted}`}>Отправление</p>
         <p className="mt-1 text-base font-black leading-snug text-white">
-          {origin} <span className="text-xs font-normal text-[#a9c1b7]">{region}</span>
+          {origin} <span className={`text-xs font-normal ${muted}`}>{region}</span>
         </p>
       </div>
-      <span aria-hidden="true" className="text-xl text-[#f3b941]">→</span>
+      <span aria-hidden="true" className={`text-xl ${theme === "blue" ? "text-blue-200" : "text-[#f3b941]"}`}>→</span>
       <div className="min-w-0 text-right">
-        <p className="text-[11px] text-[#a9c1b7]">Назначение</p>
+        <p className={`text-[11px] ${muted}`}>Назначение</p>
         <p className="mt-1 text-base font-black leading-snug break-words text-white">{destination}</p>
       </div>
     </div>

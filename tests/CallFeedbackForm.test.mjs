@@ -107,6 +107,25 @@ function renderForm({ purpose = "call-followup", variant = "default", fetchRespo
   };
 }
 
+for (const { variant, phone, label } of [
+  { variant: "default", phone: "+79789380221", label: "+7 (978) 938-02-21" },
+  { variant: "default", phone: "+79895052785", label: "+7 (989) 505-27-85" },
+  { variant: "donetsk", phone: "+79490676701", label: "+7 (949) 067-67-01" },
+]) {
+  test(`callback direct contact preserves the configured phone ${phone} with ${variant} styling`, (t) => {
+    const page = renderForm({ purpose: "callback", variant });
+    t.after(page.cleanup);
+    page.update({ contactPhoneHref: phone, contactPhoneLabel: label });
+    const link = page.find((node) => node.type === "a" && node.props.href?.startsWith("tel:"));
+    assert.ok(link);
+    assert.equal(link.props.href, `tel:${phone}`);
+    assert.equal(link.props["aria-label"], `Позвонить ${label}`);
+    assert.equal(link.props.title, `Позвонить ${label}`);
+    assert.equal(link.props["data-call-tracking-id"], "contact_modal_footer_phone");
+    assert.equal(link.props["data-donetsk-goal"], variant === "donetsk" ? "donetsk_phone_click" : undefined);
+  });
+}
+
 test("messenger entry offers safe external links and opens the existing callback form only on request", (t) => {
   const page = renderForm({ purpose: "contact-choice", variant: "donetsk" });
   t.after(page.cleanup);
@@ -135,6 +154,22 @@ test("messenger entry offers safe external links and opens the existing callback
   assert.ok(page.field("message"));
   assert.equal(page.requests.length, 0);
 });
+
+for (const { variant, phone, label } of [
+  { variant: "default", phone: "+79895052785", label: "+7 (989) 505-27-85" },
+  { variant: "donetsk", phone: "+79490676701", label: "+7 (949) 067-67-01" },
+]) {
+  test(`call follow-up retains the dialled phone ${phone} in its direct contact link`, (t) => {
+    const page = renderForm({ variant });
+    t.after(page.cleanup);
+    page.update({ callContext: { phone, page: variant === "donetsk" ? "/donetsk" : "/" } });
+    page.click("Нет, не удалось");
+    const link = page.find((node) => node.type === "a" && node.props.href?.startsWith("tel:"));
+    assert.equal(link.props.href, `tel:${phone}`);
+    assert.equal(link.props["aria-label"], `Позвонить ${label}`);
+    assert.equal(link.props["data-call-tracking-id"], "call_followup_footer_phone");
+  });
+}
 
 test("reopening messenger choice preserves an unfinished form draft and resets only the entry screen", (t) => {
   const page = renderForm({ purpose: "contact-choice", variant: "donetsk" });

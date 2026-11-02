@@ -3,11 +3,13 @@ import { MercedesImage, mercedesPhotos } from "./MercedesImage";
 
 type MercedesGalleryProps = {
   priority?: boolean;
+  theme?: "dark" | "light" | "blue";
 };
 
-export function MercedesGallery({ priority = false }: MercedesGalleryProps) {
+export function MercedesGallery({ priority = false, theme = "dark" }: MercedesGalleryProps) {
   return (
     <VehicleGallery
+      theme={theme}
       ariaLabel="Фотографии нашего транспорта"
       photos={mercedesPhotos.map((photo, index) => ({
         id: photo.name,

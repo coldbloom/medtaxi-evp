@@ -112,6 +112,24 @@ for (const output of ["export", "standalone"]) {
   });
 }
 
+for (const { label, markup } of [
+  { label: "Open Graph", markup: '<meta property="og:image" content="https://medtaxi-evp.ru/vehicle.webp">' },
+  { label: "Twitter", markup: '<meta name="twitter:image" content="https://medtaxi-evp.ru/vehicle.webp">' },
+  { label: "JSON-LD image", markup: '<script type="application/ld+json">{"@type":"Service","image":["https://medtaxi-evp.ru/vehicle.webp"]}</script>' },
+  { label: "JSON-LD primary image", markup: '<script type="application/ld+json">{"@type":"WebPage","primaryImageOfPage":{"@type":"ImageObject","url":"https://medtaxi-evp.ru/vehicle.webp"}}</script>' },
+]) {
+  test(`build verification catches a deleted image referenced only by ${label}`, async (t) => {
+    const fixture = await buildFixture(t);
+    await fixture.update("index.html", fixture.files["index.html"].replace('<img src="/vehicle.webp" alt="Транспорт">', markup));
+    const complete = fixture.run();
+    assert.equal(complete.status, 0, complete.stderr);
+    await rm(join(fixture.directory, "public/vehicle.webp"));
+    const missing = fixture.run();
+    assert.equal(missing.status, 1);
+    assert.match(missing.stderr, /missing asset \/vehicle\.webp/);
+  });
+}
+
 test("build verification rejects an incomplete server artifact", async (t) => {
   const fixture = await buildFixture(t);
   await rm(join(fixture.directory, ".next/routes-manifest.json"));

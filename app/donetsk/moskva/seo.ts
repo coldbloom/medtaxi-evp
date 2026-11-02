@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { faqItems } from "./content";
 import { mercedesImages } from "./mercedes-images.generated";
+import { DONETSK_VK_URL } from "@/app/lib/contactChannels";
 
 export const PAGE_PATH = "/donetsk/moskva";
 export const SITE_URL = "https://medtaxi-evp.ru";
@@ -34,6 +35,7 @@ export function createRouteSchema(phone: string) {
         "@type": "Organization", "@id": `${PAGE_URL}#organization`,
         name: "Медтакси", url: SITE_URL, telephone: phone,
         logo: `${SITE_URL}/logo-donetsk.svg`,
+        sameAs: [DONETSK_VK_URL],
       },
       {
         "@type": "Service", "@id": `${PAGE_URL}#service`,

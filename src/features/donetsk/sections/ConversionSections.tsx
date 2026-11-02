@@ -89,13 +89,23 @@ export function DonetskDiscountsSection() {
 export function DonetskFinalSection() {
   return (
     <section className="bg-[#10211d] px-4 py-20 text-white sm:px-6 lg:px-8 lg:py-24">
-      <div className="mx-auto max-w-5xl text-center">
-        <p className="text-sm font-black uppercase tracking-[0.22em] text-[#f3b941]">Мы рядом</p>
-        <h2 className="mx-auto mt-5 max-w-4xl text-4xl font-black tracking-[-0.04em] sm:text-6xl">Организуем бережную перевозку вашего близкого</h2>
-        <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-[#c8d8d2]">Позвоните или оставьте номер. Уточним детали, предложим подходящий вариант и заранее согласуем стоимость.</p>
-        <div className="mt-9 flex flex-col justify-center gap-3 sm:flex-row">
-          <DonetskPhoneLink href={`tel:${PHONE_HREF}`} ctaPosition="final" className={buttonPrimary} aria-label={`Позвонить ${PHONE_LABEL}`}>{PHONE_LABEL}</DonetskPhoneLink>
-          <DonetskContactTrigger className={buttonSecondary} label="Оставить заявку" ctaPosition="final" />
+      <div className="mx-auto grid max-w-7xl items-center gap-10 lg:grid-cols-[.7fr_1.3fr] lg:gap-16">
+        <div className="relative mx-auto aspect-square w-full max-w-[280px] overflow-hidden rounded-[2rem] sm:max-w-[360px] lg:max-w-none">
+          <DonetskImage
+            name="whiteSprinter"
+            alt="Иллюстрация белого специализированного автомобиля с каталкой"
+            sizes="(min-width: 1280px) 403px, (min-width: 1024px) calc(35vw - 45px), (min-width: 640px) 360px, 280px"
+            className="object-contain"
+          />
+        </div>
+        <div className="text-center lg:text-left">
+          <p className="text-sm font-black uppercase tracking-[0.22em] text-[#f3b941]">Мы рядом</p>
+          <h2 className="mx-auto mt-5 max-w-4xl text-4xl font-black tracking-[-0.04em] sm:text-6xl">Организуем бережную перевозку вашего близкого</h2>
+          <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-[#c8d8d2]">Позвоните или оставьте номер. Уточним детали, предложим подходящий вариант и заранее согласуем стоимость.</p>
+          <div className="mt-9 flex flex-col justify-center gap-3 sm:flex-row lg:justify-start">
+            <DonetskPhoneLink href={`tel:${PHONE_HREF}`} ctaPosition="final" className={buttonPrimary} aria-label={`Позвонить ${PHONE_LABEL}`}>{PHONE_LABEL}</DonetskPhoneLink>
+            <DonetskContactTrigger className={buttonSecondary} label="Оставить заявку" ctaPosition="final" />
+          </div>
         </div>
       </div>
     </section>

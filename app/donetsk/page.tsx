@@ -3,7 +3,7 @@ import type { Metadata, Viewport } from "next";
 import { DonetskHeader, DonetskFooter, DonetskMobileActions } from "./components/DonetskLanding";
 import { DonetskInteractions } from "./DonetskInteractions";
 import { ScrollProgressBar } from "@/app/components/ScrollProgressBar";
-import { SITE_URL, PAGE_PATH, PAGE_URL, PHONE_HREF, PHONE_LABEL } from "@/src/features/donetsk/content";
+import { SITE_URL, PAGE_PATH, PAGE_URL, PAGE_DESCRIPTION, OG_IMAGE_PATH, PHONE_HREF, PHONE_LABEL } from "@/src/features/donetsk/content";
 import { serviceSchema, breadcrumbSchema, webPageSchema, faqSchema } from "@/src/features/donetsk/schema";
 import styles from "./DonetskMotion.module.css";
 import { DonetskHeroSection } from "@/src/features/donetsk/sections/HeroSection";
@@ -22,8 +22,7 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: "Перевозка лежачих больных в Донецке и ДНР 24/7 | Медтакси",
-  description:
-    `Перевозка лежачих больных в Донецке и по ДНР от 3 500 ₽. Спецтранспорт, носилки, помощь от кровати до кровати. Заказ 24/7: ${PHONE_LABEL}.`,
+  description: PAGE_DESCRIPTION,
   authors: [{ name: "Медтакси Донецк" }],
   creator: "Медтакси Донецк",
   publisher: "Медтакси Донецк",
@@ -49,26 +48,26 @@ export const metadata: Metadata = {
   alternates: { canonical: PAGE_PATH },
   openGraph: {
     title: "Перевозка лежачих больных в Донецке и по ДНР 24/7",
-    description:
-      "Специализированный транспорт, помощь от кровати до кровати. Минимальная стоимость подачи — 3 500 ₽. Работаем круглосуточно.",
+    description: PAGE_DESCRIPTION,
     url: PAGE_URL,
     siteName: "Медтакси",
     locale: "ru_RU",
     type: "website",
     images: [
       {
-        url: `${SITE_URL}/mercedas-optimized.jpg`,
-        width: 767,
-        height: 656,
-        alt: "Специализированный автомобиль Mercedes для перевозки лежачих больных",
+        url: `${SITE_URL}${OG_IMAGE_PATH}`,
+        width: 1200,
+        height: 630,
+        type: "image/jpeg",
+        alt: "Медтакси Донецк — Mercedes Sprinter с подъёмником для перевозки лежачих и маломобильных людей",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Перевозка лежачих больных в Донецке и ДНР 24/7",
-    description: "Медтакси в Донецке: перевозка от кровати до кровати, подача от 3 500 ₽.",
-    images: [`${SITE_URL}/mercedas-optimized.jpg`],
+    description: PAGE_DESCRIPTION,
+    images: [`${SITE_URL}${OG_IMAGE_PATH}`],
   },
   robots: {
     index: true,

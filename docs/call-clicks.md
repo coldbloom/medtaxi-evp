@@ -111,7 +111,10 @@ import { TrackedPhoneLink } from "@/app/components/tracking/TrackedPhoneLink";
 3. Перезапустить `npm run dev` frontend и открыть `http://localhost:3000/donetsk`.
 4. В DevTools → Network → Fetch/XHR включить Preserve log и фильтр `call-clicks`.
 5. Нажать «Позвонить». Проверить URL, Payload и статус `202`.
-6. В development Console видны `[call-click] POST` с payload и `[call-click] HTTP` со статусом.
+6. В Console, в том числе в production, видны `[call-click] Событие принято API`
+   или ошибка. Успех требует `accepted: true` и совпадения `eventId` в JSON-ответе.
+   Логи содержат URL API, Origin, eventId, страницу, кнопку и доступный HTTP-статус;
+   телефон, sessionId и рекламные метки в браузерный лог не попадают.
    На backend появляется `[call-click] { ... }` с `receivedAt`, `userAgent`, page и кнопкой,
    а в настроенном Telegram-чате — карточка с кнопкой «Оформить заявку».
 
@@ -125,6 +128,17 @@ URL нужно пересобрать frontend. Для теста localhost → 
 нужно собрать его и перезапустить существующий процесс. Если `403`/CORS — проверить
 Origin. Если `(failed)` — доступность API, порт и блокировщики запросов.
 Изменения на production эта задача автоматически не выкладывает.
+
+В Console используйте фильтр `[call-click]` и включите Preserve log; для успешных
+ответов должен быть включён уровень Info. Ошибка `kind: "http"` содержит статус
+и `serverError`, если API вернул JSON с полем `error`. Для пустого ответа или HTML
+прокси сохраняется статус, а `responseFormat` равен `empty_or_non_json`.
+`kind: "invalid_response"` означает HTTP 2xx без корректного подтверждения события.
+`kind: "network_or_cors"` означает, что fetch не предоставил HTTP-ответ: JavaScript
+не может отличить сетевой сбой от запрета CORS и прочитать скрытые статус/JSON.
+Проверяйте Network и серверный лог `[call-click] Origin rejected` с фактическим
+Origin и списком разрешённых источников. Успешный ответ API не подтверждает доставку
+в Telegram. Ошибки логируются без повторной отправки и не задерживают `tel:`.
 
 Пример события:
 
@@ -143,8 +157,9 @@ Origin. Если `(failed)` — доступность API, порт и блок
 ```
 
 Тесты: `npm run test:tracking` (Node test runner + уже установленный TypeScript).
-Они проверяют non-blocking fetch, ошибки сети, Strict Mode-style повторную
-инициализацию, attribution при переходе, запрет storage и HTML ссылки без JS.
+Они проверяют non-blocking fetch, подтверждение и ошибки API/CORS в production,
+пустые и некорректные ответы, Strict Mode-style повторную инициализацию,
+attribution при переходе, запрет storage и HTML ссылки без JS.
 
 Справка: [fetch keepalive](https://developer.mozilla.org/en-US/docs/Web/API/Request/keepalive),
 [переменные NEXT_PUBLIC](https://nextjs.org/docs/app/guides/environment-variables).

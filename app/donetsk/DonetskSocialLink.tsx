@@ -1,7 +1,7 @@
 import type { AnchorHTMLAttributes } from "react";
 
 type DonetskSocialLinkProps = AnchorHTMLAttributes<HTMLAnchorElement> & {
-  network: "max" | "telegram";
+  network: "max" | "telegram" | "vk";
   ctaPosition?: string;
 };
 

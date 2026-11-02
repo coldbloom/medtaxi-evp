@@ -20,24 +20,31 @@ function loadModule(path, globals = {}) {
   return exports;
 }
 
-function browser({ storage = new Map(), fetchImpl, crypto = webcrypto } = {}) {
+function browser({ storage = new Map(), fetchImpl, crypto = webcrypto, env = {} } = {}) {
   const requests = [];
-  const location = { pathname: "/donetsk", search: "?utm_source=yandex&utm_campaign=donetsk&yclid=123" };
+  const logs = { info: [], warn: [], error: [] };
+  const location = {
+    origin: "https://medtaxi-evp.ru",
+    pathname: "/donetsk", search: "?utm_source=yandex&utm_campaign=donetsk&yclid=123",
+  };
   const globals = {
     URLSearchParams, crypto,
-    process: { env: { NEXT_PUBLIC_API_URL: "http://localhost:3235/api", NODE_ENV: "development" } },
+    process: { env: { NEXT_PUBLIC_API_URL: "http://localhost:3235/api", NODE_ENV: "development", ...env } },
     window: { location }, document: { referrer: "https://yandex.ru/" },
     sessionStorage: {
       getItem: (key) => storage.get(key) || null,
       setItem: (key, value) => storage.set(key, value),
     },
-    console: { info() {}, warn() {} },
+    console: Object.fromEntries(Object.keys(logs).map((level) => [level, (...args) => logs[level].push(args)])),
     fetch: (url, options) => {
-      requests.push({ url, ...options, payload: JSON.parse(options.body) });
-      return fetchImpl ? fetchImpl() : Promise.resolve({ status: 202 });
+      const request = { url, ...options, payload: JSON.parse(options.body) };
+      requests.push(request);
+      return fetchImpl ? fetchImpl(request) : Promise.resolve(Response.json({
+        accepted: true, eventId: request.payload.eventId,
+      }, { status: 202 }));
     },
   };
-  return { requests, location, globals, api: loadModule("app/lib/callTracking.ts", globals) };
+  return { requests, logs, location, globals, api: loadModule("app/lib/callTracking.ts", globals) };
 }
 
 test("повторная инициализация сохраняет sessionId, каждый клик получает свой eventId", () => {
@@ -93,7 +100,7 @@ test("зависший запрос не возвращает Promise вызыв
 
 test("HTTP 500, offline и синхронная ошибка fetch не выходят из функции", async () => {
   for (const fetchImpl of [
-    () => Promise.resolve({ status: 500 }),
+    () => Promise.resolve(Response.json({ error: "Internal server error" }, { status: 500 })),
     () => Promise.reject(new Error("offline")),
     () => { throw new Error("fetch unavailable"); },
   ]) {
@@ -102,6 +109,106 @@ test("HTTP 500, offline и синхронная ошибка fetch не выхо
   }
   // Даём rejected Promise пройти через catch; unhandled rejection провалит node:test.
   await new Promise(setImmediate);
+});
+
+test("production: подтверждение API логируется с eventId и Origin без payload", async () => {
+  const { api, requests, logs } = browser({ env: { NODE_ENV: "production" } });
+  assert.equal(api.trackPhoneClick("hero", "+79895052785"), undefined);
+  await new Promise(setImmediate);
+
+  assert.equal(logs.info.length, 1);
+  assert.match(logs.info[0][0], /Событие принято API/);
+  assert.equal(logs.info[0][1].status, 202);
+  assert.equal(logs.info[0][1].eventId, requests[0].payload.eventId);
+  assert.equal(logs.info[0][1].origin, "https://medtaxi-evp.ru");
+  assert.equal(logs.error.length, 0);
+  const output = JSON.stringify(logs);
+  for (const field of ["phone", "sessionId", "utm", "yclid", "referrer"]) {
+    assert.ok(!output.includes(field));
+  }
+  assert.ok(!output.includes("+79895052785"));
+});
+
+test("production: HTTP 403/429/500 логируются как ошибки с ответом сервера", async () => {
+  for (const status of [403, 429, 500]) {
+    const { api, requests, logs } = browser({
+      env: { NODE_ENV: "production" },
+      fetchImpl: () => Promise.resolve(Response.json({ error: "Origin not allowed" }, { status })),
+    });
+    api.trackPhoneClick("hero", "+79895052785");
+    await new Promise(setImmediate);
+    assert.equal(requests.length, 1);
+    assert.equal(logs.info.length, 0);
+    assert.equal(logs.error.length, 1);
+    const details = logs.error[0][1];
+    assert.equal(details.kind, "http");
+    assert.equal(details.status, status);
+    assert.equal(details.serverError, "Origin not allowed");
+    assert.equal(details.origin, "https://medtaxi-evp.ru");
+    assert.equal(details.eventId, requests[0].payload.eventId);
+  }
+});
+
+test("пустой или HTML-ответ с ошибкой сохраняет статус и не логирует HTML", async () => {
+  for (const body of [null, "<html>Bad gateway</html>"]) {
+    const { api, logs } = browser({
+      env: { NODE_ENV: "production" },
+      fetchImpl: () => Promise.resolve(new Response(body, { status: 502 })),
+    });
+    api.trackPhoneClick("hero", "+79895052785");
+    await new Promise(setImmediate);
+    assert.equal(logs.error.length, 1);
+    assert.equal(logs.error[0][1].status, 502);
+    assert.equal(logs.error[0][1].kind, "http");
+    assert.equal(logs.error[0][1].responseFormat, "empty_or_non_json");
+    assert.ok(!JSON.stringify(logs).includes("<html>"));
+  }
+});
+
+test("успешный HTTP без accepted:true и совпадающего eventId не считается приёмом", async () => {
+  for (const body of [null, {}, { accepted: false }, { accepted: true, eventId: randomUUID() }]) {
+    const { api, logs } = browser({
+      env: { NODE_ENV: "production" },
+      fetchImpl: () => Promise.resolve(Response.json(body, { status: 202 })),
+    });
+    api.trackPhoneClick("hero", "+79895052785");
+    await new Promise(setImmediate);
+    assert.equal(logs.info.length, 0);
+    assert.equal(logs.error.length, 1);
+    assert.equal(logs.error[0][1].kind, "invalid_response");
+    assert.equal(logs.error[0][1].status, 202);
+  }
+});
+
+test("production: ошибка fetch/CORS логируется без выдуманного HTTP-статуса", async () => {
+  const { api, requests, logs } = browser({
+    env: { NODE_ENV: "production" },
+    fetchImpl: () => Promise.reject(new TypeError("Failed to fetch")),
+  });
+  assert.equal(api.trackPhoneClick("hero", "+79895052785"), undefined);
+  await new Promise(setImmediate);
+  assert.equal(requests.length, 1);
+  assert.equal(logs.info.length, 0);
+  assert.equal(logs.error.length, 1);
+  const details = logs.error[0][1];
+  assert.equal(details.kind, "network_or_cors");
+  assert.equal(details.status, undefined);
+  assert.equal(details.eventId, requests[0].payload.eventId);
+  assert.match(details.message, /Failed to fetch/);
+});
+
+test("production: отсутствие API URL и синхронный сбой логируются, не мешая звонку", () => {
+  const missing = browser({ env: { NODE_ENV: "production", NEXT_PUBLIC_API_URL: "" } });
+  assert.doesNotThrow(() => missing.api.trackPhoneClick("hero", "+79895052785"));
+  assert.equal(missing.requests.length, 0);
+  assert.equal(missing.logs.error[0][1].kind, "configuration");
+
+  const broken = browser({
+    env: { NODE_ENV: "production" },
+    fetchImpl() { throw new Error("fetch unavailable"); },
+  });
+  assert.doesNotThrow(() => broken.api.trackPhoneClick("hero", "+79895052785"));
+  assert.equal(broken.logs.error[0][1].kind, "preparation");
 });
 
 test("запрет storage сохраняет сессию в памяти, fallback UUID остаётся валидным", () => {

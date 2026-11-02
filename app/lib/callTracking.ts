@@ -118,7 +118,7 @@ export function trackPhoneClick(trackingId: string, phone: string): void {
   try {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL?.replace(/\/+$/, "");
     if (!apiUrl) {
-      if (isDevelopment) console.warn("[call-click] Не задан NEXT_PUBLIC_API_URL");
+      console.error("[call-click] Не задан NEXT_PUBLIC_API_URL", { kind: "configuration" });
       return;
     }
 
@@ -131,23 +131,62 @@ export function trackPhoneClick(trackingId: string, phone: string): void {
       page: window.location.pathname,
       clientTimestamp: new Date().toISOString(),
     };
-    if (isDevelopment) console.info("[call-click] POST", url, payload);
+    // Диагностика доступна и в production, без телефона и рекламных меток.
+    const context = {
+      url,
+      origin: window.location.origin,
+      eventId: payload.eventId,
+      trackingId,
+      page: payload.page,
+    };
+    if (isDevelopment) console.info("[call-click] POST", context);
 
     // JSON внутри text/plain: браузеру не нужен дополнительный CORS preflight.
-    // fetch виден в Network → Fetch/XHR; ответ нужен только для отладки.
+    // Ответ подтверждает только приём события API, не доставку в Telegram.
     void fetch(url, {
       method: "POST",
       headers: { "Content-Type": "text/plain;charset=UTF-8" },
       body: JSON.stringify(payload),
       keepalive: true,
       credentials: "omit",
-    }).then((response) => {
-      if (isDevelopment) console.info("[call-click] HTTP", response.status);
+    }).then(async (response) => {
+      // Прокси может вернуть HTML или пустой ответ. Сохраняем HTTP-статус и тогда.
+      const result: unknown = await response.json().catch(() => undefined);
+      const body = result && typeof result === "object" ? result as Record<string, unknown> : undefined;
+      const details = { ...context, status: response.status };
+
+      if (!response.ok) {
+        console.error("[call-click] API отклонил событие", {
+          ...details,
+          kind: "http",
+          serverError: text(body?.error, 300),
+          responseFormat: result === undefined ? "empty_or_non_json" : "json",
+        });
+        return;
+      }
+
+      if (body?.accepted !== true || body.eventId !== payload.eventId) {
+        console.error("[call-click] API не подтвердил приём события", {
+          ...details,
+          kind: "invalid_response",
+        });
+        return;
+      }
+
+      console.info("[call-click] Событие принято API", details);
     }).catch((error: unknown) => {
-      if (isDevelopment) console.warn("[call-click] Запрос не доставлен", error);
+      // При CORS браузер скрывает и статус, и тело: отличить его от сбоя сети здесь нельзя.
+      console.error("[call-click] Ошибка сети или CORS: HTTP-ответ недоступен", {
+        ...context,
+        kind: "network_or_cors",
+        message: text(error instanceof Error ? error.message : String(error), 300),
+      });
     });
   } catch (error) {
     // Ни ошибка аналитики, ни отсутствие Web Crypto не должны мешать звонку.
-    if (isDevelopment) console.warn("[call-click] Ошибка подготовки запроса", error);
+    console.error("[call-click] Ошибка подготовки запроса", {
+      kind: "preparation",
+      message: text(error instanceof Error ? error.message : String(error), 300),
+    });
   }
 }

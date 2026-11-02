@@ -1,15 +1,12 @@
-/* eslint-disable @next/next/no-html-link-for-pages -- Keep the home link native; Donetsk route links use Next.js. */
 import type { ReactNode } from "react";
-import styles from "../DonetskMotion.module.css";
+import { IntercityHero } from "@/src/features/transport/IntercityHero";
 import { DonetskContactTrigger } from "../DonetskContactTrigger";
 import { DonetskPhoneLink } from "../DonetskPhoneLink";
 import { DonetskFaq } from "../components/DonetskLanding";
 import { DonetskRouteChips } from "../components/RouteChip";
-import { DonetskContactActions } from "../components/DonetskContactActions";
 import { DonetskRouteLink } from "../components/DonetskRouteLink";
 import { buttonPrimary, buttonSecondary } from "../components/buttonStyles";
 import { MercedesImage } from "./MercedesImage";
-import { MercedesGallery } from "./MercedesGallery";
 import {
   benefits, routeSteps, priceFactors, equipmentFeatures, preparationItems, orderSteps, faqItems,
 } from "./content";
@@ -53,36 +50,15 @@ function CallButton({ contact, position, children, className = buttonPrimary }: 
 
 export function RouteHero({ contact }: RouteContactProps) {
   return (
-    <section className="relative bg-[#10211d] px-4 pb-12 pt-6 text-white sm:px-6 md:pb-20 lg:px-8">
-      <div className={container}>
-        <nav aria-label="Хлебные крошки" className="mb-8 text-xs text-[#a9c1b7] sm:text-sm lg:mb-12">
-          <ol className="flex flex-wrap items-center gap-x-2 gap-y-1">
-            <li><a href="/" className="hover:text-white">Главная</a></li>
-            <li aria-hidden="true">→</li>
-            <li><DonetskRouteLink href="/donetsk" className="hover:text-white">Донецк</DonetskRouteLink></li>
-            <li aria-hidden="true">→</li>
-            <li aria-current="page" className="text-white">Москва</li>
-          </ol>
-        </nav>
-        <div className="grid items-center gap-10 lg:grid-cols-[1.05fr_.95fr] lg:gap-12">
-          <div className="min-w-0">
-            <p className="mb-5 inline-flex rounded-full border border-[#f3b941]/30 bg-[#f3b941]/10 px-4 py-2 text-xs font-bold uppercase tracking-widest text-[#ffd476]">Плановые поездки · Межгород</p>
-            <h1 className="text-[2.15rem] font-black leading-[1.07] tracking-[-0.045em] sm:text-5xl xl:text-[3.6rem]">
-              Перевозка лежачих больных <span className={`${styles.heroAccent} text-[#f3b941]`}>из Донецка в Москву</span>
-            </h1>
-            <p className="mt-6 max-w-2xl text-base leading-relaxed text-[#cfddd7] sm:text-lg">
-              Перевозим лежачих и маломобильных пациентов из Донецка и ДНР в Москву на Mercedes. Помогаем с переносом и доставляем от кровати до кровати. Стоимость согласуем до выезда.
-            </p>
-            <DonetskContactActions phone={contact.phone} phoneLabel={contact.phoneLabel} ctaPosition="donetsk_moskva_hero" />
-          </div>
-          <div className="min-w-0">
-            <MercedesGallery priority />
-            <DonetskRouteChips className="mt-5" />
-          </div>
-        </div>
-        <div className="mt-10 border-t border-white/15 pt-7 lg:mt-12"><CheckList items={benefits} light /></div>
-      </div>
-    </section>
+    <IntercityHero
+      contact={contact}
+      ctaPosition="donetsk_moskva_hero"
+      destination="в Москву"
+      description="Перевозим лежачих и маломобильных пациентов из Донецка и ДНР в Москву на Mercedes. Помогаем с переносом и доставляем от кровати до кровати. Стоимость согласуем до выезда."
+      breadcrumbs={[{ label: "Главная", href: "/" }, { label: "Донецк", href: "/donetsk" }, { label: "Москва" }]}
+      benefits={benefits}
+      routes={<DonetskRouteChips />}
+    />
   );
 }
 

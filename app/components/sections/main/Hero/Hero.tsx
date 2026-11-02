@@ -1,5 +1,5 @@
 import React from 'react';
-import {ContactModalTrigger} from "@/app/components/ContactModal";
+import { ContactModalTrigger } from "@/app/components/ContactModal";
 import Image from "next/image";
 
 export const Hero = () => {

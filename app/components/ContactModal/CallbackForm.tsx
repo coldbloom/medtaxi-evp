@@ -17,7 +17,7 @@ type CallbackFormProps = {
   contactPhoneLabel: string;
 };
 
-export function CallbackForm({ request, descriptionId, onCancel, isCallFollowup, variant }: CallbackFormProps) {
+export function CallbackForm({ request, descriptionId, onCancel, isCallFollowup, variant, contactPhoneHref, contactPhoneLabel }: CallbackFormProps) {
   const id = useId();
   const { formData, hasConsent, isSubmitting, submitError, handleSubmit, handleChange, setHasConsent, setPhone } = request;
   const isDonetsk = variant === "donetsk";
@@ -137,6 +137,8 @@ export function CallbackForm({ request, descriptionId, onCancel, isCallFollowup,
         <p className="text-xs sm:text-sm text-gray-600 text-center mb-3">Или свяжитесь с нами напрямую:</p>
         <ContactSocialLinks
           variant={variant}
+          contactPhoneHref={contactPhoneHref}
+          contactPhoneLabel={contactPhoneLabel}
           ctaPosition={isCallFollowup ? "call_followup_footer" : "contact_modal_footer"}
           disabled={isSubmitting}
           isBusy={request.isBusy}

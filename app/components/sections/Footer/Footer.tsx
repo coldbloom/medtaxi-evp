@@ -4,7 +4,7 @@ import { CodeCake } from "@/app/components/CodeCake";
 import { TrackedPhoneLink } from "@/app/components/tracking/TrackedPhoneLink";
 import { DonetskRouteLink } from "@/app/donetsk/components/DonetskRouteLink";
 
-export const Footer = () => {
+export const Footer = ({ phone = "+79789380221", phoneLabel = "+7 (978) 938-02-21" }: { phone?: string; phoneLabel?: string } = {}) => {
   return (
     <footer className="bg-gray-900 text-white py-12 px-4">
       <div className="container mx-auto max-w-6xl">
@@ -22,11 +22,11 @@ export const Footer = () => {
             <p className="text-gray-400 mb-2">
               <strong>Телефон:</strong>{" "}
               <TrackedPhoneLink
-                phone="+79789380221"
+                phone={phone}
                 trackingId="footer"
                 className="text-blue-400 hover:text-blue-300"
               >
-                +7 (978) 938-02-21
+                {phoneLabel}
               </TrackedPhoneLink>
             </p>
             <p className="text-gray-400">

@@ -2,7 +2,7 @@ import React from 'react';
 import Image from "next/image";
 import { TrackedPhoneLink } from "@/app/components/tracking/TrackedPhoneLink";
 
-export const CallToActionSection = () => {
+export const CallToActionSection = ({ actions }: { actions?: React.ReactNode } = {}) => {
   return (
     <section className="py-16 px-4 bg-blue-600 text-white">
       <div className="container mx-auto max-w-4xl text-center flex flex-col items-center">
@@ -22,6 +22,7 @@ export const CallToActionSection = () => {
           Звоните круглосуточно. Мы ответим на все вопросы и организуем
           перевозку в кратчайшие сроки.
         </p>
+        {actions ?? <>
         <div className="flex flex-col sm:flex-row gap-4 items-center justify-center flex-wrap">
           <TrackedPhoneLink
             phone="+79789380221"
@@ -103,6 +104,7 @@ export const CallToActionSection = () => {
             />
           </a>
         </div>
+        </>}
       </div>
     </section>
   );

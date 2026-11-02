@@ -1,4 +1,5 @@
-import { SITE_URL, PAGE_URL, PHONE_HREF, MIN_PRICE, faqItems } from "./content";
+import { SITE_URL, PAGE_URL, PAGE_DESCRIPTION, OG_IMAGE_PATH, PHONE_HREF, MIN_PRICE, faqItems } from "./content";
+import { DONETSK_VK_URL } from "@/app/lib/contactChannels";
 
 export const serviceSchema = {
   "@context": "https://schema.org",
@@ -6,10 +7,9 @@ export const serviceSchema = {
   "@id": `${PAGE_URL}#service`,
   name: "Перевозка лежачих больных в Донецке",
   serviceType: "Перевозка лежачих и маломобильных пациентов",
-  description:
-    "Специализированная перевозка лежачих больных и маломобильных людей в Донецке и по ДНР.",
+  description: PAGE_DESCRIPTION,
   url: PAGE_URL,
-  image: `${SITE_URL}/mercedas-optimized.jpg`,
+  image: `${SITE_URL}${OG_IMAGE_PATH}`,
   areaServed: [
     { "@type": "City", name: "Донецк" },
     { "@type": "City", name: "Макеевка" },
@@ -21,8 +21,9 @@ export const serviceSchema = {
     name: "Медтакси Донецк",
     url: PAGE_URL,
     telephone: PHONE_HREF,
-    image: `${SITE_URL}/mercedas-optimized.jpg`,
+    image: `${SITE_URL}${OG_IMAGE_PATH}`,
     logo: `${SITE_URL}/logo-donetsk.svg`,
+    sameAs: [DONETSK_VK_URL],
   },
   offers: {
     "@type": "Offer",
@@ -53,14 +54,13 @@ export const webPageSchema = {
   "@id": `${PAGE_URL}#webpage`,
   url: PAGE_URL,
   name: "Перевозка лежачих больных в Донецке и ДНР 24/7",
-  description:
-    "Перевозка лежачих и маломобильных пациентов в Донецке и по ДНР на специализированном транспорте.",
+  description: PAGE_DESCRIPTION,
   inLanguage: "ru-RU",
   primaryImageOfPage: {
     "@type": "ImageObject",
-    url: `${SITE_URL}/mercedas-optimized.jpg`,
-    width: 767,
-    height: 656,
+    url: `${SITE_URL}${OG_IMAGE_PATH}`,
+    width: 1200,
+    height: 630,
   },
   breadcrumb: { "@id": `${PAGE_URL}#breadcrumb` },
   mainEntity: { "@id": `${PAGE_URL}#service` },

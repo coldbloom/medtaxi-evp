@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
 import cn from 'clsx';
 import s from './DesktopNav.module.scss';
 import { DonetskRouteLink } from '@/app/donetsk/components/DonetskRouteLink';
@@ -32,7 +31,6 @@ type DesktopNavProps = {
 
 export const DesktopNav = ({ services }: DesktopNavProps) => {
   const pathname = usePathname();
-  const [isServicesOpen, setIsServicesOpen] = useState(false);
 
   return (
     <nav className={s.desktopNav} aria-label="Основная навигация">
@@ -60,40 +58,40 @@ export const DesktopNav = ({ services }: DesktopNavProps) => {
           </li>
         ))}
 
-        <li
-          className={s.dropdownItem}
-          onMouseEnter={() => setIsServicesOpen(true)}
-          onMouseLeave={() => setIsServicesOpen(false)}
-        >
-          <button
-            type="button"
-            className={cn(
-              s.dropdownTrigger,
-              pathname.startsWith('/uslugi/') && s.activeLink,
-              isServicesOpen && s.dropdownTriggerOpen,
-            )}
-            aria-expanded={isServicesOpen}
-            aria-haspopup="menu"
-            onClick={() => setIsServicesOpen((prev) => !prev)}
+        <li className={s.dropdownItem}>
+          <details
+            className={s.dropdown}
+            onMouseEnter={(event) => { event.currentTarget.open = true; }}
+            onMouseLeave={(event) => {
+              if (!event.currentTarget.contains(event.currentTarget.ownerDocument.activeElement)) {
+                event.currentTarget.open = false;
+              }
+            }}
+            onBlur={(event) => {
+              if (!event.currentTarget.contains(event.relatedTarget)) event.currentTarget.open = false;
+            }}
+            onKeyDown={(event) => {
+              if (event.key !== 'Escape') return;
+              event.currentTarget.open = false;
+              event.currentTarget.querySelector('summary')?.focus();
+            }}
           >
-            Услуги
-            <span className={cn(s.chevron, isServicesOpen && s.chevronOpen)} aria-hidden="true">▾</span>
-          </button>
-
-          {isServicesOpen && (
-            <div className={s.dropdownMenu} role="menu">
+            <summary className={cn(s.dropdownTrigger, pathname.startsWith('/uslugi/') && s.activeLink)}>
+              Услуги
+              <span className={s.chevron} aria-hidden="true">▾</span>
+            </summary>
+            <div className={s.dropdownMenu}>
               {[...servicesPages, ...services].map((service) => (
                 <Link
                   key={`${service.href}-${service.title}`}
                   href={service.href}
                   className={cn(s.dropdownLink, pathname === service.href && s.activeDropdownLink)}
-                  role="menuitem"
                 >
                   {service.title}
                 </Link>
               ))}
             </div>
-          )}
+          </details>
         </li>
       </ul>
     </nav>

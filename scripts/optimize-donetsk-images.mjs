@@ -11,8 +11,7 @@ const sharp = requireFromNext("sharp");
 const root = fileURLToPath(new URL("../", import.meta.url));
 const output = path.join(root, "public/donetsk/images");
 const sources = {
-  vehicle: "mercedas-optimized.jpg",
-  interior: "inside.jpg",
+  whiteSprinter: "donetsk/images/white-sprinter.png",
   pensioner: "pens.jpg",
   veteran: "svo.jpeg",
 };

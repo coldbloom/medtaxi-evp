@@ -288,11 +288,20 @@ for (const filename of htmlFiles) {
   const nodes = jsonLdNodes(html, source);
   if (sitemapPages.has(filename)) checkPageSeo(markup, pageUrl, source);
   checkBreadcrumbTargets(nodes, pageUrl, source);
+  for (const node of nodes) {
+    for (const image of [node.image, node.logo, node.primaryImageOfPage].flat()) {
+      const reference = typeof image === "string" ? image : image?.contentUrl ?? image?.url;
+      if (typeof reference === "string") checkAsset(reference, pageUrl, source);
+    }
+  }
   for (const match of markup.matchAll(/<([\w:-]+)\b[^>]*>/g)) {
     const tag = match[1].toLowerCase();
     const attrs = attributes(match[0]);
     if (sitemapPages.has(filename) && tag === "meta" && /^(robots|googlebot|yandex)$/i.test(attrs.name ?? "")) {
       check(!/\b(noindex|none)\b/i.test(attrs.content ?? ""), `${source}: indexable sitemap page contains noindex`);
+    }
+    if (tag === "meta" && /^(og:image(?::url|:secure_url)?|twitter:image(?::src)?)$/i.test(attrs.property ?? attrs.name ?? "")) {
+      checkAsset(attrs.content, pageUrl, source);
     }
     if (attrs.src) checkAsset(attrs.src, pageUrl, source);
     if (attrs.poster) checkAsset(attrs.poster, pageUrl, source);

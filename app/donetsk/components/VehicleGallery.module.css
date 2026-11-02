@@ -90,3 +90,28 @@
     font-size: 12px;
   }
 }
+
+.blue {
+  background: transparent;
+}
+
+.blue .imageFrame {
+  background: #172554;
+}
+
+.blue .counter {
+  color: #bfdbfe;
+}
+
+.blue .carousel > button {
+  background: #fff;
+  border-color: #bfdbfe;
+}
+
+.blue .carousel > button:hover {
+  background: #dbeafe;
+}
+
+.blue .carousel > button > span {
+  border-color: #1e40af;
+}

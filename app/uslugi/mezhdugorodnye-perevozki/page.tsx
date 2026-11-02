@@ -274,7 +274,7 @@ export default function Page() {
                 { label: "Евпатория — Луганск ЛНР", href: "/uslugi/perevozka-evpatoria-lugansk", price: "от\u00A018\u00A0000\u00A0руб." },
                 { label: "Краснодар — Крым", href: "/uslugi/perevozka-krasnodar-krym", price: "от\u00A020\u00A0000\u00A0руб." },
                 { label: "Ростов-на-Дону — Крым", href: "/uslugi/perevozka-rostov-krym", price: "от\u00A018\u00A0000\u00A0руб." },
-                { label: "Донецк ДНР — Крым", href: "/uslugi/perevozka-donetsk-krym", price: "от\u00A015\u00A0000\u00A0руб." },
+                { label: "Донецк ДНР — Крым", href: "/uslugi/perevozka-donetsk-krym", price: "от\u00A045\u00A0000\u00A0руб." },
                 { label: "Луганск ЛНР — Крым", href: "/uslugi/perevozka-lugansk-krym", price: "от\u00A018\u00A0000\u00A0руб." },
               ].map((d) => (
                 <Link
