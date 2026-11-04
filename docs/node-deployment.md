@@ -2,21 +2,28 @@
 
 Проект использует `next build` → `.next` → `next start`, без `output: "export"`
 и без `output: "standalone"`. Нужен постоянно работающий Node.js-процесс.
-Nginx принимает HTTPS и проксирует запросы на Next.js, слушающий `127.0.0.1:3000`.
+Nginx принимает HTTPS: `/api/` направляется в `conditioners-server` на
+`127.0.0.1:3235`, остальные запросы — в Next.js на `127.0.0.1:3000`.
 Это стандартный [вариант размещения Node.js](https://nextjs.org/docs/app/getting-started/deploying#nodejs-server).
 
 ## Окружение и API
 
-На сервере установите поддерживаемую Next.js версию Node.js (минимум 20.9;
-для одинакового окружения используйте одну поддерживаемую LTS-версию при сборке
-и запуске) и Yarn 4.17.0 из `packageManager`. Установку зависимостей выполняйте
+Для совместного размещения frontend и backend используйте Node.js 24 LTS
+(backend фиксирует major 24) и Yarn 4.17.0 из `packageManager` frontend.
+Версия Node.js при сборке и запуске должна совпадать. Установку зависимостей выполняйте
 на целевой Linux-системе по `yarn.lock` через `yarn install --immutable`.
 
 До сборки в каталоге релиза должна быть `.env.production.local` с рабочим
-`NEXT_PUBLIC_API_URL`. Поддерживается HTTPS-адрес backend либо `/api`, если
-на домене уже настроен соответствующий Nginx proxy. Отдельный backend продолжает
-принимать `/feedback` и `/call-clicks`; запуск Next.js не создаёт эти обработчики.
+`NEXT_PUBLIC_API_URL=/api`. Поддерживается также отдельный HTTPS-адрес backend.
+Отдельный backend принимает `/api/feedback`, `/api/call-clicks` и
+`/api/v1/medtaxi/events`; запуск Next.js не создаёт эти обработчики.
 Для внешнего API сохраняется необходимость корректного CORS.
+
+На backend задайте `MEDTAXI_URL=https://medtaxi-evp.ru`, `HOST=127.0.0.1`,
+`PORT=3235` и абсолютный `MEDTAXI_DB_PATH` вне каталогов релизов/публичных файлов.
+Остальные переменные, установка SQLite-зависимости, уведомления, резервные копии,
+восстановление и обслуживание описаны в README `conditioners-server`.
+Токены TG/VK и персональные данные не помещаются в frontend-переменные.
 
 Production-сборка отклоняет отсутствующий, локальный, небезопасный или некорректный
 адрес API. Значения с credentials, query или hash тоже не принимаются.
@@ -24,6 +31,27 @@ Production-сборка отклоняет отсутствующий, лока�
 JavaScript при сборке. После изменения требуется новая сборка, одного перезапуска
 недостаточно. Не помещайте в неё секреты. Это поведение описано в
 [документации переменных окружения Next.js](https://nextjs.org/docs/app/guides/environment-variables#bundling-environment-variables-for-the-browser).
+
+## Порядок обновления API и frontend
+
+1. Подготовьте и запустите новый backend по его README. Он должен сохранить
+   совместимость старых `/api/feedback` и `/api/call-clicks`, принять Medtaxi в SQLite
+   и вернуть для формы `success`, `requestId`, `leadId` после commit.
+2. Настройте отдельный `/api/` location в Nginx, проверьте `nginx -t`, затем reload.
+3. Проверьте готовность без создания заявок:
+
+   ```bash
+   curl --fail --connect-timeout 5 --max-time 15 http://127.0.0.1:3235/api/readyz
+   curl --fail --connect-timeout 5 --max-time 15 https://medtaxi-evp.ru/api/readyz
+   ```
+
+   Readiness проверяет возможность записи в БД; это не проверка доставки в TG/VK.
+4. Соберите и переключите frontend с `NEXT_PUBLIC_API_URL=/api`.
+
+**Backend разворачивается первым.** Новый frontend не считает старый ответ формы
+без совпадающего requestId/leadId успехом. При откате frontend новый backend можно
+сохранить; откат backend на прежний контракт при новом frontend требует согласованного
+отката frontend. Запись в БД не зависит от доступности провайдеров уведомлений.
 
 ## Доставка исходников и сборка
 
@@ -81,8 +109,29 @@ devDependencies после `yarn install --immutable`: загрузка `next.co
 
 ## Постоянный процесс и Nginx
 
-Подготовлен [пример systemd](../deploy/medtaxi-next.service.example). Адаптируйте
-пользователя, путь Node.js и каталог проекта. `/srv/medtaxi/current` должен указывать
+Для текущего VDS можно продолжать использовать PM2 и привычный каталог в `/root`.
+Первый запуск из каталога **проверенного релиза**:
+
+```bash
+cd /root/medtaxi/front/medtaxi-evp
+pm2 start node_modules/next/dist/bin/next --name medtaxi-front -- start --hostname 127.0.0.1 --port 3000
+pm2 save
+```
+
+Команда `pm2 start` нужна для первого создания процесса. Если `medtaxi-front` уже
+существует, не создавайте второй: сначала проверьте `pm2 describe medtaxi-front`
+и его рабочий каталог/аргументы. При обновлении прежнего пути используйте
+`pm2 restart medtaxi-front --update-env` только после успешной сборки и проверки.
+Нельзя собирать поверх работающего релиза: для последовательного обновления
+остановите процесс перед заменой файлов либо используйте отдельные каталоги релизов
+и явно перенастройте путь PM2 на подготовленный каталог. При первой настройке
+автозапуска выполните `pm2 startup`, затем указанную им команду и `pm2 save`.
+Backend — отдельный процесс, его настройки приведены в его README.
+
+Альтернатива PM2 — [пример systemd](../deploy/medtaxi-next.service.example).
+Выберите один supervisor для frontend, иначе два процесса будут конкурировать за порт.
+Для systemd адаптируйте пользователя, путь Node.js и каталог проекта.
+`/srv/medtaxi/current` должен указывать
 на проверенный релиз. При обновлении переключите эту ссылку и перезапустите
 `medtaxi-next`; предыдущий релиз оставьте для отката. Один процесс с перезапуском
 даёт небольшое окно недоступности, поэтому обновление лучше выполнять вне пика.
@@ -90,7 +139,12 @@ devDependencies после `yarn install --immutable`: загрузка `next.co
 
 [Пример Nginx](../deploy/nginx-next.conf.example) размещается внутри существующего
 HTTPS `server {}`. Сохраните сертификаты, HTTP→HTTPS перенаправление, заголовки
-безопасности и существующие backend `location`. Удалите старое сопоставление
+безопасности и несвязанные `location`. Существующий `/api/` замените примером,
+не добавляйте вторую секцию с тем же путём. В `proxy_pass http://127.0.0.1:3235;`
+нет завершающего `/`: backend должен получить полный `/api/feedback`, а не `/feedback`.
+API не кешируется, его ошибки не подменяются HTML frontend. Лимит Nginx — 64 KiB,
+чтобы пропускать Telegram webhook; для заявок и событий backend ограничивает тело
+16 KiB. Удалите старое сопоставление
 `try_files ... .html` и static `error_page 404 /404.html` для фронтенда: теперь
 маршрутизацией и 404 управляет Next.js. Также замените старые `location`, которые
 перехватывают `/_next/`, изображения или другие ресурсы и читают их из `out/`.
@@ -99,18 +153,40 @@ Next.js рекомендует reverse proxy и отключение буфер�
 Не добавляйте общий proxy-cache для HTML/RSC без учёта заголовков Next.js.
 [Рекомендации самостоятельного размещения](https://nextjs.org/docs/app/guides/self-hosting).
 
-После адаптации конфигураций администратор выполняет:
+После изменения Nginx:
 
 ```bash
 sudo nginx -t
-sudo systemctl daemon-reload
-sudo systemctl enable --now medtaxi-next
 sudo systemctl reload nginx
 ```
 
-При следующем релизе после переключения ссылки достаточно
-`sudo systemctl restart medtaxi-next`. Node.js слушает только loopback; публичные
-порты обслуживает Nginx. Backend запускается и обновляется отдельно.
+Только если выбран systemd вместо PM2: `sudo systemctl daemon-reload`, затем
+`sudo systemctl enable --now medtaxi-next`; при следующих релизах после переключения
+ссылки — `sudo systemctl restart medtaxi-next`. В root-сессии `sudo` можно опустить.
+Оба Node.js-процесса слушают только loopback; публичные порты обслуживает Nginx.
+Изменение API и переключение frontend не требует смены A/NS домена.
+
+## Временный резервный домен
+
+Для `reserve.medtaxi-evp.ru` используйте [отдельный Nginx server](../deploy/nginx-reserve.conf.example):
+он тоже направляет `/api/` на `127.0.0.1:3235`, остальные запросы — на Next.js:3000.
+До открытия форм на этом домене добавьте **на backend**
+`MEDTAXI_ADDITIONAL_ORIGINS=https://reserve.medtaxi-evp.ru` и перезапустите его
+с обновлённым окружением. `MEDTAXI_URL=https://medtaxi-evp.ru` остаётся основным;
+дополнительные origin задаются явно через запятую, без `*`, пути, query и hash.
+Один неверный элемент останавливает запуск backend. Одного `CALL_CLICK_ALLOWED_ORIGINS`
+недостаточно: этот список относится к прежним кликам других сайтов.
+
+Frontend остаётся собранным с `NEXT_PUBLIC_API_URL=/api` и каноническим
+`NEXT_PUBLIC_SITE_URL=https://medtaxi-evp.ru`. При таком значении API добавление
+резервного origin не требует пересборки frontend. Backend сохраняет фактический
+origin заявки/события; оба домена используют одну MedTaxi DB и те же каналы уведомлений.
+После настройки A-записи, HTTPS и `nginx -t`/reload проверьте
+`https://reserve.medtaxi-evp.ru/api/readyz`. Этот GET не создаёт заявок.
+
+`X-Robots-Tag: noindex` задаётся только в server резервного домена. Не переносите
+его в основной server: основной сайт должен индексироваться. Этот адрес помогает
+при устаревшем DNS основного домена, но не заменяет отдельный VDS и резервную копию.
 
 ## Проверки
 

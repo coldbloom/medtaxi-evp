@@ -2,6 +2,7 @@ import { ServiceFaq } from "@/src/features/transport/ServiceFaq";
 import { TransportSteps } from "@/src/features/transport/TransportSteps";
 import { ServiceFeatures } from "@/src/features/transport/ServiceFeatures";
 import { serializeJsonLd } from "@/app/lib/serializeJsonLd";
+import { createSocialMetadata } from "@/app/lib/socialMetadata";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Header } from "@/app/components/sections/Header";
@@ -20,14 +21,12 @@ export const metadata: Metadata = {
   description:
     "Перевозка лежачих больных из больницы домой в Евпатории, Симферополе, Севастополе и по всему Крыму. Специализированный транспорт с носилками, бережная погрузка, сопровождение. Работаем 24/7. Звоните: +7 (978) 938-02-21.",
   alternates: { canonical: "/uslugi/perevozka-iz-bolnitsy-domoj" },
-  openGraph: {
+  ...createSocialMetadata({
     title: "Перевозка лежачих больных из больницы домой — Евпатория и Крым",
     description:
       "Специализированный медицинский транспорт, носилки, погрузка с санитарами. Перевезём лежачего из больницы домой или на реабилитацию по Евпатории и Крыму.",
-    type: "website",
-    url: PAGE_URL,
-    images: [{ url: `${SITE_URL}/peugeot.jpg`, width: 1280, height: 960, alt: "Медтакси Евпатория" }],
-  },
+    path: "/uslugi/perevozka-iz-bolnitsy-domoj",
+  }),
 };
 
 const structuredData = {

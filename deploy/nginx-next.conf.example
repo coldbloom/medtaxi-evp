@@ -1,7 +1,27 @@
 # Adapt INSIDE the existing medtaxi-evp.ru HTTPS server {} block.
-# Keep listen/TLS, HTTP->HTTPS redirects, security headers and backend locations.
+# Keep listen/TLS, HTTP->HTTPS redirects, security headers and unrelated locations.
+# Replace any existing /api/ location with the one below; do not add a duplicate.
 # Replace the old frontend static locations/error_page pointing at out/.
 # next start must listen on 127.0.0.1:3000 (see medtaxi-next.service.example).
+
+# Same-origin API for NEXT_PUBLIC_API_URL=/api. Deploy the backend first.
+# No trailing slash on proxy_pass: /api/feedback must remain /api/feedback upstream.
+location ^~ /api/ {
+    proxy_pass http://127.0.0.1:3235;
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header Connection "";
+    client_max_body_size 64k;
+    proxy_connect_timeout 5s;
+    proxy_send_timeout 30s;
+    proxy_read_timeout 30s;
+    proxy_cache off;
+    # Preserve upstream JSON errors; never replace them with Next.js HTML.
+    proxy_intercept_errors off;
+}
 
 location / {
     proxy_pass http://127.0.0.1:3000;
@@ -17,7 +37,6 @@ location / {
 }
 
 # Only content-hashed photo URLs receive an immutable cache policy.
-# An existing /api/ location keeps routing requests to the separate backend.
 location ~ "^/donetsk/images/[^/]+-[0-9a-f]{12}\.(avif|webp)$" {
     proxy_pass http://127.0.0.1:3000;
     proxy_set_header Host $host;

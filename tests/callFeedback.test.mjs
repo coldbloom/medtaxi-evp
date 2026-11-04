@@ -4,10 +4,13 @@ import { createRequire } from "node:module";
 import { test } from "node:test";
 import vm from "node:vm";
 import ts from "typescript";
+import { webcrypto } from "node:crypto";
+import { moduleLoader } from "./helpers/componentHarness.mjs";
 
 const require = createRequire(import.meta.url);
 
 function loadModule(path, globals) {
+  if (!globals?.require) return moduleLoader({ globals: { crypto: webcrypto, ...globals } }).load(path);
   const code = ts.transpileModule(readFileSync(path, "utf8"), {
     compilerOptions: { module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX },
   }).outputText;
@@ -90,6 +93,7 @@ function browser() {
       document.dispatchEvent({
         type: "click", button: 0,
         target: new Element(link ? {
+          dataset: { callTrackingId: "hero" },
           getAttribute: (name) => name === "href" ? `tel:${phone}` : disabled ? "true" : null,
         } : null),
         preventDefault() { assert.fail("Native phone action must not be cancelled"); },
@@ -128,7 +132,7 @@ test("normal phone click stays native and asks once after the 15-second visible 
   page.advance(14_999);
   assert.equal(page.opened.length, 0);
   page.advance(1);
-  assert.deepEqual(page.opened, [{ phone: "+79895052785", page: "/donetsk" }]);
+  assert.deepEqual(page.opened.map(({ phone, page }) => ({ phone, page })), [{ phone: "+79895052785", page: "/donetsk" }]);
   assert.deepEqual(page.sequence, ["start-event", "start", "open-event", "open"]);
   page.focus(false);
   page.focus(true);
@@ -200,7 +204,7 @@ test("a new phone click replaces old timers and preserves the original clicked r
   page.advance(1_000);
   assert.equal(page.opened.length, 0);
   page.advance(14_000);
-  assert.deepEqual(page.opened, [{ phone: "+79789380221", page: "/prices" }]);
+  assert.deepEqual(page.opened.map(({ phone, page }) => ({ phone, page })), [{ phone: "+79789380221", page: "/prices" }]);
   page.cleanup();
 });
 

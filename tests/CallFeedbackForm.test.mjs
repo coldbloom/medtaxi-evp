@@ -1,8 +1,11 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import * as React from "react";
+import { webcrypto } from "node:crypto";
 import { renderToString } from "react-dom/server";
 import { browserFixture, hookRenderer, moduleLoader, nodes, textContent } from "./helpers/componentHarness.mjs";
+
+const accepted = (body) => ({ ok: true, json: async () => ({ success: true, requestId: body.requestId, leadId: "stored-lead-id" }) });
 
 const linkAdapter = (props) => React.createElement("a", props, props.children);
 
@@ -19,6 +22,7 @@ function renderForm({ purpose = "call-followup", variant = "default", fetchRespo
   let timerId = 0;
   const timers = new Map();
   const requests = [];
+  const analyticsEvents = [];
   Object.assign(browser.window, {
     setTimeout(callback, delay) {
       timers.set(++timerId, { callback, delay });
@@ -31,8 +35,10 @@ function renderForm({ purpose = "call-followup", variant = "default", fetchRespo
       react: renderer.react,
       "react-dom": { createPortal: (children) => children },
       "next/link": linkAdapter,
+      "@/app/lib/siteAnalytics": { trackSiteEvent: (...event) => analyticsEvents.push(event) },
     },
     globals: {
+      crypto: webcrypto,
       document: browser.document,
       window: browser.window,
       setTimeout: browser.window.setTimeout,
@@ -41,7 +47,7 @@ function renderForm({ purpose = "call-followup", variant = "default", fetchRespo
       console: { error() {} },
       fetch(url, options) {
         requests.push({ url, options, body: JSON.parse(options.body) });
-        return fetchResponse ? fetchResponse(url, options) : Promise.resolve({ ok: true });
+        return fetchResponse ? fetchResponse(url, options) : Promise.resolve(accepted(JSON.parse(options.body)));
       },
     },
   });
@@ -93,7 +99,7 @@ function renderForm({ purpose = "call-followup", variant = "default", fetchRespo
   }
   render();
   return {
-    render, find, field, button, click, change, submit, fillValid, requests, timers,
+    render, find, field, button, click, change, submit, fillValid, requests, timers, analyticsEvents,
     cleanup: () => renderer.unmount(),
     reopen: () => { props.isOpen = true; render(); },
     update: (next) => { props = { ...props, ...next }; render(); },
@@ -266,7 +272,7 @@ test("a confirmed follow-up request preserves the feedback API contract and disp
   assert.equal(body.name, "Анна");
   assert.equal(body.phone, "+7 (978) 111-22-33");
   assert.equal(body.personalDataConsent, true);
-  assert.equal(body.consentVersion, "2026-09-26");
+  assert.equal(body.consentVersion, "2026-11-03");
   assert.ok(Number.isFinite(Date.parse(body.consentedAt)));
   assert.match(body.message, /Не удалось дозвониться.*Прошу перезвонить/);
   assert.match(body.message, /\+79789380221/);
@@ -306,7 +312,7 @@ test("pending submissions cannot be duplicated or accidentally closed, and do no
   page.change("personalDataConsent", false);
   assert.equal(page.field("name").props.value, "  Анна  ");
   assert.equal(page.field("personalDataConsent").props.checked, true);
-  resolveRequest({ ok: true });
+  resolveRequest(accepted(page.requests[0].body));
   await pending;
   page.render();
   assert.match(page.text(), /Заявка принята/);
@@ -316,8 +322,8 @@ for (const failure of ["http", "network", "timeout"]) {
   test(`${failure} failure keeps the form data and consent, shows an inline alert, and permits retry`, async () => {
     let attempts = 0;
     const page = renderForm({
-      fetchResponse: (_url, { signal }) => {
-        if (++attempts > 1) return Promise.resolve({ ok: true });
+      fetchResponse: (_url, { signal, body }) => {
+        if (++attempts > 1) return Promise.resolve(accepted(JSON.parse(body)));
         if (failure === "http") return Promise.resolve({ ok: false, status: 503, text: async () => "Unavailable" });
         if (failure === "network") return Promise.reject(new TypeError("Failed to fetch"));
         return new Promise((_resolve, reject) => signal.addEventListener("abort", () => reject(new Error("Aborted")), { once: true }));
@@ -362,7 +368,8 @@ test("ordinary callback requests preserve the API payload and show one durable c
   page.render();
   const { url, body } = page.requests[0];
   assert.equal(url, "/feedback");
-  assert.deepEqual(Object.keys(body).sort(), ["consentVersion", "consentedAt", "message", "name", "personalDataConsent", "phone"]);
+  assert.deepEqual(Object.keys(body).sort(), ["consentVersion", "consentedAt", "kind", "message", "name", "page", "personalDataConsent", "phone", "requestId", "sessionId", "trackingId", "utm"]);
+  assert.equal(body.kind, "callback");
   assert.equal(body.message, "Из Евпатории в Симферополь");
   assert.equal(body.name, "Анна");
   assert.equal(body.phone, "+7 (978) 111-22-33");
@@ -424,5 +431,75 @@ test("closed ordinary, messenger and follow-up dialogs render safely on the serv
   const { ContactModal } = loader.load("app/components/ContactModal/ContactModal.tsx");
   for (const purpose of ["callback", "contact-choice", "call-followup"]) {
     assert.equal(renderToString(React.createElement(ContactModal, { isOpen: false, purpose, onClose() {} })), "");
+  }
+});
+
+test("a lost response reuses the exact logical submission, including consent time, until acknowledged", async () => {
+  let attempt = 0;
+  const page = renderForm({ fetchResponse: (_url, options) => {
+    if (++attempt === 1) return Promise.reject(new Error("response lost after server commit"));
+    return Promise.resolve(accepted(JSON.parse(options.body)));
+  } });
+  page.fillValid();
+  await page.submit();
+  page.render();
+  await page.submit();
+  page.render();
+  assert.equal(page.requests.length, 2);
+  assert.equal(page.requests[0].options.body, page.requests[1].options.body);
+  assert.match(page.requests[0].body.requestId, /^[0-9a-f-]{36}$/);
+  assert.equal(page.successes(), 1);
+  assert.match(page.text(), /Заявка принята/);
+  page.cleanup();
+});
+
+test("editing the request after a failed response starts a new idempotency key", async () => {
+  const page = renderForm({ purpose: "callback", fetchResponse: () => Promise.reject(new Error("offline")) });
+  page.fillValid();
+  await page.submit();
+  page.render();
+  page.change("message", "Другой маршрут");
+  await page.submit();
+  page.render();
+  assert.notEqual(page.requests[0].body.requestId, page.requests[1].body.requestId);
+  assert.equal(page.requests[1].body.message, "Другой маршрут");
+  assert.equal(page.successes(), 0);
+  page.cleanup();
+});
+
+test("HTTP 200 with malformed or mismatched acknowledgement never clears the form", async () => {
+  for (const acknowledgement of [null, {}, { success: true }, { success: true, requestId: "wrong", leadId: "lead" }]) {
+    const page = renderForm({ fetchResponse: () => Promise.resolve({ ok: true, json: async () => acknowledgement }) });
+    page.fillValid();
+    await page.submit();
+    page.render();
+    assert.equal(page.successes(), 0);
+    assert.equal(page.field("name").props.value, "  Анна  ");
+    assert.match(page.text(), /Не удалось подтвердить отправку/);
+    page.cleanup();
+  }
+});
+
+test("explicit call outcomes are recorded before any form, and a followup links to its click", async () => {
+  for (const [answer, outcome] of [["Да, дозвонились", "connected"], ["Нет, не удалось", "not_connected"]]) {
+    const page = renderForm();
+    page.update({ callContext: { phone: "+79490676701", page: "/donetsk/moskva", trackingId: "hero", sourceEventId: "click-id" } });
+    page.click(answer);
+    const events = page.analyticsEvents.filter(([type]) => type === "call_outcome");
+    assert.equal(events.length, 1);
+    assert.equal(events[0][1].outcome, outcome);
+    assert.equal(events[0][1].sourceEventId, "click-id");
+    assert.equal(page.requests.length, 0, "answer alone does not invent a contact request");
+    if (outcome === "not_connected") {
+      page.change("name", "Анна");
+      page.change("phone", "89781112233");
+      page.change("personalDataConsent", true);
+      await page.submit();
+      assert.equal(page.requests[0].body.kind, "missed_call_followup");
+      assert.equal(page.requests[0].body.sourceEventId, "click-id");
+      assert.equal(page.requests[0].body.page, "/donetsk/moskva");
+      assert.equal(page.requests[0].body.trackingId, "hero");
+    }
+    page.cleanup();
   }
 });

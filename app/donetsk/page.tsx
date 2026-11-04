@@ -3,7 +3,8 @@ import type { Metadata, Viewport } from "next";
 import { DonetskHeader, DonetskFooter, DonetskMobileActions } from "./components/DonetskLanding";
 import { DonetskInteractions } from "./DonetskInteractions";
 import { ScrollProgressBar } from "@/app/components/ScrollProgressBar";
-import { SITE_URL, PAGE_PATH, PAGE_URL, PAGE_DESCRIPTION, OG_IMAGE_PATH, PHONE_HREF, PHONE_LABEL } from "@/src/features/donetsk/content";
+import { PAGE_PATH, PAGE_DESCRIPTION, PHONE_HREF, PHONE_LABEL } from "@/src/features/donetsk/content";
+import { createSocialMetadata, DONETSK_SITE_NAME, DONETSK_SOCIAL_IMAGE } from "@/app/lib/socialMetadata";
 import { serviceSchema, breadcrumbSchema, webPageSchema, faqSchema } from "@/src/features/donetsk/schema";
 import styles from "./DonetskMotion.module.css";
 import { DonetskHeroSection } from "@/src/features/donetsk/sections/HeroSection";
@@ -46,29 +47,13 @@ export const metadata: Metadata = {
     "медицинское такси Донецк цена",
   ],
   alternates: { canonical: PAGE_PATH },
-  openGraph: {
+  ...createSocialMetadata({
     title: "Перевозка лежачих больных в Донецке и по ДНР 24/7",
     description: PAGE_DESCRIPTION,
-    url: PAGE_URL,
-    siteName: "Медтакси",
-    locale: "ru_RU",
-    type: "website",
-    images: [
-      {
-        url: `${SITE_URL}${OG_IMAGE_PATH}`,
-        width: 1200,
-        height: 630,
-        type: "image/jpeg",
-        alt: "Медтакси Донецк — Mercedes Sprinter с подъёмником для перевозки лежачих и маломобильных людей",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Перевозка лежачих больных в Донецке и ДНР 24/7",
-    description: PAGE_DESCRIPTION,
-    images: [`${SITE_URL}${OG_IMAGE_PATH}`],
-  },
+    path: PAGE_PATH,
+    siteName: DONETSK_SITE_NAME,
+    image: DONETSK_SOCIAL_IMAGE,
+  }),
   robots: {
     index: true,
     follow: true,

@@ -1,29 +1,31 @@
 import type { Metadata } from "next";
 import { faqItems } from "./content";
-import { mercedesImages } from "./mercedes-images.generated";
 import { DONETSK_VK_URL } from "@/app/lib/contactChannels";
+import { createSocialMetadata, DONETSK_SITE_NAME, MOSCOW_SOCIAL_IMAGE } from "@/app/lib/socialMetadata";
 
 export const PAGE_PATH = "/donetsk/moskva";
 export const SITE_URL = "https://medtaxi-evp.ru";
 export const PAGE_URL = `${SITE_URL}${PAGE_PATH}`;
 const title = "Перевозка лежачих больных Донецк — Москва | Медтакси";
 const description = "Перевозка лежачих больных из Донецка в Москву на специализированном автомобиле. Междугородняя транспортировка от кровати до кровати, носилки, помощь при переносе. Расчёт стоимости по телефону.";
-const photo = mercedesImages.front;
-const image = `${SITE_URL}${photo.webp[photo.webp.length - 1].src}`;
+const image = `${SITE_URL}${MOSCOW_SOCIAL_IMAGE.url}`;
+const socialDescription = "Перевозка лежачих больных Донецк — Москва на оборудованном Mercedes. От кровати до кровати, помощь при переносе. Расчёт стоимости по телефону.";
 
 export const routeMetadata: Metadata = {
   title,
   description,
-  authors: [{ name: "Медтакси" }],
-  creator: "Медтакси",
-  publisher: "Медтакси",
+  authors: [{ name: "Медтакси Донецк" }],
+  creator: "Медтакси Донецк",
+  publisher: "Медтакси Донецк",
   keywords: ["перевозка лежачих больных Донецк Москва", "медицинское такси Донецк Москва", "перевозка лежачего больного из ДНР в Москву"],
   alternates: { canonical: PAGE_URL },
-  openGraph: {
-    title, description, url: PAGE_URL, siteName: "Медтакси", locale: "ru_RU", type: "website",
-    images: [{ url: image, width: photo.width, height: photo.height, alt: "Наш Mercedes для перевозки лежачих больных на дальние расстояния" }],
-  },
-  twitter: { card: "summary_large_image", title, description, images: [image] },
+  ...createSocialMetadata({
+    title: "Перевозка лежачих больных Донецк — Москва",
+    description: socialDescription,
+    path: PAGE_PATH,
+    siteName: DONETSK_SITE_NAME,
+    image: MOSCOW_SOCIAL_IMAGE,
+  }),
   robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large" } },
 };
 

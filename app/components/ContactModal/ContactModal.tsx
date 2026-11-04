@@ -10,6 +10,7 @@ import { ContactDialog } from "./ContactDialog";
 import { ContactResult } from "./ContactResult";
 import type { ContactModalVariant } from "./types";
 import { useCallbackRequest } from "./useCallbackRequest";
+import { trackSiteEvent } from "@/app/lib/siteAnalytics";
 
 export interface ContactModalProps {
   isOpen: boolean;
@@ -44,12 +45,34 @@ export function ContactModal({
   const request = useCallbackRequest({
     isCallFollowup,
     callContext,
+    trackingId: contactCtaPosition,
     onSuccess: () => {
       setStep("sent");
       onSubmitSuccess?.();
     },
     onError: onSubmitError,
   });
+  const formOpenedRef = useRef(false);
+  const outcomeReportedRef = useRef(false);
+
+  useEffect(() => {
+    if (!isOpen) outcomeReportedRef.current = false;
+    if (!isOpen || step !== "form") { formOpenedRef.current = false; return; }
+    if (formOpenedRef.current) return;
+    formOpenedRef.current = true;
+    trackSiteEvent("callback_open", {
+      page: callContext?.page,
+      trackingId: callContext?.trackingId ?? contactCtaPosition,
+      sourceEventId: callContext?.sourceEventId,
+    });
+  }, [isOpen, step, callContext, contactCtaPosition]);
+
+  const reportOutcome = (outcome: "connected" | "not_connected") => {
+    if (outcomeReportedRef.current) return;
+    outcomeReportedRef.current = true;
+    trackSiteEvent("call_outcome", { ...callContext, outcome });
+    setStep(outcome === "connected" ? "connected" : "form");
+  };
 
   useEffect(() => {
     if (step === "choice") choiceTransitionRef.current = false;
@@ -82,7 +105,7 @@ export function ContactModal({
           onContactFormOpen?.();
         }} />
       ) : step === "question" ? (
-        <CallOutcomeQuestion descriptionId={descriptionId} variant={variant} onConnected={() => setStep("connected")} onCallback={() => setStep("form")} />
+        <CallOutcomeQuestion descriptionId={descriptionId} variant={variant} onConnected={() => reportOutcome("connected")} onCallback={() => reportOutcome("not_connected")} />
       ) : step === "connected" || step === "sent" ? (
         <ContactResult descriptionId={descriptionId} variant={variant} result={step} onClose={close} />
       ) : (

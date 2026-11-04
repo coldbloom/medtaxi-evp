@@ -72,9 +72,17 @@ AVIF и WebP из `public/donetsk/images/`. Браузер выбирает ра
 весит 5 704 байта в AVIF или 9 354 байта в WebP. Размеры блока зарезервированы,
 изображение загружается лениво и не добавляет клиентский JavaScript.
 
-Для OG/Twitter и JSON-LD `/donetsk` используется `public/donetsk/og-donetsk.jpg`
-(1200 × 630, 105 375 байт), с подписью «Донецк» и реальной фотографией Sprinter
-из действующей галереи. Пересоздание: `yarn generate:donetsk-og`.
+Для OG/Twitter и JSON-LD `/donetsk` используется исходная иллюстрация
+`public/donetsk/images/white-sprinter.png` (1254 × 1254, `image/png`).
+Её URL, размеры, MIME и alt заданы в `app/lib/socialMetadata.ts`; те же размеры
+использует `primaryImageOfPage` в JSON-LD. Предыдущая карточка `og-donetsk.jpg`
+и её генератор сохранены, но метаданные страницы на неё больше не ссылаются.
+Для `/donetsk/moskva` фотография Mercedes сохранена в статический JPEG
+`public/donetsk/images/mercedes-moskva-social.jpg` (1200 × 900) без обрезки;
+пересоздание: `yarn generate:moscow-og`. Галерея продолжает использовать AVIF/WebP.
+Обе страницы используют название «Медтакси Донецк | Перевозка лежачих больных»
+в `og:site_name`, а `Organization.sameAs` указывает на донецкое сообщество VK.
+Эти метаданные не управляют именем отправителя сообщения или кэшем соцсети.
 Проверка сборки проверяет наличие локальных изображений также в OG/Twitter
 и JSON-LD, поэтому удалённое превью не пройдёт `yarn check:build`.
 

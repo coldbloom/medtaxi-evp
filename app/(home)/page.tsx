@@ -1,5 +1,6 @@
 import { homeFaqStructuredData } from "@/src/features/home/content/faq";
 import { serializeJsonLd } from "@/app/lib/serializeJsonLd";
+import { createSocialMetadata } from "@/app/lib/socialMetadata";
 import type { Metadata } from "next";
 import { Discounts } from "@/app/components/sections/Discounts";
 import { Faq } from "@/app/components/sections/main/Faq";
@@ -26,28 +27,11 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/",
   },
-  openGraph: {
+  ...createSocialMetadata({
     title: "Перевозка лежачих больных и инвалидов в Евпатории | Медтакси Евпатория",
     description: "Специализированная перевозка лежачих больных и инвалидов в Евпатории, Крыму и по всей России. Профессиональная бригада, медицинское оборудование, работа 24/7.",
-    url: "https://medtaxi-evp.ru",
-    siteName: "Медтакси Евпатория",
-    locale: "ru_RU",
-    type: "website",
-    images: [
-      {
-        url: "https://medtaxi-evp.ru/peugeot.jpg",
-        width: 1280,
-        height: 960,
-        alt: "Специализированный транспорт для перевозки лежачих больных — Медтакси Евпатория",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Перевозка лежачих больных и инвалидов в Евпатории | Медтакси Евпатория",
-    description: "Специализированная перевозка лежачих больных и инвалидов в Евпатории, Крыму и по всей России. Работа 24/7.",
-    images: ["/peugeot.jpg"],
-  },
+    path: "/",
+  }),
 };
 
 // ☎

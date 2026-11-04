@@ -4,6 +4,8 @@ import { createRequire } from "node:module";
 import { test } from "node:test";
 import vm from "node:vm";
 import ts from "typescript";
+import pathModule from "node:path";
+import { webcrypto } from "node:crypto";
 
 const require = createRequire(import.meta.url);
 
@@ -96,7 +98,7 @@ function setup(kind = "default", { ordinaryCount = 1, pagePath, contactPhoneHref
       compilerOptions: { module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX },
     }).outputText;
     vm.runInNewContext(code, {
-      exports, document, window, Element, CustomEvent,
+      exports, document, window, Element, CustomEvent, crypto: webcrypto,
       setTimeout(handler) { const id = ++nextTimer; timers.set(id, handler); return id; },
       clearTimeout: (id) => timers.delete(id),
       require(name) {
@@ -110,6 +112,7 @@ function setup(kind = "default", { ordinaryCount = 1, pagePath, contactPhoneHref
         if (name === "@/app/lib/callFeedback") return load("app/lib/callFeedback.ts");
         if (name.endsWith("useContactModalController")) return load("app/components/ContactModal/useContactModalController.ts");
         if (name === "./analytics") return { trackDonetskGoal: (...args) => trackedGoals.push(args) };
+        if (name.startsWith(".")) return load(`${pathModule.join(pathModule.dirname(path), name)}.ts`);
         return require(name);
       },
     });

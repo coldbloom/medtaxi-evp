@@ -7,6 +7,7 @@ import { initializeCallTracking, trackPhoneClick } from "@/app/lib/callTracking"
 export function PhoneClickTracking() {
   useEffect(() => {
     const handleClick = (event: MouseEvent) => {
+      if ((event.button !== undefined && event.button !== 0) || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || event.defaultPrevented) return;
       if (!(event.target instanceof Element)) return;
       // closest находит ссылку даже при клике по вложенной иконке или span.
       //*** .closest(...) — метод DOM, который поднимается от event.target вверх по дереву (к родителям, дедушкам и т.д.) и возвращает ближайший элемент, удовлетворяющий CSS-селектору. Если ничего не найдено — возвращает null. ***//
@@ -21,7 +22,7 @@ export function PhoneClickTracking() {
       const phone = link.getAttribute("href")?.slice(4);
       if (!phone) return;
       // Новая необёрнутая tel:-ссылка тоже учитывается, но с пометкой unlabelled.
-      trackPhoneClick(link.dataset.callTrackingId || "unlabelled", phone);
+      trackPhoneClick(link.dataset.callTrackingId || "unlabelled", phone, event);
       // preventDefault и ожидания ответа здесь нет: браузер сам открывает телефон.
     };
 

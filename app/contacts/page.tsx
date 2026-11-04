@@ -1,5 +1,6 @@
 import { ContactCoverage } from "@/src/features/contacts/ContactCoverage";
 import { serializeJsonLd } from "@/app/lib/serializeJsonLd";
+import { createSocialMetadata } from "@/app/lib/socialMetadata";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -16,14 +17,12 @@ export const metadata: Metadata = {
   description:
     "Контакты Медтакси Евпатория: телефон +7 (978) 938-02-21, Telegram, WhatsApp, VK. Перевозка лежачих больных и инвалидов по Евпатории, Крыму и всей России. Работаем круглосуточно.",
   alternates: { canonical: "/contacts" },
-  openGraph: {
+  ...createSocialMetadata({
     title: "Контакты — Медтакси Евпатория",
     description:
       "Позвоните или напишите нам в любое время. Перевозка лежачих больных по Евпатории и всему Крыму 24/7.",
-    type: "website",
-    url: `${SITE_URL}/contacts`,
-    images: [{ url: `${SITE_URL}/peugeot.jpg`, width: 1280, height: 960, alt: "Медтакси Евпатория" }],
-  },
+    path: "/contacts",
+  }),
 };
 
 const structuredData = {

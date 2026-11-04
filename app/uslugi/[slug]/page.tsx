@@ -5,6 +5,7 @@ import { RelatedServices } from "@/src/features/transport/RelatedServices";
 import { ServiceOfferContent } from "@/src/features/transport/ServiceOfferContent";
 import { ServiceOfferHero } from "@/src/features/transport/ServiceOfferHero";
 import { serializeJsonLd } from "@/app/lib/serializeJsonLd";
+import { createSocialMetadata, DONETSK_SITE_NAME, DONETSK_SOCIAL_IMAGE, SERVICE_SOCIAL_IMAGE } from "@/app/lib/socialMetadata";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getServiceOfferBySlug, serviceOffers, SITE_URL } from "@/app/lib/serviceOffers";
@@ -38,25 +39,19 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     return { title: "Услуга не найдена | Медтакси Евпатория" };
   }
 
-  const pageUrl = `${SITE_URL}${offer.route}`;
+  const isDonetskCrimea = slug === "perevozka-donetsk-krym";
 
   return {
     title: offer.seoTitle,
     description: offer.seoDescription,
     alternates: { canonical: offer.route },
-    openGraph: {
+    ...createSocialMetadata({
       title: offer.seoTitle,
       description: offer.seoDescription,
-      type: "website",
-      url: pageUrl,
-      images: [{ url: `${SITE_URL}/mercedas-optimized.jpg`, width: 767, height: 656, alt: "Медтакси Евпатория" }],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: offer.seoTitle,
-      description: offer.seoDescription,
-      images: [`${SITE_URL}/mercedas-optimized.jpg`],
-    },
+      path: offer.route,
+      image: isDonetskCrimea ? DONETSK_SOCIAL_IMAGE : SERVICE_SOCIAL_IMAGE,
+      ...(isDonetskCrimea ? { siteName: DONETSK_SITE_NAME } : {}),
+    }),
   };
 }
 

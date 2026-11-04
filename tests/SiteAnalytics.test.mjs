@@ -51,6 +51,7 @@ function browser({ pathname = "/", readyState = "complete", idle = true, existin
     globals,
     mocks: {
       react: renderer.react,
+      "@/app/lib/siteAnalytics": { trackSitePageView() {} },
       "next/navigation": {
         usePathname: () => window.location.pathname,
         useSearchParams: () => window.location.searchParams,

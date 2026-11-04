@@ -2,6 +2,7 @@ import { ServiceFaq } from "@/src/features/transport/ServiceFaq";
 import { TransportSteps } from "@/src/features/transport/TransportSteps";
 import { ServiceFeatures } from "@/src/features/transport/ServiceFeatures";
 import { serializeJsonLd } from "@/app/lib/serializeJsonLd";
+import { createSocialMetadata } from "@/app/lib/socialMetadata";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Header } from "@/app/components/sections/Header";
@@ -20,14 +21,12 @@ export const metadata: Metadata = {
   description:
     "Специализированная перевозка инвалидов-колясочников в Евпатории, Симферополе, Севастополе и по всему Крыму. Транспорт с пандусом, опытные сопровождающие, работа 24/7. Звоните: +7 (978) 938-02-21.",
   alternates: { canonical: "/uslugi/perevozka-invalidov-kolyasochnikov" },
-  openGraph: {
+  ...createSocialMetadata({
     title: "Перевозка инвалидов-колясочников в Евпатории и по Крыму",
     description:
       "Специализированный транспорт с пандусом и подъёмником. Бережная перевозка инвалидов-колясочников по Евпатории, Крыму и России. Круглосуточно.",
-    type: "website",
-    url: PAGE_URL,
-    images: [{ url: `${SITE_URL}/peugeot.jpg`, width: 1280, height: 960, alt: "Медтакси Евпатория" }],
-  },
+    path: "/uslugi/perevozka-invalidov-kolyasochnikov",
+  }),
 };
 
 const structuredData = {

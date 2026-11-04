@@ -1,3 +1,5 @@
+import { phoneClickIdentity } from "./phoneClickIdentity";
+
 export const CALL_STARTED_EVENT = "medtax:call-started";
 export const CALL_FEEDBACK_OPEN_EVENT = "medtax:call-feedback-open";
 /** An explicit callback request supersedes other dialogs and a pending call survey. */
@@ -6,6 +8,8 @@ export const CALLBACK_OPEN_EVENT = "medtax:callback-open";
 export type CallFeedbackContext = {
   phone: string;
   page: string;
+  sourceEventId?: string;
+  trackingId?: string;
 };
 
 const RETURN_DELAY_MS = 800;
@@ -67,6 +71,10 @@ export function listenForCallFeedback(
 
     cancelTimers();
     pending = { phone, page: window.location.pathname };
+    try {
+      pending.sourceEventId = phoneClickIdentity(event).eventId;
+      pending.trackingId = link.dataset.callTrackingId || "unlabelled";
+    } catch { /* Crypto/analytics failure must not suppress the callback question. */ }
     focused = document.hasFocus();
     leftPage = !available();
 

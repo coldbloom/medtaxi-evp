@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { createSocialMetadata } from "@/app/lib/socialMetadata";
 import Link from "next/link";
 import { LegalSiteNavigation } from "@/app/components/LegalSiteNavigation";
 import { Footer } from "@/app/components/sections/Footer";
@@ -7,6 +8,11 @@ export const metadata: Metadata = {
   title: "Согласие на обработку персональных данных | Медтакси",
   description: "Условия согласия на обработку персональных данных при отправке формы на medtaxi-evp.ru.",
   alternates: { canonical: "/personal-data-consent" },
+  ...createSocialMetadata({
+    title: "Согласие на обработку персональных данных | Медтакси",
+    description: "Условия согласия на обработку персональных данных при отправке формы на medtaxi-evp.ru.",
+    path: "/personal-data-consent",
+  }),
 };
 
 export default function PersonalDataConsentPage() {
@@ -20,7 +26,7 @@ export default function PersonalDataConsentPage() {
       </header>
       <main className="bg-gray-50 px-4 py-10 text-gray-800 sm:py-14">
         <article className="mx-auto max-w-4xl space-y-6 bg-white p-6 leading-relaxed shadow-sm sm:p-10">
-          <p className="text-sm font-semibold text-blue-700">Редакция от 26 сентября 2026 года</p>
+          <p className="text-sm font-semibold text-blue-700">Редакция от 3 ноября 2026 года</p>
           <h1 className="text-3xl font-black leading-tight text-gray-950 sm:text-4xl">Согласие на обработку персональных данных</h1>
           <p>
             Проставляя отметку в чекбоксе формы и нажимая кнопку «Отправить заявку», пользователь свободно,
@@ -35,6 +41,11 @@ export default function PersonalDataConsentPage() {
               Обрабатываются имя, номер телефона и необязательный текст комментария. Цель — принять заявку,
               связаться с пользователем, уточнить условия и подготовить предложение по услуге перевозки.
               Пользователь не должен указывать в комментарии сведения о здоровье, диагнозах, документах или оплате.
+            </p>
+            <p>
+              Вместе с заявкой сохраняются дата и версия согласия, страница обращения, источник перехода и идентификатор сессии,
+              если они доступны. После попытки звонка может сохраняться связь с нажатием на номер и ответом пользователя о результате звонка.
+              Уведомление с именем, телефоном и комментарием направляется уполномоченным получателям Оператора через ВКонтакте и Telegram для обработки обращения.
             </p>
           </section>
           <section className="space-y-3">

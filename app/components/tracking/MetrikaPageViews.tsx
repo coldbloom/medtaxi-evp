@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { recordMetrikaPageView } from "@/app/lib/metrika";
+import { trackSitePageView } from "@/app/lib/siteAnalytics";
 
 /** Observe committed App Router navigation, including browser back and forward. */
 export function MetrikaPageViews() {
@@ -11,7 +12,9 @@ export function MetrikaPageViews() {
   const search = searchParams.toString();
 
   useEffect(() => {
-    recordMetrikaPageView(`${pathname}${search ? `?${search}` : ""}`, document.title);
+    const path = `${pathname}${search ? `?${search}` : ""}`;
+    trackSitePageView(path);
+    try { recordMetrikaPageView(path, document.title); } catch { /* Independent providers. */ }
   }, [pathname, search]);
 
   return null;

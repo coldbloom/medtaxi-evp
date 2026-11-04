@@ -1,0 +1,48 @@
+# Temporary frontend hostname while clients retain the previous apex A record.
+# Install as /etc/nginx/sites-available/medtaxi-reserve and enable that site.
+# Point reserve.medtaxi-evp.ru to 168.113.181.170 in REG.RU first.
+# After nginx -t and reload, obtain and install a certificate with:
+# certbot --nginx --cert-name reserve.medtaxi-evp.ru -d reserve.medtaxi-evp.ru --redirect
+# Certbot adds HTTPS to this site. Keep the main domain's configuration intact.
+# Deploy the backend on 127.0.0.1:3235 and configure its
+# MEDTAXI_ADDITIONAL_ORIGINS=https://reserve.medtaxi-evp.ru before using forms here.
+# Keep MEDTAXI_URL=https://medtaxi-evp.ru and NEXT_PUBLIC_API_URL=/api.
+# This does not fix network/TLS failures or provide a second independent VDS.
+
+server {
+    listen 80;
+    server_name reserve.medtaxi-evp.ru;
+
+    # Only this temporary hostname must stay out of search results.
+    add_header X-Robots-Tag "noindex" always;
+
+    # Preserve /api in the URI; do not add a trailing slash to proxy_pass.
+    location ^~ /api/ {
+        proxy_pass http://127.0.0.1:3235;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Connection "";
+        client_max_body_size 64k;
+        proxy_connect_timeout 5s;
+        proxy_send_timeout 30s;
+        proxy_read_timeout 30s;
+        proxy_cache off;
+        proxy_intercept_errors off;
+    }
+
+    location / {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Connection "";
+        proxy_buffering off;
+        proxy_cache off;
+        proxy_intercept_errors off;
+    }
+}

@@ -1,11 +1,12 @@
 import { serializeJsonLd } from "@/app/lib/serializeJsonLd";
+import { createSocialMetadata } from "@/app/lib/socialMetadata";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Header } from "@/app/components/sections/Header";
 import { Footer } from "@/app/components/sections/Footer";
 import { Reviews } from "@/app/components/sections/Reviews";
 import { CallToActionSection } from "@/app/components/sections/main/CallToActionSection";
-import { SITE_URL, PAGE_URL, crimeaPrices, russiaPrices } from "@/src/features/pricing/content";
+import { crimeaPrices, russiaPrices } from "@/src/features/pricing/content";
 import { structuredData, faqStructuredData, breadcrumbData } from "@/src/features/pricing/schema";
 import { RoutePriceTable } from "@/src/features/pricing/RoutePriceTable";
 import { PricingHeroSection, PricingTrustSection } from "@/src/features/pricing/sections/HeroSection";
@@ -19,14 +20,12 @@ export const metadata: Metadata = {
   description:
     "Актуальные тарифы на перевозку лежачих больных и инвалидов в Евпатории, по Крыму и России. Перевозка по Евпатории от 2\u00A0500\u00A0руб., Симферополь от 5\u00A0000\u00A0руб., Москва от 45\u00A0000\u00A0руб. Без скрытых платежей.",
   alternates: { canonical: "/prices" },
-  openGraph: {
+  ...createSocialMetadata({
     title: "Цены на перевозку лежачих больных | Медтакси Евпатория",
     description:
       "Тарифы на медицинскую перевозку: по Евпатории, по Крыму и в Россию. Прозрачное ценообразование без скрытых доплат.",
-    type: "website",
-    url: PAGE_URL,
-    images: [{ url: `${SITE_URL}/peugeot.jpg`, width: 1280, height: 960, alt: "Медтакси Евпатория" }],
-  },
+    path: "/prices",
+  }),
 };
 
 export default function PricesPage() {

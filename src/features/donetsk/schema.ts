@@ -1,5 +1,6 @@
 import { SITE_URL, PAGE_URL, PAGE_DESCRIPTION, OG_IMAGE_PATH, PHONE_HREF, MIN_PRICE, faqItems } from "./content";
 import { DONETSK_VK_URL } from "@/app/lib/contactChannels";
+import { DONETSK_SOCIAL_IMAGE } from "@/app/lib/socialMetadata";
 
 export const serviceSchema = {
   "@context": "https://schema.org",
@@ -59,8 +60,9 @@ export const webPageSchema = {
   primaryImageOfPage: {
     "@type": "ImageObject",
     url: `${SITE_URL}${OG_IMAGE_PATH}`,
-    width: 1200,
-    height: 630,
+    width: DONETSK_SOCIAL_IMAGE.width,
+    height: DONETSK_SOCIAL_IMAGE.height,
+    encodingFormat: DONETSK_SOCIAL_IMAGE.type,
   },
   breadcrumb: { "@id": `${PAGE_URL}#breadcrumb` },
   mainEntity: { "@id": `${PAGE_URL}#service` },

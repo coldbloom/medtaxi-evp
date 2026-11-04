@@ -5,6 +5,7 @@ import { test } from "node:test";
 import { createRequire } from "node:module";
 import vm from "node:vm";
 import ts from "typescript";
+import { moduleLoader } from "./helpers/componentHarness.mjs";
 import React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 
@@ -12,6 +13,7 @@ const require = createRequire(import.meta.url);
 
 // Используем установленный TypeScript: не добавляем test runner или browser SDK.
 function loadModule(path, globals = {}) {
+  if (!globals.require) return moduleLoader({ globals }).load(path);
   const code = ts.transpileModule(readFileSync(path, "utf8"), {
     compilerOptions: { module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX },
   }).outputText;
@@ -27,10 +29,14 @@ function browser({ storage = new Map(), fetchImpl, crypto = webcrypto, env = {} 
     origin: "https://medtaxi-evp.ru",
     pathname: "/donetsk", search: "?utm_source=yandex&utm_campaign=donetsk&yclid=123",
   };
+  let nextTimer = 0;
+  const timers = new Map();
   const globals = {
-    URLSearchParams, crypto,
+    URL, URLSearchParams, crypto, AbortController,
     process: { env: { NEXT_PUBLIC_API_URL: "http://localhost:3235/api", NODE_ENV: "development", ...env } },
-    window: { location }, document: { referrer: "https://yandex.ru/" },
+    window: { location, addEventListener() {},
+      setTimeout(callback, delay) { timers.set(++nextTimer, { callback, delay }); return nextTimer; },
+      clearTimeout(id) { timers.delete(id); } }, document: { referrer: "https://yandex.ru/" },
     sessionStorage: {
       getItem: (key) => storage.get(key) || null,
       setItem: (key, value) => storage.set(key, value),
@@ -208,7 +214,7 @@ test("production: отсутствие API URL и синхронный сбой 
     fetchImpl() { throw new Error("fetch unavailable"); },
   });
   assert.doesNotThrow(() => broken.api.trackPhoneClick("hero", "+79895052785"));
-  assert.equal(broken.logs.error[0][1].kind, "preparation");
+  assert.equal(broken.logs.error[0][1].kind, "network_or_cors");
 });
 
 test("запрет storage сохраняет сессию в памяти, fallback UUID остаётся валидным", () => {
@@ -282,7 +288,7 @@ test("listener не отменяет клик и снимается при по�
   // Любая попытка отменить нативное действие ссылки сразу провалит тест.
   const event = { target: new Element(), preventDefault: () => assert.fail("Клик отменён") };
   for (const listener of listeners) listener(event);
-  assert.deepEqual(clicks, [["hero", "+79895052785"]]);
+  assert.deepEqual(clicks, [["hero", "+79895052785", event]]);
   cleanupAgain();
   assert.equal(listeners.size, 0);
 });
@@ -316,7 +322,7 @@ test("заблокированная телефонная ссылка не от
 
   for (const value of ["false", null]) {
     disabled = value;
-    listener(event);
+    listener({ ...event });
   }
   assert.equal(requests.length, 2);
   for (const request of requests) {

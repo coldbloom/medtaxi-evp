@@ -1,9 +1,10 @@
 import { formatPhoneNumber } from '@/app/utils/functions';
+import { DONETSK_SOCIAL_IMAGE } from '@/app/lib/socialMetadata';
 export const SITE_URL = "https://medtaxi-evp.ru";
 export const PAGE_PATH = "/donetsk";
 export const PAGE_URL = `${SITE_URL}${PAGE_PATH}`;
 export const PAGE_DESCRIPTION = "Перевозка лежачих и маломобильных людей в Донецке и ДНР. Спецтранспорт с подъёмником, от кровати до кровати. Подача от 3 500 ₽. Заявки 24/7.";
-export const OG_IMAGE_PATH = "/donetsk/og-donetsk.jpg";
+export const OG_IMAGE_PATH = DONETSK_SOCIAL_IMAGE.url;
 export const PHONE_HREF = process.env.DONETSK_PHONE_HREF || "+79490676701";
 export const PHONE_LABEL = formatPhoneNumber(PHONE_HREF);
 export const MIN_PRICE = 3500;
