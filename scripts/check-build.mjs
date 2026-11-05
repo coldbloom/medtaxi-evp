@@ -156,6 +156,28 @@ function checkPageSeo(markup, pageUrl, source) {
   }
 }
 
+function checkDonetskSocialImage(markup, source) {
+  // Check rendered HTML, not just the metadata source: crawlers read this artifact.
+  const imageUrl = `${siteUrl}/donetsk/images/white-sprinter.png`;
+  const metas = [...markup.matchAll(/<meta\b[^>]*>/gi)].map((match) => attributes(match[0]));
+  for (const [name, expected] of [
+    ["og:image", imageUrl],
+    ["twitter:image", imageUrl],
+    ["og:image:type", "image/png"],
+    ["og:image:width", "1254"],
+    ["og:image:height", "1254"],
+  ]) {
+    const values = metas.filter((meta) => (meta.property ?? meta.name)?.toLowerCase() === name);
+    check(values.length === 1 && values[0].content === expected,
+      `${source}: expected exactly one ${name}=${expected}`);
+  }
+  for (const meta of metas) {
+    if (/^(og:image:(url|secure_url)|twitter:image:src)$/i.test(meta.property ?? meta.name ?? "")) {
+      check(meta.content === imageUrl, `${source}: conflicting social image alias`);
+    }
+  }
+}
+
 function jsonLdNodes(html, source) {
   const nodes = [];
   function collect(value) {
@@ -287,6 +309,7 @@ for (const filename of htmlFiles) {
   const markup = staticMarkup(html);
   const nodes = jsonLdNodes(html, source);
   if (sitemapPages.has(filename)) checkPageSeo(markup, pageUrl, source);
+  if (source === "donetsk.html") checkDonetskSocialImage(markup, source);
   checkBreadcrumbTargets(nodes, pageUrl, source);
   for (const node of nodes) {
     for (const image of [node.image, node.logo, node.primaryImageOfPage].flat()) {

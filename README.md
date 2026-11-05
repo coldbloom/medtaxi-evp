@@ -51,6 +51,24 @@ yarn start --hostname 127.0.0.1 --port 3000
 Простой вариант — хранить полный каталог проекта и устанавливать зависимости на VPS.
 Инструкция: [деплой Next.js на VPS](docs/node-deployment.md).
 
+## Диагностика отправки формы
+
+В DevTools → Network найдите POST `/api/feedback`: backend возвращает JSON с
+`error`, `code` и `requestId` при отказе. Frontend читает JSON и при HTTP-ошибке,
+а в Console пишет `[feedback] request failed` с HTTP-статусом, кодом,
+`requestId` из ответа/`X-Request-Id` и `submissionId` отправленной формы.
+`requestId` помогает найти конкретную попытку в логах backend; `submissionId`
+остаётся одинаковым при повторе заявки после неопределённого результата.
+Для валидации выводятся только имена неверных полей, без значений.
+Контакты, комментарий, исходное тело ответа и текст исключения в Console не попадают.
+
+`NETWORK_ERROR` означает, что fetch не получил доступного ответа (включая возможный
+отказ CORS), `REQUEST_TIMEOUT` — истёк лимит 15 секунд, `NON_JSON_RESPONSE` — ответ
+не удалось разобрать как JSON, `RESPONSE_READ_ERROR` — чтение тела оборвалось,
+`INVALID_ACKNOWLEDGEMENT` — JSON не подтверждает сохранение именно этой заявки.
+Форма сохраняет введённые данные и допускает повтор без создания нового ID.
+Эти клиентские изменения требуют новой production-сборки frontend.
+
 ## Проверки и документация
 
 ```bash
@@ -73,6 +91,9 @@ yarn test
 (1200 × 900, `image/jpeg`); пересоздание из фотографии галереи: `yarn generate:moscow-og`.
 Иллюстрация в блоке заявки по-прежнему использует AVIF/WebP (`yarn optimize:donetsk-images`).
 `check:build` проверяет также наличие локальных изображений из OG/Twitter и JSON-LD.
+Для `/donetsk` дополнительно проверяются единственные OG/Twitter-ссылки именно на
+`white-sprinter.png`, MIME `image/png` и размеры 1254 × 1254 в собранном HTML.
+Старый URL `/donetsk/og-donetsk.jpg` перенаправляется на этот PNG (308).
 
 После изменения метаданных нужен `yarn build:production` и перезапуск приложения:
 страницы предварительно генерируются, а донецкие используют `force-static`.
@@ -80,3 +101,19 @@ yarn test
 проверьте HTML и URL картинки снаружи, затем обновите кэш соцсети (у VK есть
 метод `pages.clearCache`) и отправьте ссылку заново. Старые сообщения могут сохранить
 своё превью. Название и аватар отправителя в VK не задаются Open Graph сайта.
+
+Проверка после переключения сборки на VDS (HTML должен содержать `white-sprinter.png`
+в `og:image` и `twitter:image`, а старый адрес картинки — вести на PNG):
+
+```bash
+curl -fsS --compressed --max-time 15 -A 'TelegramBot (like TwitterBot)' \
+  https://medtaxi-evp.ru/donetsk | tr '<' '\n' | grep -E '(og:image|twitter:image)'
+curl -sSI --max-time 15 https://medtaxi-evp.ru/donetsk/og-donetsk.jpg
+curl -sSI --max-time 15 https://medtaxi-evp.ru/donetsk/images/white-sprinter.png
+```
+
+Если HTML снаружи всё ещё содержит `og-donetsk.jpg` или `mercedas-optimized.jpg`
+в метатегах, проверьте каталог процесса `pm2 describe medtaxi-front` и публикацию
+новой `.next`: одного `git pull` или перезапуска старой сборки недостаточно.
+Перенаправление помогает при повторном запросе старого изображения, но не удаляет
+уже сохранённую картинку из кеша Telegram.

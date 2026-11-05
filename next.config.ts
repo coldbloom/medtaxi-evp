@@ -19,6 +19,14 @@ const nextConfig: NextConfig = {
     includePaths: [path.join(process.cwd(), "app")],
     silenceDeprecations: ["legacy-js-api"],
   },
+  async redirects() {
+    // Older social previews can still request the previous Donetsk card URL.
+    return [{
+      source: "/donetsk/og-donetsk.jpg",
+      destination: "/donetsk/images/white-sprinter.png",
+      permanent: true,
+    }];
+  },
   async headers() {
     // Only the generated, content-hashed media can be cached immutably.
     // Source files and other public assets retain Next.js's default policy.

@@ -76,7 +76,8 @@ AVIF и WebP из `public/donetsk/images/`. Браузер выбирает ра
 `public/donetsk/images/white-sprinter.png` (1254 × 1254, `image/png`).
 Её URL, размеры, MIME и alt заданы в `app/lib/socialMetadata.ts`; те же размеры
 использует `primaryImageOfPage` в JSON-LD. Предыдущая карточка `og-donetsk.jpg`
-и её генератор сохранены, но метаданные страницы на неё больше не ссылаются.
+и её генератор сохранены, но метаданные страницы на неё больше не ссылаются;
+старый публичный URL перенаправляется на `white-sprinter.png` через Next.js (308).
 Для `/donetsk/moskva` фотография Mercedes сохранена в статический JPEG
 `public/donetsk/images/mercedes-moskva-social.jpg` (1200 × 900) без обрезки;
 пересоздание: `yarn generate:moscow-og`. Галерея продолжает использовать AVIF/WebP.
@@ -85,6 +86,8 @@ AVIF и WebP из `public/donetsk/images/`. Браузер выбирает ра
 Эти метаданные не управляют именем отправителя сообщения или кэшем соцсети.
 Проверка сборки проверяет наличие локальных изображений также в OG/Twitter
 и JSON-LD, поэтому удалённое превью не пройдёт `yarn check:build`.
+Для `/donetsk` проверяется также сам выбор PNG в собранных OG/Twitter-метатегах,
+его MIME и размеры: существующая, но неверная фотография тоже отклоняется.
 
 При аудите 29 октября 2026 удалены 15 неиспользуемых изображений
 (411 783 байта): `file.svg`, `window.svg`, `inside.jpg`, шесть `vehicle-*`

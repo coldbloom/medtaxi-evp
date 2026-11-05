@@ -5,6 +5,7 @@ import type { CallFeedbackContext } from "@/app/lib/callFeedback";
 import { formatPhone } from "./phone";
 import type { CallbackFormData } from "./types";
 import { createId, getSession } from "@/app/lib/trackingSession";
+import { CallbackResponseError, confirmCallbackResponse, type CallbackDiagnostic } from "./callbackDiagnostics";
 
 type CallbackRequestOptions = {
   isCallFollowup: boolean;
@@ -72,6 +73,7 @@ export function useCallbackRequest({ isCallFollowup, callContext, trackingId, on
     setIsSubmitting(true);
     const isCurrent = () => mountedRef.current && pendingRef.current === pending;
     let succeeded = false;
+    let diagnostic: CallbackDiagnostic = { kind: "client", code: "CLIENT_REQUEST_ERROR" };
 
     try {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL?.replace(/\/+$/, "");
@@ -102,6 +104,7 @@ export function useCallbackRequest({ isCallFollowup, callContext, trackingId, on
         };
       }
       const request = submissionRef.current;
+      diagnostic = { kind: "network", code: "NETWORK_ERROR", submissionId: request.requestId };
       const response = await fetch(apiUrl ? `${apiUrl}/feedback` : "/feedback", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -110,20 +113,19 @@ export function useCallbackRequest({ isCallFollowup, callContext, trackingId, on
         credentials: "omit",
         signal: controller.signal,
       });
-      if (!response.ok || controller.signal.aborted) throw new Error("Callback request was not confirmed");
-      const acknowledgement: unknown = await response.json();
-      if (!acknowledgement || typeof acknowledgement !== "object"
-        || !("success" in acknowledgement) || acknowledgement.success !== true
-        || !("requestId" in acknowledgement) || acknowledgement.requestId !== request.requestId
-        || !("leadId" in acknowledgement) || typeof acknowledgement.leadId !== "string" || !acknowledgement.leadId
-        || controller.signal.aborted) throw new Error("Callback acknowledgement does not match the request");
+      await confirmCallbackResponse(response, request.requestId);
+      if (controller.signal.aborted) throw new Error("Callback request timed out");
       if (!isCurrent()) return;
       setFormData(emptyForm);
       updateConsent(false);
       submissionRef.current = null;
       succeeded = true;
-    } catch {
+    } catch (error) {
       if (!isCurrent()) return;
+      if (error instanceof CallbackResponseError) diagnostic = error.diagnostic;
+      if (controller.signal.aborted) diagnostic = { ...diagnostic, kind: "timeout", code: "REQUEST_TIMEOUT" };
+      // No error.message/stack, request body, contacts, attribution or raw server response.
+      console.error("[feedback] request failed", diagnostic);
       setSubmitError("Не удалось подтвердить отправку заявки. Проверьте интернет и попробуйте ещё раз — введённые данные сохранены.");
     } finally {
       window.clearTimeout(pending.timeout);

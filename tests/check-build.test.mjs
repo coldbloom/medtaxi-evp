@@ -12,6 +12,7 @@ async function buildFixture(t) {
   await mkdir(join(fixture, ".next/server/app/donetsk"), { recursive: true });
   await mkdir(join(fixture, ".next/static/chunks"), { recursive: true });
   await mkdir(join(fixture, "public"));
+  await mkdir(join(fixture, "public/donetsk/images"), { recursive: true });
   await writeFile(join(fixture, ".next/BUILD_ID"), "fixture-build");
   await writeFile(join(fixture, ".next/routes-manifest.json"), "{}");
   await writeFile(join(fixture, ".next/required-server-files.json"), JSON.stringify({
@@ -21,6 +22,8 @@ async function buildFixture(t) {
   await writeFile(join(fixture, "public/vehicle.webp"), "fixture image");
   await writeFile(join(fixture, "public/video-poster.webp"), "fixture video poster");
   await writeFile(join(fixture, "public/lift.webm"), "fixture video");
+  await copyFile(new URL("../public/donetsk/images/white-sprinter.png", import.meta.url),
+    join(fixture, "public/donetsk/images/white-sprinter.png"));
   await copyFile(new URL("../scripts/check-build.mjs", import.meta.url), join(fixture, "scripts/check-build.mjs"));
   const site = "https://medtaxi-evp.ru";
   const route = `${site}/donetsk/moskva`;
@@ -41,6 +44,10 @@ async function buildFixture(t) {
     { "@type": "ListItem", name: "Донецк", position: 2, item: `${site}/donetsk` },
   ] };
   const parent = `<title>Донецк</title><link rel="canonical" href="${site}/donetsk">
+    <meta property="og:image" content="${site}/donetsk/images/white-sprinter.png">
+    <meta name="twitter:image" content="${site}/donetsk/images/white-sprinter.png">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="1254"><meta property="og:image:height" content="1254">
     <meta name="description" content="Перевозка по Донецку"><main><h1>Донецк</h1></main>
     <script type="application/ld+json">${JSON.stringify({ "@graph": [parentBreadcrumb] })}</script>`;
   const files = {
@@ -89,6 +96,45 @@ test("optimized images validate the original public asset without requiring a st
   assert.equal(missing.status, 1);
   assert.match(missing.stderr, /missing asset \/vehicle\.webp/);
 });
+
+for (const { name, change } of [
+  {
+    name: "an existing but incorrect preview image",
+    change: (html) => html.replaceAll("/donetsk/images/white-sprinter.png", "/vehicle.webp"),
+  },
+  {
+    name: "a missing Open Graph image",
+    change: (html) => html.replace(/<meta property="og:image"[^>]*>/, ""),
+  },
+  {
+    name: "a conflicting second Open Graph image",
+    change: (html) => `${html}<meta property="og:image" content="https://medtaxi-evp.ru/vehicle.webp">`,
+  },
+  {
+    name: "a conflicting Twitter image",
+    change: (html) => html.replace(/(<meta name="twitter:image" content=")[^"]+/, "$1https://medtaxi-evp.ru/vehicle.webp"),
+  },
+  {
+    name: "an incorrect MIME type",
+    change: (html) => html.replace('content="image/png"', 'content="image/jpeg"'),
+  },
+  {
+    name: "incorrect preview dimensions",
+    change: (html) => html.replace('content="1254"', 'content="1200"'),
+  },
+  {
+    name: "a conflicting secure image alias",
+    change: (html) => `${html}<meta property="og:image:secure_url" content="https://medtaxi-evp.ru/vehicle.webp">`,
+  },
+]) {
+  test(`Donetsk build verification rejects ${name}`, async (t) => {
+    const fixture = await buildFixture(t);
+    await fixture.update("donetsk.html", change(fixture.files["donetsk.html"]));
+    const result = fixture.run();
+    assert.equal(result.status, 1);
+    assert.match(result.stderr, /donetsk\.html: (expected exactly one|conflicting social image)/);
+  });
+}
 
 for (const filename of ["public/vehicle.webp", "public/video-poster.webp", "public/lift.webm", ".next/static/chunks/app.js"]) {
   test(`build verification rejects an empty used asset: ${filename}`, async (t) => {

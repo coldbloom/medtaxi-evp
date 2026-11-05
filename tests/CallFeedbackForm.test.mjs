@@ -22,6 +22,7 @@ function renderForm({ purpose = "call-followup", variant = "default", fetchRespo
   let timerId = 0;
   const timers = new Map();
   const requests = [];
+  const diagnostics = [];
   const analyticsEvents = [];
   Object.assign(browser.window, {
     setTimeout(callback, delay) {
@@ -44,7 +45,7 @@ function renderForm({ purpose = "call-followup", variant = "default", fetchRespo
       setTimeout: browser.window.setTimeout,
       clearTimeout: browser.window.clearTimeout,
       process: { env: { NEXT_PUBLIC_API_URL: apiUrl } },
-      console: { error() {} },
+      console: { error: (...entry) => diagnostics.push(entry) },
       fetch(url, options) {
         requests.push({ url, options, body: JSON.parse(options.body) });
         return fetchResponse ? fetchResponse(url, options) : Promise.resolve(accepted(JSON.parse(options.body)));
@@ -99,7 +100,7 @@ function renderForm({ purpose = "call-followup", variant = "default", fetchRespo
   }
   render();
   return {
-    render, find, field, button, click, change, submit, fillValid, requests, timers, analyticsEvents,
+    render, find, field, button, click, change, submit, fillValid, requests, timers, analyticsEvents, diagnostics,
     cleanup: () => renderer.unmount(),
     reopen: () => { props.isOpen = true; render(); },
     update: (next) => { props = { ...props, ...next }; render(); },
@@ -324,7 +325,8 @@ for (const failure of ["http", "network", "timeout"]) {
     const page = renderForm({
       fetchResponse: (_url, { signal, body }) => {
         if (++attempts > 1) return Promise.resolve(accepted(JSON.parse(body)));
-        if (failure === "http") return Promise.resolve({ ok: false, status: 503, text: async () => "Unavailable" });
+        if (failure === "http") return Promise.resolve({ ok: false, status: 503,
+          json: async () => { throw new SyntaxError("Unavailable"); } });
         if (failure === "network") return Promise.reject(new TypeError("Failed to fetch"));
         return new Promise((_resolve, reject) => signal.addEventListener("abort", () => reject(new Error("Aborted")), { once: true }));
       },
@@ -350,6 +352,11 @@ for (const failure of ["http", "network", "timeout"]) {
     assert.equal(page.successes(), 0);
     assert.equal(page.errors(), 1);
     assert.equal(page.timers.size, 0);
+    assert.equal(page.diagnostics.length, 1);
+    const diagnostic = page.diagnostics[0][1];
+    assert.equal(diagnostic.code, { http: "NON_JSON_RESPONSE", network: "NETWORK_ERROR", timeout: "REQUEST_TIMEOUT" }[failure]);
+    assert.equal(diagnostic.submissionId, page.requests[0].body.requestId);
+    assert.doesNotMatch(JSON.stringify(page.diagnostics), /Анна|978|Failed to fetch|Unavailable/);
     await page.submit();
     page.render();
     assert.equal(page.requests.length, 2);
@@ -357,6 +364,113 @@ for (const failure of ["http", "network", "timeout"]) {
     assert.match(page.text(), /Заявка принята/);
   });
 }
+
+test("a JSON rejection is inspected and logs only safe correlation metadata while preserving the draft", async (t) => {
+  const requestId = "f743ee59-adde-4d79-a592-c5ff2f2d5f62";
+  let reads = 0;
+  const page = renderForm({
+    fetchResponse: () => Promise.resolve({
+      ok: false, status: 400,
+      headers: { get: () => requestId },
+      json: async () => {
+        reads++;
+        return {
+          error: "Do not log Анна, +7 (978) 111-22-33 or secret-token",
+          code: "VALIDATION_ERROR", requestId,
+          details: { fields: ["phone", "consentVersion", "phone", "secret-token"], phone: "+79781112233" },
+          body: { name: "Анна", message: "Private route" },
+        };
+      },
+    }),
+  });
+  t.after(page.cleanup);
+  page.fillValid();
+  await page.submit();
+  page.render();
+  assert.equal(reads, 1);
+  const [label, diagnostic] = page.diagnostics[0];
+  assert.equal(label, "[feedback] request failed");
+  assert.deepEqual(JSON.parse(JSON.stringify(diagnostic)), {
+    status: 400, submissionId: page.requests[0].body.requestId, requestId,
+    kind: "http", code: "VALIDATION_ERROR", fields: ["phone", "consentVersion"],
+  });
+  assert.equal(page.field("phone").props.value, "+7 (978) 111-22-33");
+  assert.match(page.text(), /данные сохранены/);
+  assert.doesNotMatch(JSON.stringify(page.diagnostics), /Анна|978|secret-token|Private route/);
+  assert.doesNotMatch(page.text(), /VALIDATION_ERROR|secret-token|f743ee59/);
+  await page.submit();
+  assert.equal(page.requests[0].options.body, page.requests[1].options.body);
+});
+
+test("a JSON proxy error can correlate by its nginx request ID without a response header", async (t) => {
+  const requestId = "a1341cef4c564a2e84adb38f244dd27b";
+  const page = renderForm({ fetchResponse: () => Promise.resolve({
+    ok: false, status: 502,
+    json: async () => ({ error: "Backend unavailable", code: "UPSTREAM_UNAVAILABLE", requestId }),
+  }) });
+  t.after(page.cleanup);
+  page.fillValid();
+  await page.submit();
+  assert.equal(page.diagnostics[0][1].requestId, requestId);
+  assert.equal(page.diagnostics[0][1].code, "UPSTREAM_UNAVAILABLE");
+  assert.equal(page.diagnostics[0][1].status, 502);
+  assert.equal(page.successes(), 0);
+});
+
+test("unrecognized errors and identifiers cannot inject response data into the diagnostic log", async (t) => {
+  const page = renderForm({ fetchResponse: () => Promise.resolve({
+    ok: false, status: 503,
+    headers: { get: () => "+79781112233" },
+    json: async () => ({
+      error: "Token secret-token", code: "secret-token", requestId: "Анна",
+      details: { fields: ["secret-token"] },
+    }),
+  }) });
+  t.after(page.cleanup);
+  page.fillValid();
+  await page.submit();
+  const diagnostic = page.diagnostics[0][1];
+  assert.equal(diagnostic.code, "HTTP_ERROR");
+  assert.equal(diagnostic.requestId, undefined);
+  assert.equal(diagnostic.fields, undefined);
+  assert.doesNotMatch(JSON.stringify(page.diagnostics), /Анна|978|secret-token/);
+});
+
+test("an HTML response exposes its HTTP status and request ID without logging the page", async (t) => {
+  const requestId = "2d343ef8-00e6-4244-b6d8-1ddd3a297337";
+  const page = renderForm({ fetchResponse: () => Promise.resolve({
+    ok: false, status: 502,
+    headers: { get: () => requestId },
+    json: async () => { throw new SyntaxError('Unexpected token < in <html>secret-token</html>'); },
+  }) });
+  t.after(page.cleanup);
+  page.fillValid();
+  await page.submit();
+  assert.equal(page.diagnostics[0][1].code, "NON_JSON_RESPONSE");
+  assert.equal(page.diagnostics[0][1].status, 502);
+  assert.equal(page.diagnostics[0][1].requestId, requestId);
+  assert.doesNotMatch(JSON.stringify(page.diagnostics), /secret-token|<html>/);
+  assert.equal(page.successes(), 0);
+});
+
+test("a connection lost while reading a successful response keeps the same submission for retry", async (t) => {
+  let attempts = 0;
+  const page = renderForm({ fetchResponse: (_url, options) => {
+    if (++attempts > 1) return Promise.resolve(accepted(JSON.parse(options.body)));
+    return Promise.resolve({ ok: true, status: 200, json: async () => { throw new TypeError("Connection lost secret-token"); } });
+  } });
+  t.after(page.cleanup);
+  page.fillValid();
+  await page.submit();
+  page.render();
+  assert.equal(page.diagnostics[0][1].code, "RESPONSE_READ_ERROR");
+  assert.equal(page.diagnostics[0][1].status, 200);
+  assert.equal(page.successes(), 0);
+  assert.doesNotMatch(JSON.stringify(page.diagnostics), /secret-token/);
+  await page.submit();
+  assert.equal(page.requests[0].options.body, page.requests[1].options.body);
+  assert.equal(page.successes(), 1);
+});
 
 test("ordinary callback requests preserve the API payload and show one durable confirmation before resetting on next open", async () => {
   const page = renderForm({ purpose: "callback", apiUrl: "" });
@@ -423,6 +537,7 @@ test("unmounting during submission aborts the request, clears its timeout and su
   assert.equal(page.timers.size, 0);
   assert.equal(page.successes(), 0);
   assert.equal(page.errors(), 0);
+  assert.equal(page.diagnostics.length, 0);
   assert.equal(page.document.listeners.size, 0);
 });
 
@@ -476,6 +591,7 @@ test("HTTP 200 with malformed or mismatched acknowledgement never clears the for
     assert.equal(page.successes(), 0);
     assert.equal(page.field("name").props.value, "  Анна  ");
     assert.match(page.text(), /Не удалось подтвердить отправку/);
+    assert.equal(page.diagnostics[0][1].code, "INVALID_ACKNOWLEDGEMENT");
     page.cleanup();
   }
 });
